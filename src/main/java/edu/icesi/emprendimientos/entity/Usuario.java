@@ -40,4 +40,8 @@ public class Usuario {
 
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UsuarioRol> roles;
+
+    public List<UsuarioRol> getRoles() {
+        return roles;
+    }
 }
