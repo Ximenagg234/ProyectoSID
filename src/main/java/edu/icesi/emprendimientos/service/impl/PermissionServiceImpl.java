@@ -25,4 +25,27 @@ public class PermissionServiceImpl implements PermissionService {
     public List<Permission> listar() {
         return permissionRepository.findAll();
     }
+
+    @Override
+    public Permission buscarPorId(Integer id) {
+        return permissionRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Permission no encontrado"));
+    }
+
+    @Override
+    public Permission actualizar(Integer id, Permission actualizado) {
+
+        Permission existente = permissionRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Permission no encontrado"));
+
+        existente.setNombre(actualizado.getNombre());
+        existente.setDescripcion(actualizado.getDescripcion());
+
+        return permissionRepository.save(existente);
+    }
+
+    @Override
+    public void eliminar(Integer id) {
+        permissionRepository.deleteById(id);
+    }
 }

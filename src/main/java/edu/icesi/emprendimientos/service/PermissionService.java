@@ -7,6 +7,8 @@ import java.util.List;
 public interface PermissionService {
 
     Permission guardar(Permission permission);
-
     List<Permission> listar();
+    Permission actualizar(Integer id, Permission actualizado);
+    void eliminar(Integer id);
+    Permission buscarPorId(Integer id);
 }

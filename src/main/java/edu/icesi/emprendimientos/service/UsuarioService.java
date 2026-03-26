@@ -7,12 +7,8 @@ import java.util.List;
 public interface UsuarioService {
 
     Usuario guardar(Usuario usuario);
-
     List<Usuario> listar();
-
     void eliminar(Integer id);
-
     Usuario buscarPorId(Integer id);
-
     Usuario actualizar(Integer id, Usuario usuarioActualizado);
 }

@@ -30,4 +30,26 @@ public class RolServiceImpl implements RolService {
     public List<Rol> listar() {
         return rolRepository.findAll();
     }
+
+    @Override
+    public Rol buscarPorId(Integer id) {
+        return rolRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Rol no encontrado"));
+    }
+
+    @Override
+    public Rol actualizar(Integer id, Rol rolActualizado) {
+
+        Rol existente = rolRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Rol no encontrado"));
+
+        existente.setNombre(rolActualizado.getNombre());
+
+        return rolRepository.save(existente);
+    }
+
+    @Override
+    public void eliminar(Integer id) {
+        rolRepository.deleteById(id);
+    }
 }

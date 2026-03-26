@@ -15,6 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -83,6 +84,62 @@ public class UsuarioServiceTest {
 
         // Assert
         assertEquals(1, result.size());
+    }
+
+    // =========================
+    // READ
+    // =========================
+
+    @Test
+    void buscarUsuarioPorId_WhenExiste_ReturnUsuario() {
+        // Arrange
+        when(usuarioRepository.findById(1)).thenReturn(Optional.of(usuario));
+
+        // Act
+        Usuario result = usuarioService.buscarPorId(1);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(1, result.getIdUsuario());
+    }
+
+    @Test
+    void buscarUsuarioPorId_WhenNoExiste_LanzaExcepcion() {
+        // Arrange
+        when(usuarioRepository.findById(1)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(RuntimeException.class, () -> usuarioService.buscarPorId(1));
+    }
+
+    // =========================
+    //  UPDATE
+    // =========================
+
+    @Test
+    void actualizarUsuario_WhenExiste_ActualizaCorrectamente() {
+        // Arrange
+        when(usuarioRepository.findById(1)).thenReturn(Optional.of(usuario));
+        when(usuarioRepository.save(any(Usuario.class))).thenReturn(usuario);
+
+        Usuario actualizado = new Usuario();
+        actualizado.setNombreCompleto("Nuevo Nombre");
+        actualizado.setClave("abcd");
+
+        // Act
+        Usuario result = usuarioService.actualizar(1, actualizado);
+
+        // Assert
+        assertEquals("Nuevo Nombre", result.getNombreCompleto());
+    }
+
+    @Test
+    void actualizarUsuario_WhenNoExiste_LanzaExcepcion() {
+        // Arrange
+        when(usuarioRepository.findById(1)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(RuntimeException.class, () -> usuarioService.actualizar(1, usuario));
     }
 
     // =========================

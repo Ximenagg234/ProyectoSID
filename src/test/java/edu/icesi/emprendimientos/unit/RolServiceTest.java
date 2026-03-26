@@ -1,6 +1,5 @@
 package edu.icesi.emprendimientos.unit;
 
-
 import edu.icesi.emprendimientos.entity.Rol;
 import edu.icesi.emprendimientos.entity.RolPermission;
 import edu.icesi.emprendimientos.repository.RolRepository;
@@ -16,6 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -44,7 +44,7 @@ public class RolServiceTest {
     }
 
     // =========================
-    // CREATE (guardar)
+    // CREATE
     // =========================
 
     @Test
@@ -70,7 +70,7 @@ public class RolServiceTest {
     }
 
     // =========================
-    // READ (listar)
+    // READ
     // =========================
 
     @Test
@@ -83,6 +83,61 @@ public class RolServiceTest {
 
         // Assert
         assertEquals(1, result.size());
+    }
+
+    // =========================
+    // READ
+    // =========================
+
+    @Test
+    void buscarRolPorId_WhenExiste_ReturnRol() {
+        // Arrange
+        when(rolRepository.findById(1)).thenReturn(Optional.of(rol));
+
+        // Act
+        Rol result = rolService.buscarPorId(1);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(1, result.getIdRol());
+    }
+
+    @Test
+    void buscarRolPorId_WhenNoExiste_LanzaExcepcion() {
+        // Arrange
+        when(rolRepository.findById(1)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(RuntimeException.class, () -> rolService.buscarPorId(1));
+    }
+
+    // =========================
+    // UPDATE
+    // =========================
+
+    @Test
+    void actualizarRol_WhenExiste_ActualizaCorrectamente() {
+        // Arrange
+        when(rolRepository.findById(1)).thenReturn(Optional.of(rol));
+        when(rolRepository.save(any(Rol.class))).thenReturn(rol);
+
+        Rol actualizado = new Rol();
+        actualizado.setNombre("CLIENTE");
+
+        // Act
+        Rol result = rolService.actualizar(1, actualizado);
+
+        // Assert
+        assertEquals("CLIENTE", result.getNombre());
+    }
+
+    @Test
+    void actualizarRol_WhenNoExiste_LanzaExcepcion() {
+        // Arrange
+        when(rolRepository.findById(1)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(RuntimeException.class, () -> rolService.actualizar(1, rol));
     }
 
     // =========================
