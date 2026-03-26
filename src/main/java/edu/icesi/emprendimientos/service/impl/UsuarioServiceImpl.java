@@ -35,4 +35,21 @@ public class UsuarioServiceImpl implements UsuarioService {
     public void eliminar(Integer id) {
         usuarioRepository.deleteById(id);
     }
+
+    @Override
+    public Usuario buscarPorId(Integer id) {
+        return usuarioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+    }
+
+    @Override
+    public Usuario actualizar(Integer id, Usuario usuarioActualizado) {
+        Usuario existente = usuarioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        existente.setNombreCompleto(usuarioActualizado.getNombreCompleto());
+        existente.setClave(usuarioActualizado.getClave());
+
+        return usuarioRepository.save(existente);
+    }
 }

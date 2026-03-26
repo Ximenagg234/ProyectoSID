@@ -11,4 +11,8 @@ public interface UsuarioService {
     List<Usuario> listar();
 
     void eliminar(Integer id);
+
+    Usuario buscarPorId(Integer id);
+
+    Usuario actualizar(Integer id, Usuario usuarioActualizado);
 }
