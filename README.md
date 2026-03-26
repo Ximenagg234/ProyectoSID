@@ -26,6 +26,7 @@ Ejecutar el siguiente comando en la raíz del proyecto:
 
 ```bash
 mvnw.cmd spring-boot:run
+```
 
 # Base de Datos 
 
@@ -68,6 +69,7 @@ Ejecutar el siguiente comando en la raíz del proyecto:
 
 ```bash
 mvnw.cmd test
+```
 
 # Generación y Visualización del Reporte de Cobertura (JaCoCo)
 
@@ -77,6 +79,7 @@ Ejecutar el siguiente comando en la raíz del proyecto:
 
 ```bash
 mvnw.cmd clean test
+```
 
 Abrir el siguiente archivo en el navegador para ver el reporte:
 
