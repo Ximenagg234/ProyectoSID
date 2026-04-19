@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Usuarios</title>
+</head>
+<body>
+
+<h1>Lista de Usuarios</h1>
+
+<a href="/usuarios/nuevo">Crear Usuario</a>
+
+<table border="1">
+    <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Acciones</th>
+    </tr>
+
+    <tr th:each="u : ${usuarios}">
+        <td th:text="${u.idUsuario}"></td>
+        <td th:text="${u.nombreCompleto}"></td>
+        <td>
+            <a th:href="@{'/usuarios/editar/' + ${u.idUsuario}}">Editar</a>
+            <a th:href="@{'/usuarios/eliminar/' + ${u.idUsuario}}">Eliminar</a>
+        </td>
+    </tr>
+
+</table>
+
+</body>
+</html>
