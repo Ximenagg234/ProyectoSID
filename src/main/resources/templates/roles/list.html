@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Roles</title>
+</head>
+<body>
+
+<h1>Roles</h1>
+
+<a href="/roles/nuevo">Crear Rol</a>
+
+<table border="1">
+    <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Acciones</th>
+    </tr>
+
+    <tr th:each="r : ${roles}">
+        <td th:text="${r.idRol}"></td>
+        <td th:text="${r.nombre}"></td>
+        <td>
+            <a th:href="@{'/roles/eliminar/' + ${r.idRol}}">Eliminar</a>
+            <a th:href="@{'/roles/asignar-permisos/' + ${r.idRol}}">Asignar permisos</a>
+        </td>
+    </tr>
+
+</table>
+
+</body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Asignar Rol</title>
+</head>
+<body>
+
+<h1>Asignar Rol a Usuario</h1>
+
+<form th:action="@{/usuarios/asignar-roles}" method="post">
+
+    <input type="hidden" name="idUsuario" th:value="${usuario.idUsuario}" />
+
+    <label>Rol:</label>
+    <select name="idRol">
+        <option th:each="r : ${roles}"
+                th:value="${r.idRol}"
+                th:text="${r.nombre}">
+        </option>
+    </select>
+
+    <br>
+
+    <button type="submit">Asignar</button>
+
+</form>
+
+<h3>Roles actuales:</h3>
+
+<ul>
+    <li th:each="ur : ${usuario.roles}">
+        <span th:text="${ur.rol.nombre}"></span>
+
+        <a th:href="@{'/usuarios/quitar-rol?idUsuario=' + ${usuario.idUsuario} + '&idRol=' + ${ur.rol.idRol}}">
+            Quitar
+        </a>
+    </li>
+</ul>
+
+<a href="/usuarios">Volver</a>
+
+</body>
+</html>
