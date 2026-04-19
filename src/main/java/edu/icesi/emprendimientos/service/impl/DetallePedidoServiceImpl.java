@@ -30,10 +30,22 @@ public class DetallePedidoServiceImpl implements DetallePedidoService {
 
         Producto producto = detalle.getProducto();
 
+        // VALIDAR STOCK
+        if (producto.getStockDisponible() < detalle.getCantidad()) {
+            throw new RuntimeException("Stock insuficiente");
+        }
+
+        // DESCONTAR STOCK
+        producto.setStockDisponible(
+                producto.getStockDisponible() - detalle.getCantidad()
+        );
+
         BigDecimal precio = producto.getPrecio();
 
         detalle.setPrecioUnitario(precio);
-        detalle.setSubtotal(precio.multiply(BigDecimal.valueOf(detalle.getCantidad())));
+        detalle.setSubtotal(
+                precio.multiply(BigDecimal.valueOf(detalle.getCantidad()))
+        );
 
         return detallePedidoRepository.save(detalle);
     }

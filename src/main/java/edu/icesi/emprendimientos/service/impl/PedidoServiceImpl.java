@@ -21,21 +21,17 @@ public class PedidoServiceImpl implements PedidoService {
     @Override
     public Pedido crearPedido(Pedido pedido) {
 
-        if (pedido.getUsuario() == null) {
-            throw new RuntimeException("El pedido debe tener un usuario");
-        }
-
-        if (pedido.getEmprendimiento() == null) {
-            throw new RuntimeException("El pedido debe tener un emprendimiento");
-        }
-
         if (pedido.getDetalles() == null || pedido.getDetalles().isEmpty()) {
-            throw new RuntimeException("El pedido debe tener al menos un producto");
+            throw new RuntimeException("El pedido debe tener productos");
         }
 
         BigDecimal total = BigDecimal.ZERO;
 
         for (DetallePedido d : pedido.getDetalles()) {
+
+            // aseguramos una relación bidireccional
+            d.setPedido(pedido);
+
             total = total.add(d.getSubtotal());
         }
 

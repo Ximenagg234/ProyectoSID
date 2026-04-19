@@ -1,6 +1,9 @@
 package edu.icesi.emprendimientos.service.impl;
 
+import edu.icesi.emprendimientos.entity.Rol;
 import edu.icesi.emprendimientos.entity.Usuario;
+import edu.icesi.emprendimientos.entity.UsuarioRol;
+import edu.icesi.emprendimientos.repository.RolRepository;
 import edu.icesi.emprendimientos.repository.UsuarioRepository;
 import edu.icesi.emprendimientos.service.UsuarioService;
 import org.springframework.stereotype.Service;
@@ -11,9 +14,11 @@ import java.util.List;
 public class UsuarioServiceImpl implements UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
+    private final RolRepository rolRepository;
 
-    public UsuarioServiceImpl(UsuarioRepository usuarioRepository) {
+    public UsuarioServiceImpl(UsuarioRepository usuarioRepository, RolRepository rolRepository) {
         this.usuarioRepository = usuarioRepository;
+        this.rolRepository = rolRepository;
     }
 
     @Override
@@ -51,5 +56,34 @@ public class UsuarioServiceImpl implements UsuarioService {
         existente.setClave(usuarioActualizado.getClave());
 
         return usuarioRepository.save(existente);
+    }
+
+    @Override
+    public void asignarRol(Integer idUsuario, Integer idRol) {
+
+        Usuario usuario = usuarioRepository.findById(idUsuario)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        Rol rol = rolRepository.findById(idRol)
+                .orElseThrow(() -> new RuntimeException("Rol no encontrado"));
+
+        UsuarioRol usuarioRol = new UsuarioRol();
+        usuarioRol.setUsuario(usuario);
+        usuarioRol.setRol(rol);
+
+        usuario.getRoles().add(usuarioRol);
+
+        usuarioRepository.save(usuario);
+    }
+
+    @Override
+    public void quitarRol(Integer idUsuario, Integer idRol) {
+
+        Usuario usuario = usuarioRepository.findById(idUsuario)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        usuario.getRoles().removeIf(ur -> ur.getRol().getIdRol().equals(idRol));
+
+        usuarioRepository.save(usuario);
     }
 }

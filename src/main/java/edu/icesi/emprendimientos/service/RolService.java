@@ -11,4 +11,6 @@ public interface RolService {
     Rol buscarPorId(Integer id);
     Rol actualizar(Integer id, Rol rolActualizado);
     void eliminar(Integer id);
+    void asignarPermiso(Integer idRol, Integer idPermission);
+    void quitarPermiso(Integer idRol, Integer idPermission);
 }
