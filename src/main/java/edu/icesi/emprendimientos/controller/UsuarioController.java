@@ -57,14 +57,14 @@ public class UsuarioController {
         return "layout";
     }
 
-    // ELIMINAR
+    // ELIMINAR USUARIO
     @GetMapping("/eliminar/{id}")
     public String eliminar(@PathVariable Integer id) {
         usuarioService.eliminar(id);
         return "redirect:/usuarios";
     }
 
-    // ASIGNAR ROLES (FORM)
+    // GESTIONAR ROLES (FORM — muestra asignados + disponibles)
     @GetMapping("/asignar-roles/{id}")
     public String asignarRoles(@PathVariable Integer id, Model model) {
         model.addAttribute("usuario", usuarioService.buscarPorId(id));
@@ -73,7 +73,7 @@ public class UsuarioController {
         return "layout";
     }
 
-    // GUARDAR ASIGNACIÓN — recibe "roles" (lista de ids desde los checkboxes)
+    // GUARDAR ASIGNACIÓN DE ROLES
     @PostMapping("/asignar-roles")
     public String guardarRoles(
             @RequestParam Integer idUsuario,
@@ -84,16 +84,16 @@ public class UsuarioController {
                 usuarioService.asignarRol(idUsuario, idRol);
             }
         }
-        return "redirect:/usuarios";
+        return "redirect:/usuarios/asignar-roles/" + idUsuario;
     }
 
-    // QUITAR ROL
+    // QUITAR ROL — redirige de vuelta a la vista de gestión
     @GetMapping("/quitar-rol")
     public String quitarRol(
             @RequestParam Integer idUsuario,
             @RequestParam Integer idRol
     ) {
         usuarioService.quitarRol(idUsuario, idRol);
-        return "redirect:/usuarios";
+        return "redirect:/usuarios/asignar-roles/" + idUsuario;
     }
 }

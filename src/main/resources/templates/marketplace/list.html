@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+
+<div th:fragment="contenido">
+
+    <div class="page-header">
+        <h1>Marketplace Icesi</h1>
+        <p>Descubre lo que crean tus compañeros 🚀</p>
+    </div>
+
+    <div style="display:flex; gap:24px; align-items:flex-start;">
+
+        <!-- ── FILTROS LATERAL ───────────────────────────── -->
+        <div style="width:200px; flex-shrink:0;">
+            <div class="card-custom" style="padding:20px;">
+
+                <div style="font-size:11px; font-weight:700; text-transform:uppercase;
+                            letter-spacing:.9px; color:#6B7280; margin-bottom:14px;">
+                    Categoría
+                </div>
+
+                <a href="/marketplace"
+                   style="display:flex; align-items:center; gap:8px; padding:9px 12px;
+                          border-radius:10px; text-decoration:none; font-size:13px;
+                          font-weight:600; margin-bottom:4px;"
+                   th:style="${categoriaSeleccionada == null}
+                              ? 'background:#EEF2FF; color:#4F46E5;'
+                              : 'color:#374151;'">
+                    <i class="bi bi-grid-fill" style="font-size:13px;"></i>
+                    Todos
+                </a>
+
+                <a th:each="cat : ${categorias}"
+                   th:href="@{/marketplace(categoria=${cat.idCategoria})}"
+                   style="display:flex; align-items:center; gap:8px; padding:9px 12px;
+                          border-radius:10px; text-decoration:none; font-size:13px;
+                          font-weight:500; margin-bottom:4px;"
+                   th:style="${categoriaSeleccionada != null and categoriaSeleccionada == cat.idCategoria}
+                              ? 'background:#EEF2FF; color:#4F46E5; font-weight:600;'
+                              : 'color:#374151;'">
+                    <i class="bi bi-tag" style="font-size:13px;"></i>
+                    <span th:text="${cat.nombre}"></span>
+                </a>
+
+            </div>
+        </div>
+
+        <!-- ── CONTENIDO PRINCIPAL ──────────────────────── -->
+        <div style="flex:1; min-width:0;">
+
+            <!-- Contador -->
+            <div style="margin-bottom:20px;">
+                <span style="font-size:13px; color:#6B7280;">
+                    <strong th:text="${productos.size()}" style="color:#111827;"></strong>
+                    productos encontrados
+                </span>
+            </div>
+
+            <!-- Sin resultados -->
+            <div th:if="${productos.isEmpty()}"
+                 style="text-align:center; padding:60px 0; color:#9CA3AF;">
+                <i class="bi bi-bag-x" style="font-size:48px; display:block; margin-bottom:12px;"></i>
+                <p style="font-size:15px; font-weight:600; color:#6B7280; margin-bottom:12px;">
+                    No hay productos en esta categoría
+                </p>
+                <a href="/marketplace" class="btn btn-primary">Ver todos</a>
+            </div>
+
+            <!-- Grid de productos -->
+            <div th:if="${!productos.isEmpty()}"
+                 style="display:grid; grid-template-columns:repeat(auto-fill, minmax(210px,1fr)); gap:16px;">
+
+                <div th:each="p : ${productos}"
+                     style="background:#fff; border-radius:16px; overflow:hidden;
+                            border:1px solid #E5E7EB; box-shadow:0 1px 3px rgba(0,0,0,.06);
+                            transition:box-shadow .2s, transform .2s;"
+                     onmouseover="this.style.boxShadow='0 8px 24px rgba(0,0,0,.1)';this.style.transform='translateY(-3px)'"
+                     onmouseout="this.style.boxShadow='0 1px 3px rgba(0,0,0,.06)';this.style.transform='translateY(0)'">
+
+                    <!-- Banner color por categoría -->
+                    <div th:with="cat=${p.emprendimiento?.categoria?.nombre}"
+                         style="height:130px; display:flex; align-items:center; justify-content:center;">
+                        <div th:if="${cat == 'Tecnologia'}"
+                             style="width:100%; height:100%; background:linear-gradient(135deg,#667eea,#764ba2);
+                                    display:flex; align-items:center; justify-content:center;">
+                            <i class="bi bi-cpu-fill" style="font-size:44px; color:rgba(255,255,255,.75);"></i>
+                        </div>
+                        <div th:if="${cat == 'Moda'}"
+                             style="width:100%; height:100%; background:linear-gradient(135deg,#f093fb,#f5576c);
+                                    display:flex; align-items:center; justify-content:center;">
+                            <i class="bi bi-bag-heart-fill" style="font-size:44px; color:rgba(255,255,255,.75);"></i>
+                        </div>
+                        <div th:if="${cat == 'Comida' or cat == 'Bebidas'}"
+                             style="width:100%; height:100%; background:linear-gradient(135deg,#f7971e,#ffd200);
+                                    display:flex; align-items:center; justify-content:center;">
+                            <i class="bi bi-cup-hot-fill" style="font-size:44px; color:rgba(255,255,255,.75);"></i>
+                        </div>
+                        <div th:if="${cat != 'Tecnologia' and cat != 'Moda' and cat != 'Comida' and cat != 'Bebidas'}"
+                             style="width:100%; height:100%; background:linear-gradient(135deg,#4facfe,#00f2fe);
+                                    display:flex; align-items:center; justify-content:center;">
+                            <i class="bi bi-box-seam-fill" style="font-size:44px; color:rgba(255,255,255,.75);"></i>
+                        </div>
+                    </div>
+
+                    <!-- Info del producto -->
+                    <div style="padding:14px;">
+
+                        <!-- Categoría badge -->
+                        <div style="font-size:10px; font-weight:700; text-transform:uppercase;
+                                    letter-spacing:.6px; color:#6366F1; margin-bottom:4px;"
+                             th:text="${p.emprendimiento?.categoria?.nombre}"></div>
+
+                        <!-- Nombre -->
+                        <div style="font-size:14px; font-weight:700; color:#111827; margin-bottom:4px;
+                                    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"
+                             th:text="${p.nombre}"></div>
+
+                        <!-- Emprendimiento link -->
+                        <a th:href="@{'/marketplace/emprendimiento/' + ${p.emprendimiento.idEmprendimiento}}"
+                           style="font-size:12px; color:#6B7280; text-decoration:none;
+                                  display:flex; align-items:center; gap:4px; margin-bottom:12px;">
+                            <i class="bi bi-shop" style="font-size:11px;"></i>
+                            <span th:text="${p.emprendimiento.nombre}"></span>
+                        </a>
+
+                        <!-- Precio + botón agregar -->
+                        <div style="display:flex; align-items:center; justify-content:space-between;">
+                            <span style="font-size:15px; font-weight:800; color:#111827;">
+                                $<span th:text="${#numbers.formatDecimal(p.precio, 1, 'COMMA', 0, 'POINT')}"></span>
+                            </span>
+
+                            <!-- Solo COMPRADOR puede agregar al carrito -->
+                            <form th:action="@{/carrito/agregar}" method="post" style="margin:0;"
+                                  sec:authorize="hasRole('COMPRADOR')">
+                                <input type="hidden" name="idProducto" th:value="${p.idProducto}"/>
+                                <input type="hidden" name="cantidad" value="1"/>
+                                <button type="submit"
+                                        title="Agregar al carrito"
+                                        style="width:34px; height:34px; border-radius:50%; border:none;
+                                               background:#6366F1; color:#fff; cursor:pointer; font-size:16px;
+                                               display:flex; align-items:center; justify-content:center;
+                                               transition:background .18s;"
+                                        onmouseover="this.style.background='#4F46E5'"
+                                        onmouseout="this.style.background='#6366F1'">
+                                    <i class="bi bi-cart-plus-fill"></i>
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Stock -->
+                        <div style="margin-top:8px;">
+                            <span th:if="${p.stockDisponible > 0}"
+                                  style="font-size:11px; color:#15803D; background:#DCFCE7;
+                                         padding:2px 8px; border-radius:50px; font-weight:600;">
+                                <i class="bi bi-check-circle-fill"></i>
+                                <span th:text="${p.stockDisponible} + ' disponibles'"></span>
+                            </span>
+                            <span th:if="${p.stockDisponible == 0}"
+                                  style="font-size:11px; color:#B91C1C; background:#FEE2E2;
+                                         padding:2px 8px; border-radius:50px; font-weight:600;">
+                                <i class="bi bi-x-circle-fill"></i> Sin stock
+                            </span>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

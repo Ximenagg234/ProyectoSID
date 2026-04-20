@@ -6,42 +6,104 @@
 <div th:fragment="contenido">
 
     <div class="page-header">
-        <h1>Asignar Roles</h1>
-        <p>Define el nivel de acceso del estudiante en la plataforma</p>
+        <h1>Gestionar Roles</h1>
+        <p th:text="'Administra los roles de: ' + ${usuario.nombreCompleto}">Administra los roles del estudiante</p>
     </div>
 
-    <div class="card-custom" style="max-width:520px;">
+    <div style="display:flex; gap:24px; flex-wrap:wrap; align-items:flex-start;">
 
-        <div class="section-header">
-            <div class="section-header-info">
-                <h2>Roles disponibles</h2>
-                <p>Selecciona uno o varios roles para este emprendedor</p>
-            </div>
-        </div>
+        <!-- ── ROLES ACTUALES ─────────────────────────── -->
+        <div class="card-custom" style="flex:1; min-width:280px;">
 
-        <form th:action="@{/usuarios/asignar-roles}" method="post">
-
-            <input type="hidden" name="idUsuario" th:value="${usuario.idUsuario}"/>
-
-            <div style="display:flex; flex-direction:column; gap:4px; margin-bottom:28px;">
-                <div class="form-check" th:each="r : ${roles}">
-                    <input class="form-check-input" type="checkbox" name="roles" th:value="${r.idRol}"/>
-                    <label class="form-check-label" th:text="${r.nombre}"></label>
+            <div class="section-header">
+                <div class="section-header-info">
+                    <h2>Roles asignados</h2>
+                    <p>Roles que tiene actualmente este estudiante</p>
                 </div>
             </div>
 
-            <div style="display:flex; gap:10px; padding-top:20px; border-top:1px solid #E5E7EB;">
-                <button type="submit" class="btn btn-success">
-                    <i class="bi bi-check-lg"></i>
-                    Guardar
-                </button>
-                <a href="/usuarios" class="btn btn-secondary">
-                    <i class="bi bi-arrow-left"></i>
-                    Volver
-                </a>
+            <div th:if="${usuario.roles == null or usuario.roles.isEmpty()}"
+                 style="text-align:center; padding:32px 0; color:#9CA3AF;">
+                <i class="bi bi-shield-x" style="font-size:32px; display:block; margin-bottom:8px;"></i>
+                <span style="font-size:13px;">Sin roles asignados</span>
             </div>
 
-        </form>
+            <div style="display:flex; flex-direction:column; gap:8px;"
+                 th:if="${usuario.roles != null and !usuario.roles.isEmpty()}">
+
+                <div th:each="ur : ${usuario.roles}"
+                     th:if="${ur.rol != null}"
+                     style="display:flex; align-items:center; justify-content:space-between;
+                            padding:12px 14px; background:#F9FAFB; border-radius:10px;
+                            border:1px solid #E5E7EB;">
+
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <div style="width:32px; height:32px; background:#FEF3C7; border-radius:8px;
+                                    display:flex; align-items:center; justify-content:center;
+                                    color:#D97706; font-size:14px; flex-shrink:0;">
+                            <i class="bi bi-shield-fill-check"></i>
+                        </div>
+                        <span style="font-weight:600; font-size:13.5px; color:#111827;"
+                              th:text="${ur.rol.nombre}"></span>
+                    </div>
+
+                    <a th:href="@{/usuarios/quitar-rol(idUsuario=${usuario.idUsuario}, idRol=${ur.rol.idRol})}"
+                       class="btn btn-outline-danger btn-sm"
+                       onclick="return confirm('¿Quitar este rol al estudiante?')">
+                        <i class="bi bi-x-lg"></i>
+                        Quitar
+                    </a>
+
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ── ASIGNAR NUEVO ROL ──────────────────────── -->
+        <div class="card-custom" style="flex:1; min-width:280px;">
+
+            <div class="section-header">
+                <div class="section-header-info">
+                    <h2>Asignar roles</h2>
+                    <p>Selecciona los roles a agregar</p>
+                </div>
+            </div>
+
+            <form th:action="@{/usuarios/asignar-roles}" method="post">
+
+                <input type="hidden" name="idUsuario" th:value="${usuario.idUsuario}"/>
+
+                <div style="display:flex; flex-direction:column; gap:4px; margin-bottom:24px;">
+                    <div class="form-check" th:each="r : ${roles}">
+                        <input class="form-check-input" type="checkbox"
+                               name="roles" th:value="${r.idRol}"
+                               th:disabled="${usuario.roles != null and #lists.contains(usuario.roles.![rol?.idRol], r.idRol)}"/>
+                        <label class="form-check-label"
+                               th:text="${r.nombre}"
+                               th:style="${usuario.roles != null and #lists.contains(usuario.roles.![rol?.idRol], r.idRol)} ? 'color:#9CA3AF;' : ''">
+                        </label>
+                        <span th:if="${usuario.roles != null and #lists.contains(usuario.roles.![rol?.idRol], r.idRol)}"
+                              style="font-size:11px; color:#9CA3AF; margin-left:6px;">
+                            (ya asignado)
+                        </span>
+                    </div>
+                </div>
+
+                <div style="display:flex; gap:10px; padding-top:20px; border-top:1px solid #E5E7EB;">
+                    <button type="submit" class="btn btn-success">
+                        <i class="bi bi-check-lg"></i>
+                        Guardar
+                    </button>
+                    <a href="/usuarios" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left"></i>
+                        Volver
+                    </a>
+                </div>
+
+            </form>
+
+        </div>
+
     </div>
 
 </div>

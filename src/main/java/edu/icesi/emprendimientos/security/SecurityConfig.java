@@ -32,12 +32,23 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-
         http
                 .authenticationProvider(authenticationProvider())
                 .authorizeHttpRequests(auth -> auth
+                        // Públicas
                         .requestMatchers("/login", "/usuarios/nuevo").permitAll()
+                        // Admin
                         .requestMatchers("/roles/**").hasRole("ADMIN")
+                        .requestMatchers("/estudiantes/**").hasRole("ADMIN")
+                        // Marketplace: cualquier autenticado puede explorar
+                        .requestMatchers("/marketplace/**").authenticated()
+                        // Carrito: solo COMPRADOR
+                        .requestMatchers("/carrito/**").hasRole("COMPRADOR")
+                        // Mis pedidos: COMPRADOR
+                        .requestMatchers("/pedidos/mis-pedidos/**").hasRole("COMPRADOR")
+                        // Pedidos recibidos: EMPRENDEDOR
+                        .requestMatchers("/pedidos/recibidos/**").hasRole("EMPRENDEDOR")
+                        // Todo lo demás requiere autenticación
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form

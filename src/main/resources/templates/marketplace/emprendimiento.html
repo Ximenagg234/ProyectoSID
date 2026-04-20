@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+
+<div th:fragment="contenido">
+
+    <!-- Volver -->
+    <a href="/marketplace"
+       style="display:inline-flex; align-items:center; gap:6px; font-size:13px;
+              font-weight:600; color:#6B7280; text-decoration:none; margin-bottom:20px;">
+        <i class="bi bi-arrow-left"></i> Volver al Marketplace
+    </a>
+
+    <!-- ── BANNER DEL EMPRENDIMIENTO ────────────────────────── -->
+    <div th:style="'border-radius:20px; padding:28px 32px; margin-bottom:24px; overflow:hidden; position:relative;' +
+                   'background: linear-gradient(135deg,' +
+                   (${emprendimiento.categoria.nombre == 'Tecnologia'} ? '#667eea,#764ba2' :
+                    ${emprendimiento.categoria.nombre == 'Moda'} ? '#f093fb,#f5576c' :
+                    '#f7971e,#ffd200') + ');'">
+
+        <div style="display:flex; align-items:center; gap:20px; position:relative; z-index:1;">
+
+            <!-- Logo / ícono -->
+            <div style="width:72px; height:72px; background:rgba(255,255,255,.2);
+                        border-radius:16px; display:flex; align-items:center;
+                        justify-content:center; flex-shrink:0;">
+                <i class="bi bi-rocket-takeoff-fill" style="font-size:32px; color:#fff;"></i>
+            </div>
+
+            <div>
+                <!-- Categoría -->
+                <div style="font-size:11px; font-weight:700; text-transform:uppercase;
+                            letter-spacing:.8px; color:rgba(255,255,255,.7); margin-bottom:4px;"
+                     th:text="${emprendimiento.categoria.nombre}"></div>
+
+                <!-- Nombre -->
+                <h1 style="font-size:26px; font-weight:800; color:#fff; margin:0 0 6px;
+                           letter-spacing:-.5px;"
+                    th:text="${emprendimiento.nombre}"></h1>
+
+                <!-- Meta -->
+                <div style="display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
+                    <span style="font-size:12.5px; color:rgba(255,255,255,.75); display:flex; align-items:center; gap:5px;">
+                        <i class="bi bi-person-fill"></i>
+                        <span th:text="${emprendimiento.usuario.nombreCompleto}"></span>
+                    </span>
+                    <span style="font-size:12.5px; color:rgba(255,255,255,.75); display:flex; align-items:center; gap:5px;">
+                        <i class="bi bi-collection"></i>
+                        <span th:text="${productos.size()} + ' productos'"></span>
+                    </span>
+                    <span style="font-size:12.5px; color:rgba(255,255,255,.75); display:flex; align-items:center; gap:5px;"
+                          th:if="${emprendimiento.semestre != null}">
+                        <i class="bi bi-calendar3"></i>
+                        <span th:text="${emprendimiento.semestre.periodo}"></span>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Decoración fondo -->
+        <i class="bi bi-rocket-takeoff-fill"
+           style="position:absolute; right:32px; top:50%; transform:translateY(-50%);
+                  font-size:96px; color:rgba(255,255,255,.08);"></i>
+    </div>
+
+    <!-- ── DESCRIPCIÓN ───────────────────────────────────────── -->
+    <div class="card-custom" style="margin-bottom:24px; padding:20px 24px;">
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+            <i class="bi bi-info-circle" style="color:#6366F1;"></i>
+            <span style="font-size:13px; font-weight:700; color:#111827;">Sobre nosotros</span>
+        </div>
+        <p style="font-size:13.5px; color:#6B7280; margin:0; line-height:1.7;"
+           th:text="${emprendimiento.descripcion}"></p>
+    </div>
+
+    <!-- ── PRODUCTOS DEL EMPRENDIMIENTO ─────────────────────── -->
+    <div class="card-custom">
+        <div class="section-header">
+            <div class="section-header-info">
+                <h2>Productos</h2>
+                <p th:text="${productos.size()} + ' productos disponibles'"></p>
+            </div>
+        </div>
+
+        <!-- Sin productos -->
+        <div th:if="${productos.isEmpty()}"
+             style="text-align:center; padding:40px 0; color:#9CA3AF;">
+            <i class="bi bi-bag-x" style="font-size:36px; display:block; margin-bottom:10px;"></i>
+            <p style="font-size:14px;">Este emprendimiento aún no tiene productos publicados.</p>
+        </div>
+
+        <!-- Grid de productos -->
+        <div th:if="${!productos.isEmpty()}"
+             style="display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr)); gap:16px;">
+
+            <div th:each="p : ${productos}"
+                 style="background:#F9FAFB; border-radius:12px; overflow:hidden;
+                        border:1px solid #E5E7EB; transition:box-shadow .2s, transform .2s;"
+                 onmouseover="this.style.boxShadow='0 6px 20px rgba(0,0,0,.08)';this.style.transform='translateY(-2px)'"
+                 onmouseout="this.style.boxShadow='none';this.style.transform='translateY(0)'">
+
+                <!-- Color background imagen -->
+                <div style="height:120px; display:flex; align-items:center; justify-content:center;
+                            background:linear-gradient(135deg,rgba(99,102,241,.15),rgba(99,102,241,.05));">
+                    <i class="bi bi-bag-fill" style="font-size:36px; color:#6366F1; opacity:.6;"></i>
+                </div>
+
+                <div style="padding:12px;">
+                    <div style="font-size:13.5px; font-weight:700; color:#111827; margin-bottom:6px;
+                                white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"
+                         th:text="${p.nombre}"></div>
+
+                    <div style="font-size:12px; color:#6B7280; margin-bottom:10px; line-height:1.5;
+                                overflow:hidden; display:-webkit-box; -webkit-line-clamp:2;
+                                -webkit-box-orient:vertical;"
+                         th:text="${p.descripcion}"></div>
+
+                    <div style="display:flex; align-items:center; justify-content:space-between;">
+                        <span style="font-size:14px; font-weight:800; color:#111827;">
+                            $<span th:text="${#numbers.formatDecimal(p.precio, 1, 'COMMA', 0, 'POINT')}"></span>
+                        </span>
+
+                        <form th:action="@{/carrito/agregar}" method="post" style="margin:0;"
+                              sec:authorize="hasRole('COMPRADOR')">
+                            <input type="hidden" name="idProducto" th:value="${p.idProducto}"/>
+                            <input type="hidden" name="cantidad" value="1"/>
+                            <button type="submit"
+                                    style="width:30px; height:30px; border-radius:50%; border:none;
+                                           background:#6366F1; color:#fff; cursor:pointer;
+                                           display:flex; align-items:center; justify-content:center;
+                                           font-size:14px; transition:background .2s;"
+                                    onmouseover="this.style.background='#4F46E5'"
+                                    onmouseout="this.style.background='#6366F1'"
+                                    title="Agregar al carrito">
+                                <i class="bi bi-plus-lg"></i>
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Stock badge -->
+                    <div style="margin-top:6px;">
+                        <span th:if="${p.stockDisponible > 0}"
+                              style="font-size:11px; color:#15803D; background:#DCFCE7;
+                                     padding:2px 8px; border-radius:50px; font-weight:600;">
+                            <i class="bi bi-check-circle-fill"></i>
+                            <span th:text="${p.stockDisponible} + ' en stock'"></span>
+                        </span>
+                        <span th:if="${p.stockDisponible == 0}"
+                              style="font-size:11px; color:#B91C1C; background:#FEE2E2;
+                                     padding:2px 8px; border-radius:50px; font-weight:600;">
+                            <i class="bi bi-x-circle-fill"></i> Sin stock
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

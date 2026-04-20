@@ -17,4 +17,6 @@ public interface ProductoService {
     void eliminar(Integer id);
 
     List<Producto> listarPorEmprendimiento(Integer idEmprendimiento);
+
+    List<Producto> listarPorCategoria(Integer idCategoria);
 }
