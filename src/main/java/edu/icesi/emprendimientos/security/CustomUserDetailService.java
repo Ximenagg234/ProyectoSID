@@ -5,6 +5,8 @@ import edu.icesi.emprendimientos.repository.UsuarioRepository;
 import org.springframework.security.core.userdetails.*;
 import org.springframework.stereotype.Service;
 
+import java.util.stream.Collectors;
+
 @Service
 public class CustomUserDetailService implements UserDetailsService {
 
@@ -15,15 +17,28 @@ public class CustomUserDetailService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) {
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        Usuario usuario = usuarioRepository.findByNombreCompleto(username)
+        Usuario usuario = usuarioRepository.findByCorreoInstitucional(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
 
+        // El password debe incluir el ID del encoder: {noop} para texto plano o {bcrypt} para hashes BCrypt
+        String password = usuario.getClave();
+        if (!password.contains("{")) {
+            password = "{noop}" + password;
+        }
+
         return User
-                .withUsername(usuario.getNombreCompleto())
-                .password("{noop}" + usuario.getClave())
-                .authorities("ROLE_ADMIN")
+                .withUsername(usuario.getCorreoInstitucional())
+                .password(password)
+                .authorities(
+                    usuario.getRoles() != null ?
+                    usuario.getRoles().stream()
+                        .map(ur -> "ROLE_" + ur.getRol().getNombre())
+                        .collect(Collectors.toList())
+                        .toArray(new String[0])
+                    : new String[0]
+                )
                 .build();
     }
 }

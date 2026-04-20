@@ -141,3 +141,5 @@ INSERT INTO reporte
 (id_reporte, fecha_generacion, periodo, ruta_archivo, id_usuario)
 VALUES
     (1, CURRENT_TIMESTAMP, '2026-1', 'reporte.pdf', 1);
+
+ALTER TABLE usuario ALTER COLUMN id_usuario RESTART WITH 100;

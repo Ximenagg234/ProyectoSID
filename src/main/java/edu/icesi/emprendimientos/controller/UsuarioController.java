@@ -1,6 +1,7 @@
 package edu.icesi.emprendimientos.controller;
 
 import edu.icesi.emprendimientos.entity.Usuario;
+import edu.icesi.emprendimientos.service.ProductoService;
 import edu.icesi.emprendimientos.service.RolService;
 import edu.icesi.emprendimientos.service.UsuarioService;
 import org.springframework.stereotype.Controller;
@@ -13,16 +14,20 @@ public class UsuarioController {
 
     private final UsuarioService usuarioService;
     private final RolService rolService;
+    private final ProductoService productoService;
 
-    public UsuarioController(UsuarioService usuarioService, RolService rolService) {
+    public UsuarioController(UsuarioService usuarioService, RolService rolService, ProductoService productoService) {
         this.usuarioService = usuarioService;
         this.rolService = rolService;
+        this.productoService = productoService;
     }
 
     // LISTAR
     @GetMapping
     public String listar(Model model) {
         model.addAttribute("usuarios", usuarioService.listar());
+        model.addAttribute("productos", productoService.listar());
+        model.addAttribute("roles", rolService.listar());
         return "usuarios/list";
     }
 
@@ -36,8 +41,8 @@ public class UsuarioController {
     // GUARDAR
     @PostMapping
     public String guardar(@ModelAttribute Usuario usuario) {
-        usuarioService.guardar(usuario);
-        return "redirect:/usuarios";
+        Usuario usuarioGuardado = usuarioService.guardar(usuario);
+        return "redirect:/usuarios/asignar-roles/" + usuarioGuardado.getIdUsuario();
     }
 
     // EDITAR

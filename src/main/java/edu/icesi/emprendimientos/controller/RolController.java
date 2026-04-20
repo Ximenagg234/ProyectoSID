@@ -7,6 +7,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Controller
 @RequestMapping("/roles")
 public class RolController {
@@ -61,10 +63,15 @@ public class RolController {
     @PostMapping("/asignar-permisos")
     public String guardarPermisos(
             @RequestParam Integer idRol,
-            @RequestParam Integer idPermission
+            @RequestParam(required = false) List<Integer> permisos
     ) {
 
-        rolService.asignarPermiso(idRol, idPermission);
+        if (permisos != null) {
+            for (Integer idPermission : permisos) {
+                rolService.asignarPermiso(idRol, idPermission);
+            }
+        }
+
         return "redirect:/roles";
     }
 }

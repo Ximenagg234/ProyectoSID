@@ -29,10 +29,11 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     public Usuario guardar(Usuario usuario) {
 
+        usuario.setIdUsuario(null);
+
         if (usuario.getRoles() == null || usuario.getRoles().isEmpty()) {
             throw new RuntimeException("El usuario debe tener al menos un rol");
         }
-
         if (usuario.getClave() == null || usuario.getClave().isEmpty()) {
             throw new RuntimeException("El usuario debe tener una contraseña");
         }

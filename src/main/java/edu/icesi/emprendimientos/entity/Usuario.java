@@ -38,7 +38,7 @@ public class Usuario {
     @Column(name = "clave", nullable = false)
     private String clave;
 
-    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<UsuarioRol> roles;
 
     public List<UsuarioRol> getRoles() {

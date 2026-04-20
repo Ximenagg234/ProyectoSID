@@ -21,7 +21,7 @@ public class UsuarioRol {
     @JoinColumn(name = "id_usuario")
     private Usuario usuario;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @MapsId("idRol")
     @JoinColumn(name = "id_rol")
     private Rol rol;

@@ -3,16 +3,34 @@
     <div class="card-custom">
         <h4>Crear Usuario</h4>
         <form th:action="@{/usuarios}" th:object="${usuario}" method="post">
-            <input type="hidden" th:field="*{idUsuario}" />
+
             <div class="mb-3">
-                <label>Nombre</label>
-                <input type="text" th:field="*{nombreCompleto}" class="form-control"/>
+                <label>Nombre Completo</label>
+                <input type="text" th:field="*{nombreCompleto}" class="form-control" required/>
             </div>
+
             <div class="mb-3">
-                <label>Clave</label>
-                <input type="password" th:field="*{clave}" class="form-control"/>
+                <label>Correo Institucional</label>
+                <input type="email" th:field="*{correoInstitucional}" class="form-control" required/>
             </div>
-            <button class="btn btn-success">Guardar</button>
+
+            <div class="mb-3">
+                <label>Programa Académico</label>
+                <input type="text" th:field="*{programaAcademico}" class="form-control" required/>
+            </div>
+
+            <div class="mb-3">
+                <label>Semestre Académico</label>
+                <input type="number" th:field="*{semestreAcademico}" class="form-control" required/>
+            </div>
+
+            <div class="mb-3">
+                <label>Contraseña</label>
+                <input type="password" th:field="*{clave}" class="form-control" required/>
+            </div>
+
+            <button type="submit" class="btn btn-success">Guardar</button>
+            <a href="/usuarios" class="btn btn-secondary">Cancelar</a>
         </form>
 
     </div>
