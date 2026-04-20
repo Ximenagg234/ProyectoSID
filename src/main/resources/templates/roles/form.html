@@ -1,15 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+
 <div th:fragment="contenido">
 
-    <div class="card-custom">
-        <h4>Crear Rol</h4>
-        <form th:action="@{/roles}" th:object="${rol}" method="post">
-            <div class="mb-3">
-                <label>Nombre</label>
-                <input type="text" th:field="*{nombre}" class="form-control"/>
-            </div>
-            <button class="btn btn-success">Guardar</button>
-        </form>
+    <div class="page-header">
+        <h1>Nuevo Rol</h1>
+        <p>Crea un rol para controlar el acceso en la plataforma</p>
+    </div>
 
+    <div class="card-custom" style="max-width:480px;">
+
+        <div class="section-header">
+            <div class="section-header-info">
+                <h2>Datos del rol</h2>
+                <p>Ej: ROLE_ADMIN, ROLE_EMPRENDEDOR</p>
+            </div>
+        </div>
+
+        <form th:action="@{/roles}" th:object="${rol}" method="post">
+
+            <div class="mb-4">
+                <label class="form-label">Nombre del Rol</label>
+                <div style="position:relative;">
+                    <span style="position:absolute; left:14px; top:50%; transform:translateY(-50%); color:#9CA3AF; font-size:15px; pointer-events:none;">
+                        <i class="bi bi-shield"></i>
+                    </span>
+                    <input type="text" th:field="*{nombre}"
+                           class="form-control"
+                           style="padding-left:40px;"
+                           placeholder="Ej. ROLE_EMPRENDEDOR"/>
+                </div>
+            </div>
+
+            <div style="display:flex; gap:10px; padding-top:20px; border-top:1px solid #E5E7EB;">
+                <button type="submit" class="btn btn-success">
+                    <i class="bi bi-check-lg"></i>
+                    Guardar Rol
+                </button>
+                <a href="/roles" class="btn btn-secondary">
+                    <i class="bi bi-x-lg"></i>
+                    Cancelar
+                </a>
+            </div>
+
+        </form>
     </div>
 
 </div>
+
+</body>
+</html>

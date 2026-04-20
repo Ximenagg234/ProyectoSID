@@ -1,32 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+
 <div th:fragment="contenido">
 
-    <div class="card-custom">
-        <h4>Crear Producto</h4>
-        <form th:action="@{/productos}" th:object="${producto}" method="post">
-            <div class="mb-3">
-                <label>Nombre</label>
-                <input type="text" th:field="*{nombre}" class="form-control"/>
-            </div>
-            <div class="mb-3">
-                <label>Precio</label>
-                <input type="number" th:field="*{precio}" class="form-control"/>
-            </div>
-            <div class="mb-3">
-                <label>Stock</label>
-                <input type="number" th:field="*{stockDisponible}" class="form-control"/>
-            </div>
-            <div class="mb-3">
-                <label>Emprendimiento</label>
-                <select th:field="*{emprendimiento}" class="form-control">
-                    <option th:each="e : ${emprendimientos}"
-                            th:value="${e}"
-                            th:text="${e.nombre}">
-                    </option>
-                </select>
-            </div>
-            <button class="btn btn-success">Guardar</button>
-        </form>
+    <div class="page-header">
+        <h1>Publicar Producto</h1>
+        <p>Añade un producto o servicio a tu emprendimiento en Icesi</p>
+    </div>
 
+    <div class="card-custom" style="max-width:560px;">
+
+        <div class="section-header">
+            <div class="section-header-info">
+                <h2>Datos del producto</h2>
+                <p>Completa la información para publicarlo en el campus</p>
+            </div>
+        </div>
+
+        <form th:action="@{/productos}" th:object="${producto}" method="post">
+
+            <div class="row g-3">
+
+                <div class="col-12">
+                    <label class="form-label">Nombre del Producto o Servicio</label>
+                    <div style="position:relative;">
+                        <span style="position:absolute; left:14px; top:50%; transform:translateY(-50%); color:#9CA3AF; font-size:15px; pointer-events:none;">
+                            <i class="bi bi-bag"></i>
+                        </span>
+                        <input type="text" th:field="*{nombre}"
+                               class="form-control"
+                               style="padding-left:40px;"
+                               placeholder="Ej. Tote bag artesanal, Asesoría de diseño..."/>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Precio (COP)</label>
+                    <div style="position:relative;">
+                        <span style="position:absolute; left:14px; top:50%; transform:translateY(-50%); color:#9CA3AF; font-size:13px; font-weight:700; pointer-events:none;">$</span>
+                        <input type="number" th:field="*{precio}"
+                               class="form-control"
+                               style="padding-left:30px;"
+                               placeholder="0" step="100" min="0"/>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Unidades disponibles</label>
+                    <input type="number" th:field="*{stockDisponible}"
+                           class="form-control"
+                           placeholder="Ej. 20" min="0"/>
+                </div>
+
+                <div class="col-12">
+                    <label class="form-label">Emprendimiento</label>
+                    <select th:field="*{emprendimiento}" class="form-select">
+                        <option th:each="e : ${emprendimientos}"
+                                th:value="${e}"
+                                th:text="${e.nombre}">
+                        </option>
+                    </select>
+                </div>
+
+            </div>
+
+            <div style="display:flex; gap:10px; margin-top:28px; padding-top:20px; border-top:1px solid #E5E7EB;">
+                <button type="submit" class="btn btn-success">
+                    <i class="bi bi-check-lg"></i>
+                    Publicar Producto
+                </button>
+                <a href="/productos" class="btn btn-secondary">
+                    <i class="bi bi-x-lg"></i>
+                    Cancelar
+                </a>
+            </div>
+
+        </form>
     </div>
 
 </div>
+
+</body>
+</html>

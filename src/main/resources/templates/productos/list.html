@@ -1,40 +1,76 @@
-<div xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
-     th:fragment="contenido">
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+
+<div th:fragment="contenido">
+
+    <div class="page-header">
+        <h1>Productos y Servicios</h1>
+        <p>Catálogo de ofertas publicadas por los emprendedores Icesi</p>
+    </div>
 
     <div class="card-custom">
-        <div class="d-flex justify-content-between mb-3 align-items-center">
-            <h4>Productos</h4>
+
+        <div class="section-header">
+            <div class="section-header-info">
+                <h2>Catálogo de emprendimientos</h2>
+                <p>Productos y servicios disponibles en el campus</p>
+            </div>
             <a href="/productos/nuevo"
-               class="btn btn-success"
+               class="btn btn-primary"
                sec:authorize="hasAuthority('CREAR_PRODUCTO')">
-                + Crear
+                <i class="bi bi-plus-lg"></i>
+                Publicar Producto
             </a>
         </div>
-        <table class="table table-hover align-middle mt-4">
-            <thead class="table-light">
-            <tr>
-                <th>Nombre</th>
-                <th>Precio</th>
-                <th>Stock</th>
-                <th></th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="p : ${productos}">
-                <td th:text="${p.nombre}"></td>
-                <td th:text="${p.precio}"></td>
-                <td th:text="${p.stockDisponible}"></td>
-                <td>
-                    <a th:href="@{'/productos/eliminar/' + ${p.idProducto}}"
-                       class="btn btn-outline-primary btn-sm"
-                       sec:authorize="hasAuthority('ELIMINAR_PRODUCTO')">
-                        Eliminar
-                    </a>
-                </td>
-            </tr>
-            </tbody>
-        </table>
+
+        <div class="table-wrapper">
+            <table class="table table-hover align-middle">
+                <thead>
+                <tr>
+                    <th>Producto / Servicio</th>
+                    <th>Precio</th>
+                    <th>Stock</th>
+                    <th style="width:130px; text-align:right;">Acciones</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="p : ${productos}">
+                    <td>
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <div style="width:34px; height:34px; background:#DCFCE7; border-radius:8px; display:flex; align-items:center; justify-content:center; color:#22C55E; font-size:15px; flex-shrink:0;">
+                                <i class="bi bi-bag-fill"></i>
+                            </div>
+                            <span style="font-weight:600;" th:text="${p.nombre}"></span>
+                        </div>
+                    </td>
+                    <td>
+                            <span style="font-weight:700; color:#111827;">
+                                $<span th:text="${p.precio}"></span>
+                            </span>
+                    </td>
+                    <td>
+                            <span style="display:inline-flex; align-items:center; gap:5px; padding:3px 12px; background:#F3F4F6; border-radius:50px; font-size:12px; font-weight:600; color:#6B7280;"
+                                  th:text="${p.stockDisponible}">
+                            </span>
+                    </td>
+                    <td style="text-align:right;">
+                        <a th:href="@{'/productos/eliminar/' + ${p.idProducto}}"
+                           class="btn btn-outline-danger btn-sm"
+                           sec:authorize="hasAuthority('ELIMINAR_PRODUCTO')">
+                            <i class="bi bi-trash3"></i>
+                            Eliminar
+                        </a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
 
     </div>
 
 </div>
+
+</body>
+</html>

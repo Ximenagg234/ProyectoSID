@@ -32,19 +32,19 @@ public class ProductoController {
     @GetMapping
     public String listar(Model model) {
         model.addAttribute("productos", productoService.listar());
-        return "productos/list";
+        model.addAttribute("contenido", "productos/list :: contenido");
+        return "layout";
     }
 
     // FORM CREAR
     @GetMapping("/nuevo")
     public String formulario(Model model) {
-
         model.addAttribute("producto", new Producto());
         model.addAttribute("categorias", categoriaService.listar());
         model.addAttribute("estados", estadoService.listar());
         model.addAttribute("emprendimientos", emprendimientoService.listar());
-
-        return "productos/form";
+        model.addAttribute("contenido", "productos/form :: contenido");
+        return "layout";
     }
 
     // GUARDAR

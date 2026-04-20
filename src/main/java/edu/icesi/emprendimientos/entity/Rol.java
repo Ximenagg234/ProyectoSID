@@ -21,10 +21,10 @@ public class Rol {
     @Column(name = "nombre", nullable = false, unique = true)
     private String nombre;
 
-    @OneToMany(mappedBy = "rol", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "rol", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<UsuarioRol> usuarios;
 
-    @OneToMany(mappedBy = "rol", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "rol", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<RolPermission> permisos;
 
     public List<RolPermission> getPermisos() {

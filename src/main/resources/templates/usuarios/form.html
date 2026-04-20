@@ -1,38 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+
 <div th:fragment="contenido">
 
-    <div class="card-custom">
-        <h4>Crear Usuario</h4>
+    <div class="page-header">
+        <h1>Registrar Estudiante</h1>
+        <p>Añade un nuevo emprendedor a la plataforma Icesi</p>
+    </div>
+
+    <div class="card-custom" style="max-width:640px;">
+
+        <div class="section-header">
+            <div class="section-header-info">
+                <h2>Datos del estudiante</h2>
+                <p>Todos los campos son requeridos</p>
+            </div>
+        </div>
+
         <form th:action="@{/usuarios}" th:object="${usuario}" method="post">
 
-            <div class="mb-3">
-                <label>Nombre Completo</label>
-                <input type="text" th:field="*{nombreCompleto}" class="form-control" required/>
+            <div class="row g-3">
+
+                <div class="col-12">
+                    <label class="form-label">Nombre Completo</label>
+                    <div style="position:relative;">
+                        <span style="position:absolute; left:14px; top:50%; transform:translateY(-50%); color:#9CA3AF; font-size:15px; pointer-events:none;">
+                            <i class="bi bi-person"></i>
+                        </span>
+                        <input type="text" th:field="*{nombreCompleto}"
+                               class="form-control"
+                               style="padding-left:40px;"
+                               placeholder="Ej. María Camila Restrepo"
+                               required/>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <label class="form-label">Correo Institucional</label>
+                    <div style="position:relative;">
+                        <span style="position:absolute; left:14px; top:50%; transform:translateY(-50%); color:#9CA3AF; font-size:15px; pointer-events:none;">
+                            <i class="bi bi-envelope"></i>
+                        </span>
+                        <input type="email" th:field="*{correoInstitucional}"
+                               class="form-control"
+                               style="padding-left:40px;"
+                               placeholder="estudiante@icesi.edu.co"
+                               required/>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Programa Académico</label>
+                    <input type="text" th:field="*{programaAcademico}"
+                           class="form-control"
+                           placeholder="Ej. Ingeniería de Sistemas"
+                           required/>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Semestre Académico</label>
+                    <input type="number" th:field="*{semestreAcademico}"
+                           class="form-control"
+                           placeholder="Ej. 6"
+                           min="1" max="12"
+                           required/>
+                </div>
+
+                <div class="col-12">
+                    <label class="form-label">Contraseña</label>
+                    <div style="position:relative;">
+                        <span style="position:absolute; left:14px; top:50%; transform:translateY(-50%); color:#9CA3AF; font-size:15px; pointer-events:none;">
+                            <i class="bi bi-lock"></i>
+                        </span>
+                        <input type="password" th:field="*{clave}"
+                               class="form-control"
+                               style="padding-left:40px;"
+                               placeholder="••••••••"
+                               required/>
+                    </div>
+                </div>
+
             </div>
 
-            <div class="mb-3">
-                <label>Correo Institucional</label>
-                <input type="email" th:field="*{correoInstitucional}" class="form-control" required/>
+            <div style="display:flex; gap:10px; margin-top:28px; padding-top:20px; border-top:1px solid #E5E7EB;">
+                <button type="submit" class="btn btn-success">
+                    <i class="bi bi-check-lg"></i>
+                    Registrar Estudiante
+                </button>
+                <a href="/usuarios" class="btn btn-secondary">
+                    <i class="bi bi-x-lg"></i>
+                    Cancelar
+                </a>
             </div>
 
-            <div class="mb-3">
-                <label>Programa Académico</label>
-                <input type="text" th:field="*{programaAcademico}" class="form-control" required/>
-            </div>
-
-            <div class="mb-3">
-                <label>Semestre Académico</label>
-                <input type="number" th:field="*{semestreAcademico}" class="form-control" required/>
-            </div>
-
-            <div class="mb-3">
-                <label>Contraseña</label>
-                <input type="password" th:field="*{clave}" class="form-control" required/>
-            </div>
-
-            <button type="submit" class="btn btn-success">Guardar</button>
-            <a href="/usuarios" class="btn btn-secondary">Cancelar</a>
         </form>
-
     </div>
 
 </div>
+
+</body>
+</html>

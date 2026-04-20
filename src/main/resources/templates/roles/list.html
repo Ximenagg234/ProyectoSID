@@ -1,34 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+
 <div th:fragment="contenido">
 
+    <div class="page-header">
+        <h1>Roles</h1>
+        <p>Gestión de roles y niveles de acceso en la plataforma</p>
+    </div>
+
     <div class="card-custom">
-        <div class="d-flex justify-content-between mb-3 align-items-center">
-            <h4>Roles</h4>
-            <a href="/roles/nuevo" class="btn btn-success">+ Crear Rol</a>
+
+        <div class="section-header">
+            <div class="section-header-info">
+                <h2>Roles del sistema</h2>
+                <p>Controla qué puede hacer cada tipo de usuario</p>
+            </div>
+            <a href="/roles/nuevo" class="btn btn-primary">
+                <i class="bi bi-plus-lg"></i>
+                Nuevo Rol
+            </a>
         </div>
-        <table class="table table-hover align-middle mt-4">
-            <thead class="table-light">
-            <tr>
-                <th>Nombre</th>
-                <th></th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="r : ${roles}">
-                <td th:text="${r.nombre}"></td>
-                <td>
-                    <a th:href="@{'/roles/asignar-permisos/' + ${r.idRol}}"
-                       class="btn btn-outline-primary btn-sm">
-                        Permisos
-                    </a>
-                    <a th:href="@{'/roles/eliminar/' + ${r.idRol}}"
-                       class="btn btn-outline-primary btn-sm">
-                        Eliminar
-                    </a>
-                </td>
-            </tr>
-            </tbody>
-        </table>
+
+        <div class="table-wrapper">
+            <table class="table table-hover align-middle">
+                <thead>
+                <tr>
+                    <th>Nombre del rol</th>
+                    <th style="width:210px; text-align:right;">Acciones</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="r : ${roles}">
+                    <td>
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <div style="width:34px; height:34px; background:#FEF3C7; border-radius:8px; display:flex; align-items:center; justify-content:center; color:#D97706; font-size:15px; flex-shrink:0;">
+                                <i class="bi bi-shield-fill-check"></i>
+                            </div>
+                            <span style="font-weight:600;" th:text="${r.nombre}"></span>
+                        </div>
+                    </td>
+                    <td style="text-align:right;">
+                        <div style="display:flex; gap:6px; justify-content:flex-end;">
+                            <a th:href="@{'/roles/asignar-permisos/' + ${r.idRol}}"
+                               class="btn btn-outline-primary btn-sm">
+                                <i class="bi bi-key"></i>
+                                Permisos
+                            </a>
+                            <a th:href="@{'/roles/eliminar/' + ${r.idRol}}"
+                               class="btn btn-outline-danger btn-sm">
+                                <i class="bi bi-trash3"></i>
+                                Eliminar
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
 
     </div>
 
 </div>
+
+</body>
+</html>

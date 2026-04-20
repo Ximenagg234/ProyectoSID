@@ -1,6 +1,5 @@
 package edu.icesi.emprendimientos.entity;
-import edu.icesi.emprendimientos.entity.Rol;
-import edu.icesi.emprendimientos.entity.Usuario;
+
 import edu.icesi.emprendimientos.entity.keys.UsuarioRolId;
 import jakarta.persistence.*;
 import lombok.*;
@@ -16,7 +15,7 @@ public class UsuarioRol {
     @EmbeddedId
     private UsuarioRolId id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @MapsId("idUsuario")
     @JoinColumn(name = "id_usuario")
     private Usuario usuario;
@@ -25,7 +24,7 @@ public class UsuarioRol {
     @MapsId("idRol")
     @JoinColumn(name = "id_rol")
     private Rol rol;
-    
+
     public Rol getRol() {
         return rol;
     }

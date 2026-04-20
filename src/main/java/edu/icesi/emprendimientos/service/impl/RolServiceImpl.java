@@ -3,11 +3,14 @@ package edu.icesi.emprendimientos.service.impl;
 import edu.icesi.emprendimientos.entity.Permission;
 import edu.icesi.emprendimientos.entity.Rol;
 import edu.icesi.emprendimientos.entity.RolPermission;
+import edu.icesi.emprendimientos.entity.keys.RolPermissionId;
 import edu.icesi.emprendimientos.repository.PermissionRepository;
+import edu.icesi.emprendimientos.repository.RolPermissionRepository;
 import edu.icesi.emprendimientos.repository.RolRepository;
 import edu.icesi.emprendimientos.service.RolService;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -15,19 +18,21 @@ public class RolServiceImpl implements RolService {
 
     private final RolRepository rolRepository;
     private final PermissionRepository permissionRepository;
+    private final RolPermissionRepository rolPermissionRepository;
 
-    public RolServiceImpl(RolRepository rolRepository, PermissionRepository permissionRepository) {
+    public RolServiceImpl(RolRepository rolRepository,
+                          PermissionRepository permissionRepository,
+                          RolPermissionRepository rolPermissionRepository) {
         this.rolRepository = rolRepository;
         this.permissionRepository = permissionRepository;
+        this.rolPermissionRepository = rolPermissionRepository;
     }
 
     @Override
     public Rol guardar(Rol rol) {
-
-        if (rol.getPermisos() == null || rol.getPermisos().isEmpty()) {
-            throw new RuntimeException("El rol debe tener al menos un permiso");
+        if (rol.getPermisos() == null) {
+            rol.setPermisos(new ArrayList<>());
         }
-
         return rolRepository.save(rol);
     }
 
@@ -44,12 +49,9 @@ public class RolServiceImpl implements RolService {
 
     @Override
     public Rol actualizar(Integer id, Rol rolActualizado) {
-
         Rol existente = rolRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Rol no encontrado"));
-
         existente.setNombre(rolActualizado.getNombre());
-
         return rolRepository.save(existente);
     }
 
@@ -60,6 +62,10 @@ public class RolServiceImpl implements RolService {
 
     @Override
     public void asignarPermiso(Integer idRol, Integer idPermission) {
+        RolPermissionId id = new RolPermissionId(idRol, idPermission);
+
+        // Si ya existe no hacer nada
+        if (rolPermissionRepository.existsById(id)) return;
 
         Rol rol = rolRepository.findById(idRol)
                 .orElseThrow(() -> new RuntimeException("Rol no encontrado"));
@@ -68,30 +74,17 @@ public class RolServiceImpl implements RolService {
                 .orElseThrow(() -> new RuntimeException("Permiso no encontrado"));
 
         RolPermission rp = new RolPermission();
+        rp.setId(id);
         rp.setRol(rol);
         rp.setPermission(permiso);
 
-        if (rol.getPermisos() != null) {
-            rol.getPermisos().add(rp);
-        } else {
-            rol.setPermisos(new java.util.ArrayList<>());
-            rol.getPermisos().add(rp);
-        }
-
-        rolRepository.save(rol);
+        // Guardar directamente en la tabla junction, sin cascade
+        rolPermissionRepository.save(rp);
     }
 
     @Override
     public void quitarPermiso(Integer idRol, Integer idPermission) {
-
-        Rol rol = rolRepository.findById(idRol)
-                .orElseThrow(() -> new RuntimeException("Rol no encontrado"));
-
-        if (rol.getPermisos() != null && !rol.getPermisos().isEmpty()) {
-            rol.getPermisos().removeIf(rp -> rp.getPermission() != null && 
-                    rp.getPermission().getIdPermission().equals(idPermission));
-        }
-
-        rolRepository.save(rol);
+        RolPermissionId id = new RolPermissionId(idRol, idPermission);
+        rolPermissionRepository.deleteById(id);
     }
 }

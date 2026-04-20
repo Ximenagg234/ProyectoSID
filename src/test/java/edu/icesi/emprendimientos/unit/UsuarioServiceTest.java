@@ -1,15 +1,17 @@
 package edu.icesi.emprendimientos.unit;
 
+import edu.icesi.emprendimientos.entity.Rol;
 import edu.icesi.emprendimientos.entity.Usuario;
 import edu.icesi.emprendimientos.entity.UsuarioRol;
-import edu.icesi.emprendimientos.repository.UsuarioRepository;
+import edu.icesi.emprendimientos.entity.keys.UsuarioRolId;
 import edu.icesi.emprendimientos.repository.RolRepository;
+import edu.icesi.emprendimientos.repository.UsuarioRepository;
+import edu.icesi.emprendimientos.repository.UsuarioRolRepository;
 import edu.icesi.emprendimientos.service.impl.UsuarioServiceImpl;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -33,13 +35,15 @@ public class UsuarioServiceTest {
     private RolRepository rolRepository;
 
     @Mock
+    private UsuarioRolRepository usuarioRolRepository;
+
+    @Mock
     private PasswordEncoder passwordEncoder;
 
     @InjectMocks
     private UsuarioServiceImpl usuarioService;
 
     private Usuario usuario;
-    private UsuarioRol usuarioRol;
 
     @BeforeEach
     void setup() {
@@ -47,10 +51,7 @@ public class UsuarioServiceTest {
         usuario.setIdUsuario(1);
         usuario.setNombreCompleto("Ximena Gomez");
         usuario.setClave("1234");
-
-        usuarioRol = new UsuarioRol();
-
-        usuario.setRoles(new ArrayList<>(Arrays.asList(usuarioRol)));
+        usuario.setRoles(new ArrayList<>(Arrays.asList(new UsuarioRol())));
     }
 
     // =========================
@@ -59,24 +60,32 @@ public class UsuarioServiceTest {
 
     @Test
     void guardarUsuario_WhenTieneRol_SeGuardaCorrectamente() {
-        // Arrange
         when(passwordEncoder.encode("1234")).thenReturn("encodedPassword");
         when(usuarioRepository.save(usuario)).thenReturn(usuario);
 
-        // Act
         Usuario result = usuarioService.guardar(usuario);
 
-        // Assert
         assertNotNull(result);
         assertEquals("Ximena Gomez", result.getNombreCompleto());
     }
 
     @Test
-    void guardarUsuario_WhenNoTieneRol_LanzaExcepcion() {
-        // Arrange
+    void guardarUsuario_WhenNoTieneRol_SeGuardaConListaVacia() {
+        // guardar() ya no lanza excepción si roles es null — inicializa lista vacía
         usuario.setRoles(null);
+        when(passwordEncoder.encode("1234")).thenReturn("encodedPassword");
+        when(usuarioRepository.save(usuario)).thenReturn(usuario);
 
-        // Act & Assert
+        Usuario result = usuarioService.guardar(usuario);
+
+        assertNotNull(result);
+        assertNotNull(result.getRoles()); // se inicializó la lista
+    }
+
+    @Test
+    void guardarUsuario_WhenSinClave_LanzaExcepcion() {
+        usuario.setClave(null);
+
         assertThrows(RuntimeException.class, () -> usuarioService.guardar(usuario));
     }
 
@@ -86,49 +95,36 @@ public class UsuarioServiceTest {
 
     @Test
     void listarUsuarios_ReturnListaUsuarios() {
-        // Arrange
         when(usuarioRepository.findAll()).thenReturn(Arrays.asList(usuario));
 
-        // Act
         List<Usuario> result = usuarioService.listar();
 
-        // Assert
         assertEquals(1, result.size());
     }
 
-    // =========================
-    // READ
-    // =========================
-
     @Test
     void buscarUsuarioPorId_WhenExiste_ReturnUsuario() {
-        // Arrange
         when(usuarioRepository.findById(1)).thenReturn(Optional.of(usuario));
 
-        // Act
         Usuario result = usuarioService.buscarPorId(1);
 
-        // Assert
         assertNotNull(result);
         assertEquals(1, result.getIdUsuario());
     }
 
     @Test
     void buscarUsuarioPorId_WhenNoExiste_LanzaExcepcion() {
-        // Arrange
         when(usuarioRepository.findById(1)).thenReturn(Optional.empty());
 
-        // Act & Assert
         assertThrows(RuntimeException.class, () -> usuarioService.buscarPorId(1));
     }
 
     // =========================
-    //  UPDATE
+    // UPDATE
     // =========================
 
     @Test
     void actualizarUsuario_WhenExiste_ActualizaCorrectamente() {
-        // Arrange
         when(usuarioRepository.findById(1)).thenReturn(Optional.of(usuario));
         when(passwordEncoder.encode("abcd")).thenReturn("encodedNewPassword");
         when(usuarioRepository.save(any(Usuario.class))).thenReturn(usuario);
@@ -137,19 +133,15 @@ public class UsuarioServiceTest {
         actualizado.setNombreCompleto("Nuevo Nombre");
         actualizado.setClave("abcd");
 
-        // Act
         Usuario result = usuarioService.actualizar(1, actualizado);
 
-        // Assert
         assertEquals("Nuevo Nombre", result.getNombreCompleto());
     }
 
     @Test
     void actualizarUsuario_WhenNoExiste_LanzaExcepcion() {
-        // Arrange
         when(usuarioRepository.findById(1)).thenReturn(Optional.empty());
 
-        // Act & Assert
         assertThrows(RuntimeException.class, () -> usuarioService.actualizar(1, usuario));
     }
 
@@ -159,22 +151,17 @@ public class UsuarioServiceTest {
 
     @Test
     void eliminarUsuario_WhenExiste_EliminaCorrectamente() {
-        // Arrange
         doNothing().when(usuarioRepository).deleteById(1);
 
-        // Act
         usuarioService.eliminar(1);
 
-        // Assert
         verify(usuarioRepository, times(1)).deleteById(1);
     }
 
     @Test
     void eliminarUsuario_WhenFalla_LanzaExcepcion() {
-        // Arrange
         doThrow(new RuntimeException()).when(usuarioRepository).deleteById(1);
 
-        // Act & Assert
         assertThrows(RuntimeException.class, () -> usuarioService.eliminar(1));
     }
 
@@ -184,27 +171,46 @@ public class UsuarioServiceTest {
 
     @Test
     void asignarRol_UsuarioExiste_RolExiste_AsignaCorrectamente() {
+        UsuarioRolId id = new UsuarioRolId(1, 1);
+        Rol rol = new Rol();
+        rol.setIdRol(1);
+
+        when(usuarioRolRepository.existsById(id)).thenReturn(false);
         when(usuarioRepository.findById(1)).thenReturn(Optional.of(usuario));
-        when(rolRepository.findById(1)).thenReturn(Optional.of(new edu.icesi.emprendimientos.entity.Rol()));
-        when(usuarioRepository.save(any(Usuario.class))).thenReturn(usuario);
-        
+        when(rolRepository.findById(1)).thenReturn(Optional.of(rol));
+        when(usuarioRolRepository.save(any(UsuarioRol.class))).thenReturn(new UsuarioRol());
+
         usuarioService.asignarRol(1, 1);
-        
-        verify(usuarioRepository, times(1)).save(usuario);
+
+        verify(usuarioRolRepository, times(1)).save(any(UsuarioRol.class));
+    }
+
+    @Test
+    void asignarRol_YaAsignado_NoGuardaDuplicado() {
+        UsuarioRolId id = new UsuarioRolId(1, 1);
+        when(usuarioRolRepository.existsById(id)).thenReturn(true);
+
+        usuarioService.asignarRol(1, 1);
+
+        verify(usuarioRolRepository, never()).save(any());
     }
 
     @Test
     void asignarRol_UsuarioNoExiste_LanzaExcepcion() {
+        UsuarioRolId id = new UsuarioRolId(1, 1);
+        when(usuarioRolRepository.existsById(id)).thenReturn(false);
         when(usuarioRepository.findById(1)).thenReturn(Optional.empty());
-        
+
         assertThrows(RuntimeException.class, () -> usuarioService.asignarRol(1, 1));
     }
 
     @Test
     void asignarRol_RolNoExiste_LanzaExcepcion() {
+        UsuarioRolId id = new UsuarioRolId(1, 1);
+        when(usuarioRolRepository.existsById(id)).thenReturn(false);
         when(usuarioRepository.findById(1)).thenReturn(Optional.of(usuario));
         when(rolRepository.findById(1)).thenReturn(Optional.empty());
-        
+
         assertThrows(RuntimeException.class, () -> usuarioService.asignarRol(1, 1));
     }
 
@@ -213,19 +219,20 @@ public class UsuarioServiceTest {
     // =========================
 
     @Test
-    void quitarRol_UsuarioExiste_QuitaCorrectamente() {
-        when(usuarioRepository.findById(1)).thenReturn(Optional.of(usuario));
-        when(usuarioRepository.save(any(Usuario.class))).thenReturn(usuario);
-        
+    void quitarRol_QuitaCorrectamente() {
+        UsuarioRolId id = new UsuarioRolId(1, 1);
+        doNothing().when(usuarioRolRepository).deleteById(id);
+
         usuarioService.quitarRol(1, 1);
-        
-        verify(usuarioRepository, times(1)).save(usuario);
+
+        verify(usuarioRolRepository, times(1)).deleteById(id);
     }
 
     @Test
-    void quitarRol_UsuarioNoExiste_LanzaExcepcion() {
-        when(usuarioRepository.findById(1)).thenReturn(Optional.empty());
-        
+    void quitarRol_WhenFalla_LanzaExcepcion() {
+        UsuarioRolId id = new UsuarioRolId(1, 1);
+        doThrow(new RuntimeException()).when(usuarioRolRepository).deleteById(id);
+
         assertThrows(RuntimeException.class, () -> usuarioService.quitarRol(1, 1));
     }
 }

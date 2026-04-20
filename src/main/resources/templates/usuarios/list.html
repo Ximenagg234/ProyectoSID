@@ -1,92 +1,109 @@
-<div xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
-     th:fragment="contenido">
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
 
+<div th:fragment="contenido">
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <h1>Panel de Emprendimientos</h1>
+        <p>Resumen de la actividad de la plataforma — Universidad Icesi</p>
+    </div>
+
+    <!-- Metric Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="metric-card">
+                <div class="metric-icon" style="background:#EEF2FF; color:#6366F1;">
+                    <i class="bi bi-person-badge-fill"></i>
+                </div>
+                <div>
+                    <div class="metric-title">Estudiantes</div>
+                    <div class="metric-value" th:text="${usuarios.size()}">0</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="metric-card">
+                <div class="metric-icon" style="background:#DCFCE7; color:#22C55E;">
+                    <i class="bi bi-bag-fill"></i>
+                </div>
+                <div>
+                    <div class="metric-title">Productos</div>
+                    <div class="metric-value" th:text="${productos.size()}">0</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="metric-card">
+                <div class="metric-icon" style="background:#FEF3C7; color:#D97706;">
+                    <i class="bi bi-shield-fill-check"></i>
+                </div>
+                <div>
+                    <div class="metric-title">Roles</div>
+                    <div class="metric-value" th:text="${roles.size()}">0</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Students Table -->
     <div class="card-custom">
-        <div class="d-flex justify-content-between mb-3 align-items-center">
-            <h4>Usuarios</h4>
-            <a href="/usuarios/nuevo" class="btn btn-success">+ Crear</a>
+        <div class="section-header">
+            <div class="section-header-info">
+                <h2>Estudiantes registrados</h2>
+                <p>Emprendedores activos en la plataforma</p>
+            </div>
+            <a href="/usuarios/nuevo" class="btn btn-primary">
+                <i class="bi bi-plus-lg"></i>
+                Nuevo Estudiante
+            </a>
         </div>
-        <div class="row mb-4">
-            <div class="col-md-4">
-                <div class="card-custom metric-card">
-                    <div class="metric-icon" style="background:#e0e7ef;color:#3b82f6;">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor"
-                             viewBox="0 0 16 16">
-                            <path
-                                d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
-                        </svg>
-                    </div>
-                    <div>
-                        <div class="metric-title">Usuarios</div>
-                        <div class="metric-value" th:text="${usuarios.size()}"></div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card-custom metric-card">
-                    <div class="metric-icon" style="background:#fef3c7;color:#f59e42;">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor"
-                             viewBox="0 0 16 16">
-                            <path
-                                d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zm0 13A6 6 0 1 1 8 2a6 6 0 0 1 0 12z"/>
-                            <path
-                                d="M8 4a.5.5 0 0 1 .5.5v3.793l2.146 2.147a.5.5 0 0 1-.708.708l-2.292-2.292A.5.5 0 0 1 7.5 8.5V4.5A.5.5 0 0 1 8 4z"/>
-                        </svg>
-                    </div>
-                    <div>
-                        <div class="metric-title">Productos</div>
-                        <div class="metric-value" th:text="${productos.size()}"></div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card-custom metric-card">
-                    <div class="metric-icon" style="background:#ede9fe;color:#7c3aed;">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor"
-                             viewBox="0 0 16 16">
-                            <path
-                                d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0zm0 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14z"/>
-                            <path
-                                d="M8 4a.5.5 0 0 1 .5.5v3.793l2.146 2.147a.5.5 0 0 1-.708.708l-2.292-2.292A.5.5 0 0 1 7.5 8.5V4.5A.5.5 0 0 1 8 4z"/>
-                        </svg>
-                    </div>
-                    <div>
-                        <div class="metric-title">Roles</div>
-                        <div class="metric-value" th:text="${roles.size()}"></div>
-                    </div>
-                </div>
-            </div>
+
+        <div class="table-wrapper">
+            <table class="table table-hover align-middle">
+                <thead>
+                <tr>
+                    <th>Estudiante</th>
+                    <th style="width:200px; text-align:right;">Acciones</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="u : ${usuarios}">
+                    <td>
+                        <div style="display:flex; align-items:center; gap:12px;">
+                            <div style="width:36px; height:36px; background:#EEF2FF; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#6366F1; font-size:14px; font-weight:700; flex-shrink:0;">
+                                <i class="bi bi-person-fill"></i>
+                            </div>
+                            <div>
+                                <div style="font-weight:600; color:#111827;" th:text="${u.nombreCompleto}"></div>
+                                <div style="font-size:12px; color:#6B7280;">Emprendedor Icesi</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td style="text-align:right;">
+                        <div style="display:flex; gap:6px; justify-content:flex-end;">
+                            <a th:href="@{'/usuarios/asignar-roles/' + ${u.idUsuario}}"
+                               class="btn btn-outline-primary btn-sm"
+                               sec:authorize="hasRole('ADMIN')">
+                                <i class="bi bi-shield"></i>
+                                Roles
+                            </a>
+                            <a th:href="@{'/usuarios/eliminar/' + ${u.idUsuario}}"
+                               class="btn btn-outline-danger btn-sm">
+                                <i class="bi bi-trash3"></i>
+                                Eliminar
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
         </div>
-        <table class="table table-hover align-middle mt-4">
-
-            <thead class="table-light">
-            <tr>
-                <th>Nombre</th>
-                <th></th>
-            </tr>
-            </thead>
-
-            <tbody>
-            <tr th:each="u : ${usuarios}">
-                <td th:text="${u.nombreCompleto}"></td>
-
-                <td>
-                    <a th:href="@{'/usuarios/asignar-roles/' + ${u.idUsuario}}"
-                       class="btn btn-outline-primary btn-sm"
-                       sec:authorize="hasRole('ADMIN')">
-                        Roles
-                    </a>
-
-                    <a th:href="@{'/usuarios/eliminar/' + ${u.idUsuario}}"
-                       class="btn btn-outline-primary btn-sm">
-                        Eliminar
-                    </a>
-                </td>
-            </tr>
-            </tbody>
-
-        </table>
-
     </div>
 
 </div>
+
+</body>
+</html>

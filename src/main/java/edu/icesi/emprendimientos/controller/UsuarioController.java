@@ -8,6 +8,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Controller
 @RequestMapping("/usuarios")
 public class UsuarioController {
@@ -28,14 +30,16 @@ public class UsuarioController {
         model.addAttribute("usuarios", usuarioService.listar());
         model.addAttribute("productos", productoService.listar());
         model.addAttribute("roles", rolService.listar());
-        return "usuarios/list";
+        model.addAttribute("contenido", "usuarios/list :: contenido");
+        return "layout";
     }
 
     // FORM CREAR
     @GetMapping("/nuevo")
     public String formulario(Model model) {
         model.addAttribute("usuario", new Usuario());
-        return "usuarios/form";
+        model.addAttribute("contenido", "usuarios/form :: contenido");
+        return "layout";
     }
 
     // GUARDAR
@@ -49,7 +53,8 @@ public class UsuarioController {
     @GetMapping("/editar/{id}")
     public String editar(@PathVariable Integer id, Model model) {
         model.addAttribute("usuario", usuarioService.buscarPorId(id));
-        return "usuarios/form";
+        model.addAttribute("contenido", "usuarios/form :: contenido");
+        return "layout";
     }
 
     // ELIMINAR
@@ -62,21 +67,23 @@ public class UsuarioController {
     // ASIGNAR ROLES (FORM)
     @GetMapping("/asignar-roles/{id}")
     public String asignarRoles(@PathVariable Integer id, Model model) {
-
         model.addAttribute("usuario", usuarioService.buscarPorId(id));
         model.addAttribute("roles", rolService.listar());
-
-        return "usuarios/asignar-roles";
+        model.addAttribute("contenido", "usuarios/asignar-roles :: contenido");
+        return "layout";
     }
 
-    // GUARDAR ASIGNACIÓN
+    // GUARDAR ASIGNACIÓN — recibe "roles" (lista de ids desde los checkboxes)
     @PostMapping("/asignar-roles")
-    public String guardarRol(
+    public String guardarRoles(
             @RequestParam Integer idUsuario,
-            @RequestParam Integer idRol
+            @RequestParam(value = "roles", required = false) List<Integer> roles
     ) {
-
-        usuarioService.asignarRol(idUsuario, idRol);
+        if (roles != null) {
+            for (Integer idRol : roles) {
+                usuarioService.asignarRol(idUsuario, idRol);
+            }
+        }
         return "redirect:/usuarios";
     }
 
@@ -86,7 +93,6 @@ public class UsuarioController {
             @RequestParam Integer idUsuario,
             @RequestParam Integer idRol
     ) {
-
         usuarioService.quitarRol(idUsuario, idRol);
         return "redirect:/usuarios";
     }

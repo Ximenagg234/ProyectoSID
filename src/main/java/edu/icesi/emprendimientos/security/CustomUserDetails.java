@@ -22,15 +22,19 @@ public class CustomUserDetails implements UserDetails {
 
         Set<GrantedAuthority> authorities = new HashSet<>();
 
-        for (UsuarioRol ur : usuario.getRoles()) {
+        if (usuario.getRoles() == null) return authorities;
 
-            String roleName = "ROLE_" + ur.getRol().getNombre();
-            authorities.add(new SimpleGrantedAuthority(roleName));
+        for (UsuarioRol ur : usuario.getRoles()) {
+            if (ur.getRol() == null) continue;
+
+            authorities.add(new SimpleGrantedAuthority("ROLE_" + ur.getRol().getNombre()));
+
+            if (ur.getRol().getPermisos() == null) continue;
 
             for (RolPermission rp : ur.getRol().getPermisos()) {
-                authorities.add(
-                        new SimpleGrantedAuthority(rp.getPermission().getNombre())
-                );
+                if (rp.getPermission() != null) {
+                    authorities.add(new SimpleGrantedAuthority(rp.getPermission().getNombre()));
+                }
             }
         }
 
@@ -44,7 +48,8 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return usuario.getNombreCompleto();
+        // DEBE coincidir con el campo usado en loadUserByUsername
+        return usuario.getCorreoInstitucional();
     }
 
     @Override public boolean isAccountNonExpired() { return true; }

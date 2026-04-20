@@ -25,14 +25,16 @@ public class RolController {
     @GetMapping
     public String listar(Model model) {
         model.addAttribute("roles", rolService.listar());
-        return "roles/list";
+        model.addAttribute("contenido", "roles/list :: contenido");
+        return "layout";
     }
 
     // FORM CREAR
     @GetMapping("/nuevo")
     public String mostrarFormulario(Model model) {
         model.addAttribute("rol", new Rol());
-        return "roles/form";
+        model.addAttribute("contenido", "roles/form :: contenido");
+        return "layout";
     }
 
     // GUARDAR
@@ -52,11 +54,10 @@ public class RolController {
     // ASIGNAR PERMISOS (FORM)
     @GetMapping("/asignar-permisos/{id}")
     public String asignarPermisos(@PathVariable Integer id, Model model) {
-
         model.addAttribute("rol", rolService.buscarPorId(id));
         model.addAttribute("permisos", permissionService.listar());
-
-        return "roles/asignar-permisos";
+        model.addAttribute("contenido", "roles/asignar-permisos :: contenido");
+        return "layout";
     }
 
     // GUARDAR ASIGNACIÓN
@@ -65,13 +66,11 @@ public class RolController {
             @RequestParam Integer idRol,
             @RequestParam(required = false) List<Integer> permisos
     ) {
-
         if (permisos != null) {
             for (Integer idPermission : permisos) {
                 rolService.asignarPermiso(idRol, idPermission);
             }
         }
-
         return "redirect:/roles";
     }
 }
