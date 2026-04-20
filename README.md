@@ -3,7 +3,7 @@
 **Plataforma de Gestión de Emprendimientos Universitarios — Universidad Icesi**
 
 Sistema web para que estudiantes registren emprendimientos, publiquen productos, gestionen usuarios con roles y permisos, y accedan a métricas de desempeño.
-
+ 
 ---
 
 ## Tecnologías
@@ -17,7 +17,6 @@ Sistema web para que estudiantes registren emprendimientos, publiquen productos,
 - Bootstrap 5 + Bootstrap Icons
 - JUnit 5 + Mockito
 - Maven
-
 ---
 
 ## Requisitos previos
@@ -28,7 +27,7 @@ Sistema web para que estudiantes registren emprendimientos, publiquen productos,
 | Maven | incluido (Maven Wrapper) |
 | Navegador | Chrome, Firefox, Edge |
 | IDE (opcional) | IntelliJ IDEA |
-
+ 
 ---
 
 ## Clonar el repositorio
@@ -37,7 +36,7 @@ Sistema web para que estudiantes registren emprendimientos, publiquen productos,
 git clone <url-del-repositorio>
 cd proyecto-final-mergemasters
 ```
-
+ 
 ---
 
 ## Ejecutar la aplicación
@@ -60,7 +59,6 @@ mvnw.cmd spring-boot:run
 2. Esperar a que Maven descargue las dependencias
 3. Ubicar la clase `EmprendimientosApplication.java`
 4. Click en el botón ▶ **Run**
-
 ---
 
 ## Acceder a la aplicación
@@ -72,7 +70,43 @@ http://localhost:8081
 ```
 
 Serás redirigido automáticamente al login.
+ 
+---
 
+## Despliegue en servidor (IAsLab)
+
+El sistema fue desplegado manualmente en un equipo del laboratorio IAsLab utilizando Apache Tomcat en un entorno Linux.
+
+### Proceso realizado
+
+1. Se verificó que el servidor no contaba con una instalación previa de Tomcat
+2. Se descargó Apache Tomcat (versión 9) desde el repositorio oficial
+3. Se descomprimió el servidor en el directorio del usuario
+4. Se copió el archivo `emprendimientos-0.0.1-SNAPSHOT.war` en la carpeta `webapps`
+5. Se inició el servidor ejecutando:
+```bash
+./startup.sh
+```
+
+6. Apache Tomcat desplegó automáticamente la aplicación al expandir el archivo WAR
+7. Se verificó el despliegue accediendo desde el navegador:
+```
+http://localhost:8081/emprendimientos-0.0.1-SNAPSHOT
+```
+
+### Acceso remoto
+
+Gracias al uso de ZeroTier, la aplicación puede ser accedida desde otra máquina dentro de la misma red virtual mediante la siguiente dirección:
+
+```
+http://10.147.20.78:8081/emprendimientos-0.0.1-SNAPSHOT
+```
+
+### Notas
+
+- El despliegue se realizó de forma manual sin herramientas de automatización.
+- Tomcat realiza la descompresión automática del archivo WAR dentro de la carpeta `webapps`.
+- Es necesario que el puerto `8081` esté habilitado para el acceso remoto.
 ---
 
 ## Credenciales de prueba
@@ -84,7 +118,7 @@ Serás redirigido automáticamente al login.
 
 > El usuario ADMIN puede ver y gestionar Estudiantes, Roles y Permisos.
 > El usuario CLIENTE no tiene acceso a la sección de Administración.
-
+ 
 ---
 
 ## Funcionalidades disponibles
@@ -92,24 +126,20 @@ Serás redirigido automáticamente al login.
 ### Autenticación
 - Iniciar sesión con correo institucional y contraseña
 - Cerrar sesión
-
 ### Estudiantes (requiere login)
 - Listar estudiantes registrados con métricas de resumen
 - Registrar nuevo estudiante
 - Asignar roles a un estudiante
 - Eliminar estudiante
-
 ### Roles (requiere rol ADMIN)
 - Listar roles del sistema
 - Crear nuevo rol
 - Asignar permisos a un rol
 - Eliminar rol
-
 ### Productos (requiere login)
 - Listar productos y servicios del catálogo
 - Publicar nuevo producto (requiere permiso `CREAR_PRODUCTO`)
 - Eliminar producto (requiere permiso `ELIMINAR_PRODUCTO`)
-
 ---
 
 ## Base de datos H2
@@ -124,17 +154,14 @@ Para inspeccionar las tablas y datos:
    ```
 
 2. Ingresar las siguientes credenciales:
-
    | Campo | Valor |
-      |---|---|
+   |---|---|
    | JDBC URL | `jdbc:h2:mem:testdb` |
    | User Name | `sa` |
    | Password | *(dejar vacío)* |
-
 3. Click en **Connect**
-
 > ⚠️ La base de datos se reinicia cada vez que se reinicia la aplicación. Todos los datos creados durante la sesión se perderán.
-
+ 
 ---
 
 ## Ejecutar pruebas unitarias
@@ -155,8 +182,7 @@ mvnw.cmd test
 
 1. Click derecho sobre la carpeta `src/test/java`
 2. Seleccionar **Run 'All Tests'**
-
-Las pruebas cubren los servicios principales:
+   Las pruebas cubren los servicios principales:
 
 | Clase de test | Servicio cubierto |
 |---|---|
@@ -170,7 +196,7 @@ Las pruebas cubren los servicios principales:
 | `PedidoServiceTest` | CRUD de pedidos |
 | `DetallePedidoServiceTest` | CRUD de detalles de pedido |
 | `ImagenProductoServiceTest` | CRUD de imágenes |
-
+ 
 ---
 
 ## Reporte de cobertura (JaCoCo)
@@ -195,7 +221,6 @@ El reporte muestra:
 - **Branches** — cobertura de estructuras condicionales (`if`, `switch`, etc.)
 - **Methods** — métodos cubiertos
 - **Lines** — líneas de código ejecutadas
-
 ---
 
 ## Estructura del proyecto
@@ -222,7 +247,7 @@ src/
     └── java/edu/icesi/emprendimientos/unit/
         └── *ServiceTest.java # Pruebas unitarias
 ```
-
+ 
 ---
 
 ## Notas importantes
@@ -231,7 +256,6 @@ src/
 - Al registrar un nuevo usuario, la contraseña se encripta automáticamente con **BCrypt**.
 - Los datos del `data.sql` incluyen usuarios de prueba con contraseñas ya hasheadas.
 - Los IDs de los datos seed empiezan en valores bajos (1, 2, 3...), los nuevos registros creados desde la app empezarán desde el **100** para evitar conflictos.
-
 ---
 
 ## Autores
