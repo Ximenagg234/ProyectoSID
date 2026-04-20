@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <title>Emprendimientos</title>
+
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', 'Inter', sans-serif;
+            background-color: #f7fafd;
+        }
+
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+            background: #16213e;
+            position: fixed;
+            color: #fff;
+            padding: 30px 20px 20px 20px;
+            border-top-right-radius: 32px;
+            border-bottom-right-radius: 32px;
+            box-shadow: 2px 0 16px 0 rgba(22,33,62,0.08);
+        }
+
+        .sidebar h4 {
+            margin-bottom: 32px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .sidebar a {
+            display: flex;
+            align-items: center;
+            color: #cbd5e1;
+            padding: 12px 16px;
+            border-radius: 12px;
+            text-decoration: none;
+            margin-bottom: 8px;
+            font-size: 1.08rem;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .sidebar a:hover, .sidebar a.active {
+            background: #e0e7ef;
+            color: #16213e;
+            font-weight: 600;
+        }
+
+        .content {
+            margin-left: 270px;
+            padding: 40px 40px 40px 40px;
+            min-height: 100vh;
+            background: #f7fafd;
+        }
+
+        .topbar-custom {
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 2px 8px 0 rgba(22,33,62,0.04);
+            padding: 18px 32px;
+            margin-bottom: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .search-bar {
+            border-radius: 24px;
+            border: 1px solid #e0e7ef;
+            background: #f4f6fa;
+            padding-left: 18px;
+            font-size: 1rem;
+            width: 320px;
+        }
+
+        .user-badge {
+            background: #e0e7ef;
+            color: #16213e;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .card-custom {
+            border-radius: 18px;
+            padding: 28px 24px;
+            background: #fff;
+            box-shadow: 0px 4px 16px rgba(22,33,62,0.07);
+            margin-bottom: 24px;
+            transition: 0.2s;
+        }
+
+        .card-custom:hover {
+            transform: translateY(-3px) scale(1.01);
+            box-shadow: 0px 8px 24px rgba(22,33,62,0.10);
+        }
+
+        .metric-card {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            background: #f4f6fa;
+            border: none;
+            box-shadow: none;
+            padding: 24px 18px;
+            margin-bottom: 0;
+        }
+
+        .metric-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: #e0e7ef;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+
+        .metric-title {
+            font-size: 1.1rem;
+            color: #6b7280;
+            margin-bottom: 2px;
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #16213e;
+        }
+
+        .table {
+            background: #fff;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px 0 rgba(22,33,62,0.04);
+        }
+
+        .table thead {
+            background: #f4f6fa;
+        }
+
+        .table th, .table td {
+            border: none !important;
+        }
+
+        .btn {
+            border-radius: 24px !important;
+            font-weight: 500;
+            padding: 8px 20px;
+            font-size: 1rem;
+        }
+
+        .btn-success {
+            background: #3ecf8e;
+            border: none;
+        }
+
+        .btn-success:hover {
+            background: #2ebd7f;
+        }
+
+        .btn-outline-primary {
+            border: 1.5px solid #3b82f6;
+            color: #3b82f6;
+            background: #f4f6fa;
+        }
+
+        .btn-outline-primary:hover {
+            background: #3b82f6;
+            color: #fff;
+        }
+
+        h4 {
+            font-weight: 700;
+            color: #16213e;
+        }
+
+        h6 {
+            font-weight: 600;
+            color: #6b7280;
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+
+    <h4>🚀 Emprendimientos</h4>
+
+    <a href="/usuarios">Usuarios</a>
+
+    <a href="/roles" sec:authorize="hasRole('ADMIN')">Roles</a>
+
+    <a href="/productos">Productos</a>
+
+</div>
+
+<!-- CONTENIDO -->
+<div class="content">
+
+    <div class="card-custom d-flex justify-content-between align-items-center mb-4">
+
+        <input type="text" class="form-control w-50" placeholder="Buscar...">
+
+        <div>
+            👤 <span sec:authentication="name"></span>
+        </div>
+
+    </div>
+
+    <!--  AQUÍ SE INYECTAN LAS VISTAS -->
+    <div th:replace="${contenido}"></div>
+
+</div>
+
+</body>
+</html>

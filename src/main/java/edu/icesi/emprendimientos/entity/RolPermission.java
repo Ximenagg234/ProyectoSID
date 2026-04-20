@@ -26,4 +26,8 @@ public class RolPermission {
     @MapsId("idPermission")
     @JoinColumn(name = "id_permission")
     private Permission permission;
+
+    public Permission getPermission() {
+        return permission;
+    }
 }

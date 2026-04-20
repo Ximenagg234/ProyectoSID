@@ -1,0 +1,32 @@
+<div th:fragment="contenido">
+
+    <div class="card-custom">
+        <h4>Crear Producto</h4>
+        <form th:action="@{/productos}" th:object="${producto}" method="post">
+            <div class="mb-3">
+                <label>Nombre</label>
+                <input type="text" th:field="*{nombre}" class="form-control"/>
+            </div>
+            <div class="mb-3">
+                <label>Precio</label>
+                <input type="number" th:field="*{precio}" class="form-control"/>
+            </div>
+            <div class="mb-3">
+                <label>Stock</label>
+                <input type="number" th:field="*{stockDisponible}" class="form-control"/>
+            </div>
+            <div class="mb-3">
+                <label>Emprendimiento</label>
+                <select th:field="*{emprendimiento}" class="form-control">
+                    <option th:each="e : ${emprendimientos}"
+                            th:value="${e}"
+                            th:text="${e.nombre}">
+                    </option>
+                </select>
+            </div>
+            <button class="btn btn-success">Guardar</button>
+        </form>
+
+    </div>
+
+</div>

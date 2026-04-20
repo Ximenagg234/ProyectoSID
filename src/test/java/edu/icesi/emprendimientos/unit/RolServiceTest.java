@@ -3,6 +3,7 @@ package edu.icesi.emprendimientos.unit;
 import edu.icesi.emprendimientos.entity.Rol;
 import edu.icesi.emprendimientos.entity.RolPermission;
 import edu.icesi.emprendimientos.repository.RolRepository;
+import edu.icesi.emprendimientos.repository.PermissionRepository;
 import edu.icesi.emprendimientos.service.impl.RolServiceImpl;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -14,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,11 +28,13 @@ public class RolServiceTest {
     @Mock
     private RolRepository rolRepository;
 
+    @Mock
+    private PermissionRepository permissionRepository;
+
     @InjectMocks
     private RolServiceImpl rolService;
 
     private Rol rol;
-    private RolPermission rolPermission;
 
     @BeforeEach
     void setup() {
@@ -38,9 +42,8 @@ public class RolServiceTest {
         rol.setIdRol(1);
         rol.setNombre("ADMIN");
 
-        rolPermission = new RolPermission();
-
-        rol.setPermisos(Arrays.asList(rolPermission));
+        RolPermission rolPermission = new RolPermission();
+        rol.setPermisos(new java.util.ArrayList<>(Arrays.asList(rolPermission)));
     }
 
     // =========================
@@ -163,5 +166,52 @@ public class RolServiceTest {
 
         // Act & Assert
         assertThrows(RuntimeException.class, () -> rolService.eliminar(1));
+    }
+
+    // =========================
+    // PERMISOS
+    // =========================
+
+    @Test
+    void asignarPermiso_RolExiste_PermisoExiste_AsignaCorrectamente() {
+        when(rolRepository.findById(1)).thenReturn(Optional.of(rol));
+        when(permissionRepository.findById(1)).thenReturn(Optional.of(new edu.icesi.emprendimientos.entity.Permission()));
+        when(rolRepository.save(any(edu.icesi.emprendimientos.entity.Rol.class))).thenReturn(rol);
+        
+        rolService.asignarPermiso(1, 1);
+        
+        verify(rolRepository, times(1)).save(rol);
+    }
+
+    @Test
+    void asignarPermiso_RolNoExiste_LanzaExcepcion() {
+        when(rolRepository.findById(1)).thenReturn(Optional.empty());
+        
+        assertThrows(RuntimeException.class, () -> rolService.asignarPermiso(1, 1));
+    }
+
+    @Test
+    void asignarPermiso_PermisoNoExiste_LanzaExcepcion() {
+        when(rolRepository.findById(1)).thenReturn(Optional.of(rol));
+        when(permissionRepository.findById(1)).thenReturn(Optional.empty());
+        
+        assertThrows(RuntimeException.class, () -> rolService.asignarPermiso(1, 1));
+    }
+
+    @Test
+    void quitarPermiso_RolExiste_QuitaCorrectamente() {
+        when(rolRepository.findById(1)).thenReturn(Optional.of(rol));
+        when(rolRepository.save(any(edu.icesi.emprendimientos.entity.Rol.class))).thenReturn(rol);
+        
+        rolService.quitarPermiso(1, 1);
+        
+        verify(rolRepository, times(1)).save(rol);
+    }
+
+    @Test
+    void quitarPermiso_RolNoExiste_LanzaExcepcion() {
+        when(rolRepository.findById(1)).thenReturn(Optional.empty());
+        
+        assertThrows(RuntimeException.class, () -> rolService.quitarPermiso(1, 1));
     }
 }

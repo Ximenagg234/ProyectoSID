@@ -1,31 +1,19 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Asignar Permisos</title>
-</head>
-<body>
+<div th:fragment="contenido">
 
-<h1>Asignar Permiso</h1>
+    <div class="card-custom">
+        <h4>Asignar Permisos</h4>
+        <form th:action="@{/roles/asignar-permisos}" method="post">
+            <input type="hidden" name="idRol" th:value="${rol.idRol}"/>
+            <div class="mb-3">
+                <label>Permisos</label>
+                <div class="form-check" th:each="p : ${permisos}">
+                    <input class="form-check-input" type="checkbox" name="permisos" th:value="${p.idPermission}"/>
+                    <label class="form-check-label" th:text="${p.nombre}"></label>
+                </div>
+            </div>
+            <button class="btn btn-success">Guardar</button>
+        </form>
 
-<form th:action="@{/roles/asignar-permisos}" method="post">
+    </div>
 
-    <input type="hidden" name="idRol" th:value="${rol.idRol}" />
-
-    <label>Permiso:</label>
-    <select name="idPermission">
-        <option th:each="p : ${permisos}"
-                th:value="${p.idPermission}"
-                th:text="${p.nombre}">
-        </option>
-    </select>
-
-    <br>
-
-    <button type="submit">Asignar</button>
-
-</form>
-
-<a href="/roles">Volver</a>
-
-</body>
-</html>
+</div>

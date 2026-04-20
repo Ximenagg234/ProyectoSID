@@ -1,43 +1,19 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Asignar Rol</title>
-</head>
-<body>
+<div th:fragment="contenido">
 
-<h1>Asignar Rol a Usuario</h1>
+    <div class="card-custom">
+        <h4>Asignar Roles</h4>
+        <form th:action="@{/usuarios/asignar-roles}" method="post">
+            <input type="hidden" name="idUsuario" th:value="${usuario.idUsuario}"/>
+            <div class="mb-3">
+                <label>Roles</label>
+                <div class="form-check" th:each="r : ${roles}">
+                    <input class="form-check-input" type="checkbox" name="roles" th:value="${r.idRol}"/>
+                    <label class="form-check-label" th:text="${r.nombre}"></label>
+                </div>
+            </div>
+            <button class="btn btn-success">Guardar</button>
+        </form>
 
-<form th:action="@{/usuarios/asignar-roles}" method="post">
+    </div>
 
-    <input type="hidden" name="idUsuario" th:value="${usuario.idUsuario}" />
-
-    <label>Rol:</label>
-    <select name="idRol">
-        <option th:each="r : ${roles}"
-                th:value="${r.idRol}"
-                th:text="${r.nombre}">
-        </option>
-    </select>
-
-    <br>
-
-    <button type="submit">Asignar</button>
-
-</form>
-
-<h3>Roles actuales:</h3>
-
-<ul>
-    <li th:each="ur : ${usuario.roles}">
-        <span th:text="${ur.rol.nombre}"></span>
-
-        <a th:href="@{'/usuarios/quitar-rol?idUsuario=' + ${usuario.idUsuario} + '&idRol=' + ${ur.rol.idRol}}">
-            Quitar
-        </a>
-    </li>
-</ul>
-
-<a href="/usuarios">Volver</a>
-
-</body>
-</html>
+</div>

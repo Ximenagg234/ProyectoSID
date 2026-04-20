@@ -19,7 +19,7 @@ public class ImagenProductoServiceImpl implements ImagenProductoService {
     @Override
     public ImagenProducto guardar(ImagenProducto imagen) {
 
-        if (imagen.getUrl() == null || imagen.getUrl().isEmpty()) {
+        if (imagen.getUrlImagen() == null || imagen.getUrlImagen().isEmpty()) {
             throw new RuntimeException("La imagen debe tener una URL");
         }
 

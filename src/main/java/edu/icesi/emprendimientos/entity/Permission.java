@@ -26,4 +26,8 @@ public class Permission {
 
     @OneToMany(mappedBy = "permission", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RolPermission> roles;
+
+    public String getNombre() {
+        return nombre;
+    }
 }

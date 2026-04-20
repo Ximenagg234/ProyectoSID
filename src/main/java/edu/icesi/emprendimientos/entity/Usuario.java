@@ -44,4 +44,12 @@ public class Usuario {
     public List<UsuarioRol> getRoles() {
         return roles;
     }
+
+    public String getClave() {
+        return clave;
+    }
+
+    public String getNombreCompleto() {
+        return nombreCompleto;
+    }
 }

@@ -1,0 +1,40 @@
+<div xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+     th:fragment="contenido">
+
+    <div class="card-custom">
+        <div class="d-flex justify-content-between mb-3 align-items-center">
+            <h4>Productos</h4>
+            <a href="/productos/nuevo"
+               class="btn btn-success"
+               sec:authorize="hasAuthority('CREAR_PRODUCTO')">
+                + Crear
+            </a>
+        </div>
+        <table class="table table-hover align-middle mt-4">
+            <thead class="table-light">
+            <tr>
+                <th>Nombre</th>
+                <th>Precio</th>
+                <th>Stock</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="p : ${productos}">
+                <td th:text="${p.nombre}"></td>
+                <td th:text="${p.precio}"></td>
+                <td th:text="${p.stockDisponible}"></td>
+                <td>
+                    <a th:href="@{'/productos/eliminar/' + ${p.idProducto}}"
+                       class="btn btn-outline-primary btn-sm"
+                       sec:authorize="hasAuthority('ELIMINAR_PRODUCTO')">
+                        Eliminar
+                    </a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+    </div>
+
+</div>

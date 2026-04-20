@@ -1,31 +1,92 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Usuarios</title>
-</head>
-<body>
+<div xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+     th:fragment="contenido">
 
-<h1>Lista de Usuarios</h1>
+    <div class="card-custom">
+        <div class="d-flex justify-content-between mb-3 align-items-center">
+            <h4>Usuarios</h4>
+            <a href="/usuarios/nuevo" class="btn btn-success">+ Crear</a>
+        </div>
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="card-custom metric-card">
+                    <div class="metric-icon" style="background:#e0e7ef;color:#3b82f6;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor"
+                             viewBox="0 0 16 16">
+                            <path
+                                d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="metric-title">Usuarios</div>
+                        <div class="metric-value" th:text="${usuarios.size()}"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card-custom metric-card">
+                    <div class="metric-icon" style="background:#fef3c7;color:#f59e42;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor"
+                             viewBox="0 0 16 16">
+                            <path
+                                d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zm0 13A6 6 0 1 1 8 2a6 6 0 0 1 0 12z"/>
+                            <path
+                                d="M8 4a.5.5 0 0 1 .5.5v3.793l2.146 2.147a.5.5 0 0 1-.708.708l-2.292-2.292A.5.5 0 0 1 7.5 8.5V4.5A.5.5 0 0 1 8 4z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="metric-title">Productos</div>
+                        <div class="metric-value" th:text="${productos.size()}"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card-custom metric-card">
+                    <div class="metric-icon" style="background:#ede9fe;color:#7c3aed;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor"
+                             viewBox="0 0 16 16">
+                            <path
+                                d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0zm0 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14z"/>
+                            <path
+                                d="M8 4a.5.5 0 0 1 .5.5v3.793l2.146 2.147a.5.5 0 0 1-.708.708l-2.292-2.292A.5.5 0 0 1 7.5 8.5V4.5A.5.5 0 0 1 8 4z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="metric-title">Roles</div>
+                        <div class="metric-value" th:text="${roles.size()}"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <table class="table table-hover align-middle mt-4">
 
-<a href="/usuarios/nuevo">Crear Usuario</a>
+            <thead class="table-light">
+            <tr>
+                <th>Nombre</th>
+                <th></th>
+            </tr>
+            </thead>
 
-<table border="1">
-    <tr>
-        <th>ID</th>
-        <th>Nombre</th>
-        <th>Acciones</th>
-    </tr>
+            <tbody>
+            <tr th:each="u : ${usuarios}">
+                <td th:text="${u.nombreCompleto}"></td>
 
-    <tr th:each="u : ${usuarios}">
-        <td th:text="${u.idUsuario}"></td>
-        <td th:text="${u.nombreCompleto}"></td>
-        <td>
-            <a th:href="@{'/usuarios/editar/' + ${u.idUsuario}}">Editar</a>
-            <a th:href="@{'/usuarios/eliminar/' + ${u.idUsuario}}">Eliminar</a>
-        </td>
-    </tr>
+                <td>
+                    <a th:href="@{'/usuarios/asignar-roles/' + ${u.idUsuario}}"
+                       class="btn btn-outline-primary btn-sm"
+                       sec:authorize="hasRole('ADMIN')">
+                        Roles
+                    </a>
 
-</table>
+                    <a th:href="@{'/usuarios/eliminar/' + ${u.idUsuario}}"
+                       class="btn btn-outline-primary btn-sm">
+                        Eliminar
+                    </a>
+                </td>
+            </tr>
+            </tbody>
 
-</body>
-</html>
+        </table>
+
+    </div>
+
+</div>

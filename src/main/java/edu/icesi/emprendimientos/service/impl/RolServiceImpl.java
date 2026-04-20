@@ -71,7 +71,12 @@ public class RolServiceImpl implements RolService {
         rp.setRol(rol);
         rp.setPermission(permiso);
 
-        rol.getPermisos().add(rp);
+        if (rol.getPermisos() != null) {
+            rol.getPermisos().add(rp);
+        } else {
+            rol.setPermisos(new java.util.ArrayList<>());
+            rol.getPermisos().add(rp);
+        }
 
         rolRepository.save(rol);
     }
@@ -82,7 +87,10 @@ public class RolServiceImpl implements RolService {
         Rol rol = rolRepository.findById(idRol)
                 .orElseThrow(() -> new RuntimeException("Rol no encontrado"));
 
-        rol.getPermisos().removeIf(rp -> rp.getPermission().getIdPermission().equals(idPermission));
+        if (rol.getPermisos() != null && !rol.getPermisos().isEmpty()) {
+            rol.getPermisos().removeIf(rp -> rp.getPermission() != null && 
+                    rp.getPermission().getIdPermission().equals(idPermission));
+        }
 
         rolRepository.save(rol);
     }

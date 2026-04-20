@@ -30,4 +30,8 @@ public class Rol {
     public List<RolPermission> getPermisos() {
         return permisos;
     }
+
+    public String getNombre() {
+        return nombre;
+    }
 }

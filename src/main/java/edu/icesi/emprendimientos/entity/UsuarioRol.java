@@ -25,4 +25,16 @@ public class UsuarioRol {
     @MapsId("idRol")
     @JoinColumn(name = "id_rol")
     private Rol rol;
+    
+    public Rol getRol() {
+        return rol;
+    }
+
+    public String getClave() {
+        return usuario != null ? usuario.getClave() : null;
+    }
+
+    public String getNombreCompleto() {
+        return usuario != null ? usuario.getNombreCompleto() : null;
+    }
 }

@@ -1,24 +1,15 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Crear Rol</title>
-</head>
-<body>
+<div th:fragment="contenido">
 
-<h1>Crear Rol</h1>
+    <div class="card-custom">
+        <h4>Crear Rol</h4>
+        <form th:action="@{/roles}" th:object="${rol}" method="post">
+            <div class="mb-3">
+                <label>Nombre</label>
+                <input type="text" th:field="*{nombre}" class="form-control"/>
+            </div>
+            <button class="btn btn-success">Guardar</button>
+        </form>
 
-<form th:action="@{/roles}" th:object="${rol}" method="post">
+    </div>
 
-    <label>Nombre:</label>
-    <input type="text" th:field="*{nombre}" />
-
-    <br>
-
-    <button type="submit">Guardar</button>
-
-</form>
-
-<a href="/roles">Volver</a>
-
-</body>
-</html>
+</div>

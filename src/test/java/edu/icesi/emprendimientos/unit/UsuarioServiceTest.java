@@ -3,6 +3,7 @@ package edu.icesi.emprendimientos.unit;
 import edu.icesi.emprendimientos.entity.Usuario;
 import edu.icesi.emprendimientos.entity.UsuarioRol;
 import edu.icesi.emprendimientos.repository.UsuarioRepository;
+import edu.icesi.emprendimientos.repository.RolRepository;
 import edu.icesi.emprendimientos.service.impl.UsuarioServiceImpl;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -12,7 +13,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -25,6 +28,12 @@ public class UsuarioServiceTest {
 
     @Mock
     private UsuarioRepository usuarioRepository;
+
+    @Mock
+    private RolRepository rolRepository;
+
+    @Mock
+    private PasswordEncoder passwordEncoder;
 
     @InjectMocks
     private UsuarioServiceImpl usuarioService;
@@ -41,7 +50,7 @@ public class UsuarioServiceTest {
 
         usuarioRol = new UsuarioRol();
 
-        usuario.setRoles(Arrays.asList(usuarioRol));
+        usuario.setRoles(new ArrayList<>(Arrays.asList(usuarioRol)));
     }
 
     // =========================
@@ -51,6 +60,7 @@ public class UsuarioServiceTest {
     @Test
     void guardarUsuario_WhenTieneRol_SeGuardaCorrectamente() {
         // Arrange
+        when(passwordEncoder.encode("1234")).thenReturn("encodedPassword");
         when(usuarioRepository.save(usuario)).thenReturn(usuario);
 
         // Act
@@ -120,6 +130,7 @@ public class UsuarioServiceTest {
     void actualizarUsuario_WhenExiste_ActualizaCorrectamente() {
         // Arrange
         when(usuarioRepository.findById(1)).thenReturn(Optional.of(usuario));
+        when(passwordEncoder.encode("abcd")).thenReturn("encodedNewPassword");
         when(usuarioRepository.save(any(Usuario.class))).thenReturn(usuario);
 
         Usuario actualizado = new Usuario();
@@ -165,5 +176,56 @@ public class UsuarioServiceTest {
 
         // Act & Assert
         assertThrows(RuntimeException.class, () -> usuarioService.eliminar(1));
+    }
+
+    // =========================
+    // ASIGNAR ROL
+    // =========================
+
+    @Test
+    void asignarRol_UsuarioExiste_RolExiste_AsignaCorrectamente() {
+        when(usuarioRepository.findById(1)).thenReturn(Optional.of(usuario));
+        when(rolRepository.findById(1)).thenReturn(Optional.of(new edu.icesi.emprendimientos.entity.Rol()));
+        when(usuarioRepository.save(any(Usuario.class))).thenReturn(usuario);
+        
+        usuarioService.asignarRol(1, 1);
+        
+        verify(usuarioRepository, times(1)).save(usuario);
+    }
+
+    @Test
+    void asignarRol_UsuarioNoExiste_LanzaExcepcion() {
+        when(usuarioRepository.findById(1)).thenReturn(Optional.empty());
+        
+        assertThrows(RuntimeException.class, () -> usuarioService.asignarRol(1, 1));
+    }
+
+    @Test
+    void asignarRol_RolNoExiste_LanzaExcepcion() {
+        when(usuarioRepository.findById(1)).thenReturn(Optional.of(usuario));
+        when(rolRepository.findById(1)).thenReturn(Optional.empty());
+        
+        assertThrows(RuntimeException.class, () -> usuarioService.asignarRol(1, 1));
+    }
+
+    // =========================
+    // QUITAR ROL
+    // =========================
+
+    @Test
+    void quitarRol_UsuarioExiste_QuitaCorrectamente() {
+        when(usuarioRepository.findById(1)).thenReturn(Optional.of(usuario));
+        when(usuarioRepository.save(any(Usuario.class))).thenReturn(usuario);
+        
+        usuarioService.quitarRol(1, 1);
+        
+        verify(usuarioRepository, times(1)).save(usuario);
+    }
+
+    @Test
+    void quitarRol_UsuarioNoExiste_LanzaExcepcion() {
+        when(usuarioRepository.findById(1)).thenReturn(Optional.empty());
+        
+        assertThrows(RuntimeException.class, () -> usuarioService.quitarRol(1, 1));
     }
 }
