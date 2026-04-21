@@ -1,17 +1,10 @@
 package edu.icesi.emprendimientos.entity;
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
+import jakarta.persistence.*;
 import java.util.Date;
+
 @Entity
 @Table(name = "reporte")
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
 public class Reporte {
 
     @Id
@@ -32,4 +25,29 @@ public class Reporte {
     @ManyToOne
     @JoinColumn(name = "id_usuario", nullable = false)
     private Usuario usuario;
+
+    public Reporte() {}
+
+    public Reporte(Integer idReporte, Date fechaGeneracion, String periodo, String rutaArchivo, Usuario usuario) {
+        this.idReporte = idReporte;
+        this.fechaGeneracion = fechaGeneracion;
+        this.periodo = periodo;
+        this.rutaArchivo = rutaArchivo;
+        this.usuario = usuario;
+    }
+
+    public Integer getIdReporte() { return idReporte; }
+    public void setIdReporte(Integer idReporte) { this.idReporte = idReporte; }
+
+    public Date getFechaGeneracion() { return fechaGeneracion; }
+    public void setFechaGeneracion(Date fechaGeneracion) { this.fechaGeneracion = fechaGeneracion; }
+
+    public String getPeriodo() { return periodo; }
+    public void setPeriodo(String periodo) { this.periodo = periodo; }
+
+    public String getRutaArchivo() { return rutaArchivo; }
+    public void setRutaArchivo(String rutaArchivo) { this.rutaArchivo = rutaArchivo; }
+
+    public Usuario getUsuario() { return usuario; }
+    public void setUsuario(Usuario usuario) { this.usuario = usuario; }
 }

@@ -1,17 +1,10 @@
 package edu.icesi.emprendimientos.entity;
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
+import jakarta.persistence.*;
 import java.util.Date;
+
 @Entity
 @Table(name = "notificacion")
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
 public class Notificacion {
 
     @Id
@@ -35,4 +28,33 @@ public class Notificacion {
 
     @Column(name = "referencia_id")
     private Integer referenciaId;
+
+    public Notificacion() {}
+
+    public Notificacion(Integer idNotificacion, String tipo, String contenido, Date fecha, Usuario usuario, Integer referenciaId) {
+        this.idNotificacion = idNotificacion;
+        this.tipo = tipo;
+        this.contenido = contenido;
+        this.fecha = fecha;
+        this.usuario = usuario;
+        this.referenciaId = referenciaId;
+    }
+
+    public Integer getIdNotificacion() { return idNotificacion; }
+    public void setIdNotificacion(Integer idNotificacion) { this.idNotificacion = idNotificacion; }
+
+    public String getTipo() { return tipo; }
+    public void setTipo(String tipo) { this.tipo = tipo; }
+
+    public String getContenido() { return contenido; }
+    public void setContenido(String contenido) { this.contenido = contenido; }
+
+    public Date getFecha() { return fecha; }
+    public void setFecha(Date fecha) { this.fecha = fecha; }
+
+    public Usuario getUsuario() { return usuario; }
+    public void setUsuario(Usuario usuario) { this.usuario = usuario; }
+
+    public Integer getReferenciaId() { return referenciaId; }
+    public void setReferenciaId(Integer referenciaId) { this.referenciaId = referenciaId; }
 }

@@ -2,14 +2,9 @@ package edu.icesi.emprendimientos.entity;
 
 import edu.icesi.emprendimientos.entity.keys.RolPermissionId;
 import jakarta.persistence.*;
-import lombok.*;
 
 @Entity
 @Table(name = "role_permission")
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
 public class RolPermission {
 
     @EmbeddedId
@@ -25,7 +20,20 @@ public class RolPermission {
     @JoinColumn(name = "id_permission")
     private Permission permission;
 
-    public Permission getPermission() {
-        return permission;
+    public RolPermission() {}
+
+    public RolPermission(RolPermissionId id, Rol rol, Permission permission) {
+        this.id = id;
+        this.rol = rol;
+        this.permission = permission;
     }
+
+    public RolPermissionId getId() { return id; }
+    public void setId(RolPermissionId id) { this.id = id; }
+
+    public Rol getRol() { return rol; }
+    public void setRol(Rol rol) { this.rol = rol; }
+
+    public Permission getPermission() { return permission; }
+    public void setPermission(Permission permission) { this.permission = permission; }
 }

@@ -1,16 +1,10 @@
 package edu.icesi.emprendimientos.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
-
 import java.util.List;
 
 @Entity
 @Table(name = "categoria")
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
 public class Categoria {
 
     @Id
@@ -26,4 +20,25 @@ public class Categoria {
 
     @OneToMany(mappedBy = "categoria")
     private List<Emprendimiento> emprendimientos;
+
+    public Categoria() {}
+
+    public Categoria(Integer idCategoria, String nombre, String descripcion, List<Emprendimiento> emprendimientos) {
+        this.idCategoria = idCategoria;
+        this.nombre = nombre;
+        this.descripcion = descripcion;
+        this.emprendimientos = emprendimientos;
+    }
+
+    public Integer getIdCategoria() { return idCategoria; }
+    public void setIdCategoria(Integer idCategoria) { this.idCategoria = idCategoria; }
+
+    public String getNombre() { return nombre; }
+    public void setNombre(String nombre) { this.nombre = nombre; }
+
+    public String getDescripcion() { return descripcion; }
+    public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
+
+    public List<Emprendimiento> getEmprendimientos() { return emprendimientos; }
+    public void setEmprendimientos(List<Emprendimiento> emprendimientos) { this.emprendimientos = emprendimientos; }
 }

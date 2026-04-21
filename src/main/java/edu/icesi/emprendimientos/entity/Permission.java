@@ -1,16 +1,10 @@
 package edu.icesi.emprendimientos.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
-
 import java.util.List;
 
 @Entity
 @Table(name = "permission")
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
 public class Permission {
 
     @Id
@@ -27,7 +21,24 @@ public class Permission {
     @OneToMany(mappedBy = "permission", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RolPermission> roles;
 
-    public String getNombre() {
-        return nombre;
+    public Permission() {}
+
+    public Permission(Integer idPermission, String nombre, String descripcion, List<RolPermission> roles) {
+        this.idPermission = idPermission;
+        this.nombre = nombre;
+        this.descripcion = descripcion;
+        this.roles = roles;
     }
+
+    public Integer getIdPermission() { return idPermission; }
+    public void setIdPermission(Integer idPermission) { this.idPermission = idPermission; }
+
+    public String getNombre() { return nombre; }
+    public void setNombre(String nombre) { this.nombre = nombre; }
+
+    public String getDescripcion() { return descripcion; }
+    public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
+
+    public List<RolPermission> getRoles() { return roles; }
+    public void setRoles(List<RolPermission> roles) { this.roles = roles; }
 }

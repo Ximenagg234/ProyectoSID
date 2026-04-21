@@ -2,17 +2,10 @@ package edu.icesi.emprendimientos.entity.keys;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
 import java.io.Serializable;
 import java.util.Objects;
 
 @Embeddable
-@Getter
-@Setter
-@NoArgsConstructor
 public class UsuarioRolId implements Serializable {
 
     @Column(name = "id_usuario")
@@ -21,10 +14,18 @@ public class UsuarioRolId implements Serializable {
     @Column(name = "id_rol")
     private Integer idRol;
 
+    public UsuarioRolId() {}
+
     public UsuarioRolId(Integer idUsuario, Integer idRol) {
         this.idUsuario = idUsuario;
         this.idRol = idRol;
     }
+
+    public Integer getIdUsuario() { return idUsuario; }
+    public void setIdUsuario(Integer idUsuario) { this.idUsuario = idUsuario; }
+
+    public Integer getIdRol() { return idRol; }
+    public void setIdRol(Integer idRol) { this.idRol = idRol; }
 
     @Override
     public boolean equals(Object o) {

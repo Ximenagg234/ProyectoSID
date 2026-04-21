@@ -1,17 +1,10 @@
 package edu.icesi.emprendimientos.entity;
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
+import jakarta.persistence.*;
 import java.util.Date;
+
 @Entity
 @Table(name = "mensaje")
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
 public class Mensaje {
 
     @Id
@@ -37,4 +30,33 @@ public class Mensaje {
     @ManyToOne
     @JoinColumn(name = "id_pedido")
     private Pedido pedido;
+
+    public Mensaje() {}
+
+    public Mensaje(Integer idMensaje, String contenido, Date fecha, Usuario remitente, Usuario receptor, Pedido pedido) {
+        this.idMensaje = idMensaje;
+        this.contenido = contenido;
+        this.fecha = fecha;
+        this.remitente = remitente;
+        this.receptor = receptor;
+        this.pedido = pedido;
+    }
+
+    public Integer getIdMensaje() { return idMensaje; }
+    public void setIdMensaje(Integer idMensaje) { this.idMensaje = idMensaje; }
+
+    public String getContenido() { return contenido; }
+    public void setContenido(String contenido) { this.contenido = contenido; }
+
+    public Date getFecha() { return fecha; }
+    public void setFecha(Date fecha) { this.fecha = fecha; }
+
+    public Usuario getRemitente() { return remitente; }
+    public void setRemitente(Usuario remitente) { this.remitente = remitente; }
+
+    public Usuario getReceptor() { return receptor; }
+    public void setReceptor(Usuario receptor) { this.receptor = receptor; }
+
+    public Pedido getPedido() { return pedido; }
+    public void setPedido(Pedido pedido) { this.pedido = pedido; }
 }

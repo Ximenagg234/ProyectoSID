@@ -2,14 +2,9 @@ package edu.icesi.emprendimientos.entity;
 
 import edu.icesi.emprendimientos.entity.keys.UsuarioRolId;
 import jakarta.persistence.*;
-import lombok.*;
 
 @Entity
 @Table(name = "user_role")
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
 public class UsuarioRol {
 
     @EmbeddedId
@@ -25,15 +20,23 @@ public class UsuarioRol {
     @JoinColumn(name = "id_rol")
     private Rol rol;
 
-    public Rol getRol() {
-        return rol;
+    public UsuarioRol() {}
+
+    public UsuarioRol(UsuarioRolId id, Usuario usuario, Rol rol) {
+        this.id = id;
+        this.usuario = usuario;
+        this.rol = rol;
     }
 
-    public String getClave() {
-        return usuario != null ? usuario.getClave() : null;
-    }
+    public UsuarioRolId getId() { return id; }
+    public void setId(UsuarioRolId id) { this.id = id; }
 
-    public String getNombreCompleto() {
-        return usuario != null ? usuario.getNombreCompleto() : null;
-    }
+    public Usuario getUsuario() { return usuario; }
+    public void setUsuario(Usuario usuario) { this.usuario = usuario; }
+
+    public Rol getRol() { return rol; }
+    public void setRol(Rol rol) { this.rol = rol; }
+
+    public String getClave() { return usuario != null ? usuario.getClave() : null; }
+    public String getNombreCompleto() { return usuario != null ? usuario.getNombreCompleto() : null; }
 }
