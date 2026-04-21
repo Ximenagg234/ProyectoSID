@@ -597,7 +597,7 @@
 
         <div class="sidebar-section-label">Principal</div>
 
-        <a href="/usuarios" class="sidebar-link">
+        <a th:href="@{/usuarios}" class="sidebar-link">
             <i class="bi bi-grid-1x2"></i>
             Inicio
         </a>
@@ -609,29 +609,29 @@
             Mis Emprendimientos
         </a>
 
-        <a href="/marketplace" class="sidebar-link">
+        <a th:href="@{/marketplace}" class="sidebar-link">
             <i class="bi bi-bag"></i>
             Marketplace
         </a>
 
-        <a href="/pedidos/mis-pedidos" class="sidebar-link">
+        <a th:href="@{/pedidos/mis-pedidos}" class="sidebar-link">
             <i class="bi bi-cart3"></i>
             Mis Pedidos
         </a>
 
-        <a href="/pedidos/recibidos" class="sidebar-link">
+        <a th:href="@{/pedidos/recibidos}" class="sidebar-link">
             <i class="bi bi-inbox"></i>
             Pedidos Recibidos
         </a>
 
         <div class="sidebar-section-label" sec:authorize="hasRole('ADMIN')">Administración</div>
 
-        <a href="/usuarios" class="sidebar-link" sec:authorize="hasRole('ADMIN')">
+        <a th:href="@{/usuarios}" class="sidebar-link" sec:authorize="hasRole('ADMIN')">
             <i class="bi bi-people"></i>
             Estudiantes
         </a>
 
-        <a href="/roles" class="sidebar-link" sec:authorize="hasRole('ADMIN')">
+        <a th:href="@{/roles}" class="sidebar-link" sec:authorize="hasRole('ADMIN')">
             <i class="bi bi-shield-check"></i>
             Roles
         </a>
@@ -648,7 +648,7 @@
             <i class="bi bi-person-circle"></i>
             Mi Perfil
         </a>
-        <a href="/logout" class="sidebar-link logout">
+        <a th:href="@{/logout}" class="sidebar-link logout">
             <i class="bi bi-box-arrow-left"></i>
             Cerrar Sesión
         </a>

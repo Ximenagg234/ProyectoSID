@@ -17,7 +17,7 @@
                 <h2>Catálogo de emprendimientos</h2>
                 <p>Productos y servicios disponibles en el campus</p>
             </div>
-            <a href="/productos/nuevo"
+            <a th:href="@{/productos/nuevo}"
                class="btn btn-primary"
                sec:authorize="hasAuthority('CREAR_PRODUCTO')">
                 <i class="bi bi-plus-lg"></i>
