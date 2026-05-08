@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="contenido">
+
+    <div class="page-header">
+        <h1>Mis Pedidos</h1>
+        <p>Revisa el estado de tus compras</p>
+    </div>
+
+    <!-- Mensaje de confirmación al volver del carrito -->
+    <div th:if="${pedidosConfirmados}"
+         style="background:#DCFCE7; color:#15803D; border-radius:12px; padding:14px 18px;
+                font-size:13.5px; font-weight:600; margin-bottom:24px;
+                display:flex; align-items:center; gap:10px;">
+        <i class="bi bi-check-circle-fill" style="font-size:18px;"></i>
+        <span>¡Pedido confirmado exitosamente! Ya puedes hacer seguimiento aquí.</span>
+    </div>
+
+    <!-- Sin pedidos -->
+    <div th:if="${#lists.isEmpty(pedidos)}"
+         style="text-align:center; padding:80px 0;">
+        <div style="width:80px; height:80px; background:#EEF2FF; border-radius:50%;
+                    display:flex; align-items:center; justify-content:center; margin:0 auto 20px;">
+            <i class="bi bi-bag-x" style="font-size:36px; color:#6366F1;"></i>
+        </div>
+        <h3 style="font-size:18px; font-weight:700; color:#111827; margin-bottom:8px;">
+            Aún no tienes pedidos
+        </h3>
+        <p style="font-size:14px; color:#6B7280; margin-bottom:24px;">
+            Explora el marketplace y realiza tu primera compra
+        </p>
+        <a th:href="@{/marketplace}" class="btn btn-primary">
+            <i class="bi bi-bag"></i> Explorar Marketplace
+        </a>
+    </div>
+
+    <!-- Lista de pedidos -->
+    <div th:if="${!#lists.isEmpty(pedidos)}"
+         style="display:flex; flex-direction:column; gap:16px;">
+
+        <div th:each="pedido : ${pedidos}"
+             style="background:#fff; border-radius:16px; border:1px solid #E5E7EB;
+                    box-shadow:0 1px 3px rgba(0,0,0,.05); overflow:hidden;">
+
+            <!-- Header del pedido -->
+            <div style="display:flex; align-items:center; justify-content:space-between;
+                        padding:16px 20px; border-bottom:1px solid #F3F4F6; flex-wrap:wrap; gap:10px;">
+
+                <div style="display:flex; align-items:center; gap:14px;">
+                    <div style="font-size:13px; font-weight:700; color:#6366F1;">
+                        #PED-<span th:text="${pedido.idPedido}"></span>
+                    </div>
+                    <div style="font-size:12.5px; color:#6B7280;">
+                        <i class="bi bi-shop"></i>
+                        <span th:text="${pedido.emprendimiento.nombre}"></span>
+                    </div>
+                    <div style="font-size:12px; color:#9CA3AF;">
+                        <i class="bi bi-calendar3"></i>
+                        <span th:text="${#dates.format(pedido.fechaPedido, 'dd/MM/yyyy HH:mm')}"></span>
+                    </div>
+                </div>
+
+                <div style="display:flex; align-items:center; gap:12px;">
+                    <!-- Badge estado -->
+                    <span th:text="${pedido.estado.nombre}"
+                          th:style="${pedido.estado.nombre == 'PENDIENTE'}   ? 'background:#FEF9C3; color:#854D0E;' :
+                                    ${pedido.estado.nombre == 'CONFIRMADO'}  ? 'background:#DBEAFE; color:#1E40AF;' :
+                                    ${pedido.estado.nombre == 'PREPARANDO'}  ? 'background:#EDE9FE; color:#5B21B6;' :
+                                    ${pedido.estado.nombre == 'ENTREGADO'}   ? 'background:#DCFCE7; color:#15803D;' :
+                                    ${pedido.estado.nombre == 'CANCELADO'}   ? 'background:#FEE2E2; color:#B91C1C;' :
+                                                                               'background:#F3F4F6; color:#374151;'"
+                          style="font-size:11px; font-weight:700; padding:4px 10px;
+                                 border-radius:50px; text-transform:uppercase; letter-spacing:.5px;">
+                    </span>
+
+                    <!-- Total -->
+                    <span style="font-size:16px; font-weight:800; color:#111827;">
+                        $<span th:text="${#numbers.formatDecimal(pedido.total, 1, 'COMMA', 0, 'POINT')}"></span>
+                    </span>
+                </div>
+            </div>
+
+            <!-- Productos del pedido -->
+            <div style="padding:16px 20px;">
+                <div th:each="detalle : ${pedido.detalles}"
+                     style="display:flex; align-items:center; gap:12px; margin-bottom:10px;">
+                    <div style="width:40px; height:40px; background:#EEF2FF; border-radius:10px;
+                                display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                        <i class="bi bi-bag-fill" style="font-size:16px; color:#6366F1;"></i>
+                    </div>
+                    <div style="flex:1;">
+                        <div style="font-size:13.5px; font-weight:600; color:#111827;"
+                             th:text="${detalle.producto.nombre}"></div>
+                        <div style="font-size:12px; color:#6B7280;">
+                            x<span th:text="${detalle.cantidad}"></span>
+                            · $<span th:text="${#numbers.formatDecimal(detalle.precioUnitario, 1, 'COMMA', 0, 'POINT')}"></span> c/u
+                        </div>
+                    </div>
+                    <div style="font-size:13.5px; font-weight:700; color:#111827;">
+                        $<span th:text="${#numbers.formatDecimal(detalle.subtotal, 1, 'COMMA', 0, 'POINT')}"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tracker de estado -->
+            <div style="padding:12px 20px 18px; border-top:1px solid #F3F4F6;">
+                <div style="display:flex; align-items:center; gap:0; position:relative;">
+
+                    <div th:each="paso, iter : ${ {'PENDIENTE','CONFIRMADO','PREPARANDO','ENTREGADO'} }"
+                         style="display:flex; align-items:center; flex:1;">
+
+                        <!-- Línea conectora (no para el primero) -->
+                        <div th:if="${iter.index > 0}"
+                             style="flex:1; height:2px;"
+                             th:style="'flex:1; height:2px; background:' +
+                                       (${#lists.contains({'CONFIRMADO','PREPARANDO','ENTREGADO'}, pedido.estado.nombre) and iter.index <= 1} or
+                                        ${#lists.contains({'PREPARANDO','ENTREGADO'}, pedido.estado.nombre) and iter.index <= 2} or
+                                        ${pedido.estado.nombre == 'ENTREGADO' and iter.index <= 3}
+                                        ? '#6366F1' : '#E5E7EB')">
+                        </div>
+
+                        <!-- Círculo del paso -->
+                        <div style="width:28px; height:28px; border-radius:50%; flex-shrink:0;
+                                    display:flex; align-items:center; justify-content:center;
+                                    font-size:11px; font-weight:700; z-index:1;"
+                             th:style="${pedido.estado.nombre == paso or
+                                        (paso == 'PENDIENTE' and #lists.contains({'CONFIRMADO','PREPARANDO','ENTREGADO'}, pedido.estado.nombre)) or
+                                        (paso == 'CONFIRMADO' and #lists.contains({'PREPARANDO','ENTREGADO'}, pedido.estado.nombre)) or
+                                        (paso == 'PREPARANDO' and pedido.estado.nombre == 'ENTREGADO')}
+                                        ? 'background:#6366F1; color:#fff;'
+                                        : 'background:#F3F4F6; color:#9CA3AF; border:1.5px solid #E5E7EB;'">
+                            <i class="bi bi-check-lg" th:if="${pedido.estado.nombre != paso and
+                                       (paso == 'PENDIENTE' and #lists.contains({'CONFIRMADO','PREPARANDO','ENTREGADO'}, pedido.estado.nombre)) or
+                                       (paso == 'CONFIRMADO' and #lists.contains({'PREPARANDO','ENTREGADO'}, pedido.estado.nombre)) or
+                                       (paso == 'PREPARANDO' and pedido.estado.nombre == 'ENTREGADO')}"></i>
+                            <span th:if="${pedido.estado.nombre == paso}" th:text="${iter.index + 1}"></span>
+                            <span th:if="${!(pedido.estado.nombre == paso) and !(
+                                       (paso == 'PENDIENTE' and #lists.contains({'CONFIRMADO','PREPARANDO','ENTREGADO'}, pedido.estado.nombre)) or
+                                       (paso == 'CONFIRMADO' and #lists.contains({'PREPARANDO','ENTREGADO'}, pedido.estado.nombre)) or
+                                       (paso == 'PREPARANDO' and pedido.estado.nombre == 'ENTREGADO'))}"
+                                  th:text="${iter.index + 1}"></span>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Labels -->
+                <div style="display:flex; margin-top:6px;">
+                    <div style="flex:1; text-align:center; font-size:10px; color:#6B7280;">Pendiente</div>
+                    <div style="flex:1; text-align:center; font-size:10px; color:#6B7280;">Confirmado</div>
+                    <div style="flex:1; text-align:center; font-size:10px; color:#6B7280;">Preparando</div>
+                    <div style="flex:1; text-align:center; font-size:10px; color:#6B7280;">Entregado</div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

@@ -4,7 +4,6 @@ import edu.icesi.emprendimientos.entity.Emprendimiento;
 import edu.icesi.emprendimientos.repository.EmprendimientoRepository;
 import edu.icesi.emprendimientos.service.EmprendimientoService;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 @Service
@@ -18,23 +17,14 @@ public class EmprendimientoServiceImpl implements EmprendimientoService {
 
     @Override
     public Emprendimiento guardar(Emprendimiento emprendimiento) {
-
-        if (emprendimiento.getNombre() == null || emprendimiento.getNombre().isEmpty()) {
+        if (emprendimiento.getNombre() == null || emprendimiento.getNombre().isEmpty())
             throw new RuntimeException("El emprendimiento debe tener nombre");
-        }
-
-        if (emprendimiento.getUsuario() == null) {
+        if (emprendimiento.getUsuario() == null)
             throw new RuntimeException("El emprendimiento debe tener un usuario");
-        }
-
-        if (emprendimiento.getCategoria() == null) {
+        if (emprendimiento.getCategoria() == null)
             throw new RuntimeException("El emprendimiento debe tener una categoria");
-        }
-
-        if (emprendimiento.getEstado() == null) {
+        if (emprendimiento.getEstado() == null)
             throw new RuntimeException("El emprendimiento debe tener un estado");
-        }
-
         return emprendimientoRepository.save(emprendimiento);
     }
 
@@ -51,19 +41,22 @@ public class EmprendimientoServiceImpl implements EmprendimientoService {
 
     @Override
     public Emprendimiento actualizar(Integer id, Emprendimiento actualizado) {
-
         Emprendimiento existente = emprendimientoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Emprendimiento no encontrado"));
-
         existente.setNombre(actualizado.getNombre());
         existente.setDescripcion(actualizado.getDescripcion());
         existente.setLogoUrl(actualizado.getLogoUrl());
-
+        if (actualizado.getCategoria() != null) existente.setCategoria(actualizado.getCategoria());
         return emprendimientoRepository.save(existente);
     }
 
     @Override
     public void eliminar(Integer id) {
         emprendimientoRepository.deleteById(id);
+    }
+
+    @Override
+    public List<Emprendimiento> listarPorUsuario(Integer idUsuario) {
+        return emprendimientoRepository.findByUsuario_IdUsuario(idUsuario);
     }
 }

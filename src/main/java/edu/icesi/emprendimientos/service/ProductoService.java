@@ -19,4 +19,8 @@ public interface ProductoService {
     List<Producto> listarPorEmprendimiento(Integer idEmprendimiento);
 
     List<Producto> listarPorCategoria(Integer idCategoria);
+
+    List<Producto> listarActivos();
+
+    List<Producto> listarActivosPorCategoria(Integer idCategoria);
 }

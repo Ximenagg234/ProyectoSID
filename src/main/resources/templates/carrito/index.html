@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+
+<div th:fragment="contenido">
+
+    <div class="page-header">
+        <h1>Tu Carrito</h1>
+        <p>Revisa tus productos antes de confirmar el pedido</p>
+    </div>
+
+    <!-- Mensaje de éxito si viene de agregar -->
+    <div th:if="${exitoCarrito}"
+         style="background:#DCFCE7; color:#15803D; border-radius:12px; padding:12px 16px;
+                font-size:13.5px; font-weight:500; margin-bottom:20px;
+                display:flex; align-items:center; gap:8px;">
+        <i class="bi bi-check-circle-fill"></i>
+        <span th:text="${exitoCarrito}"></span>
+    </div>
+
+    <!-- Carrito vacío -->
+    <div th:if="${#lists.isEmpty(items)}"
+         style="text-align:center; padding:80px 0;">
+        <div style="width:80px; height:80px; background:#EEF2FF; border-radius:50%;
+                    display:flex; align-items:center; justify-content:center;
+                    margin:0 auto 20px;">
+            <i class="bi bi-cart-x" style="font-size:36px; color:#6366F1;"></i>
+        </div>
+        <h3 style="font-size:18px; font-weight:700; color:#111827; margin-bottom:8px;">
+            Tu carrito está vacío
+        </h3>
+        <p style="font-size:14px; color:#6B7280; margin-bottom:24px;">
+            Explora el marketplace y agrega los productos que te gusten
+        </p>
+        <a href="/marketplace" class="btn btn-primary">
+            <i class="bi bi-bag"></i>
+            Explorar Marketplace
+        </a>
+    </div>
+
+    <!-- Carrito con items -->
+    <div th:if="${!#lists.isEmpty(items)}"
+         style="display:flex; gap:24px; align-items:flex-start;">
+
+        <!-- ── LISTA DE PRODUCTOS ─────────────────────────── -->
+        <div style="flex:1; min-width:0;">
+            <div class="card-custom">
+
+                <div class="section-header">
+                    <div class="section-header-info">
+                        <h2>Productos seleccionados</h2>
+                        <p th:text="${#lists.size(items)} + ' ' + (${#lists.size(items)} == 1 ? 'producto' : 'productos')"></p>
+                    </div>
+                    <form action="/carrito/vaciar" method="post">
+                        <button type="submit" class="btn btn-secondary btn-sm"
+                                onclick="return confirm('¿Vaciar todo el carrito?')">
+                            <i class="bi bi-trash3"></i> Vaciar
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Cada item -->
+                <div th:each="item : ${items}"
+                     style="display:flex; align-items:center; gap:16px; padding:16px 0;
+                            border-bottom:1px solid #F3F4F6;">
+
+                    <!-- Ícono producto -->
+                    <div style="width:52px; height:52px; background:#EEF2FF; border-radius:12px;
+                                display:flex; align-items:center; justify-content:center;
+                                flex-shrink:0;">
+                        <i class="bi bi-bag-fill" style="font-size:22px; color:#6366F1;"></i>
+                    </div>
+
+                    <!-- Info -->
+                    <div style="flex:1; min-width:0;">
+                        <div style="font-size:14px; font-weight:700; color:#111827;
+                                    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"
+                             th:text="${item.nombreProducto}"></div>
+                        <div style="font-size:12px; color:#6B7280; margin-top:2px;">
+                            <i class="bi bi-shop" style="font-size:11px;"></i>
+                            <span th:text="${item.nombreEmprendimiento}"></span>
+                        </div>
+                        <div style="font-size:12px; color:#6B7280; margin-top:2px;">
+                            $<span th:text="${#numbers.formatDecimal(item.precioUnitario, 1, 'COMMA', 0, 'POINT')}"></span>
+                            c/u
+                        </div>
+                    </div>
+
+                    <!-- Control cantidad -->
+                    <form action="/carrito/actualizar" method="post"
+                          style="display:flex; align-items:center; gap:8px;">
+                        <input type="hidden" name="idProducto" th:value="${item.idProducto}"/>
+                        <div style="display:flex; align-items:center; gap:0; border:1.5px solid #E5E7EB;
+                                    border-radius:8px; overflow:hidden;">
+                            <button type="submit" name="cantidad"
+                                    th:value="${item.cantidad - 1}"
+                                    style="width:32px; height:32px; border:none; background:#F9FAFB;
+                                           cursor:pointer; font-size:16px; font-weight:700;
+                                           color:#6B7280; transition:background .15s;"
+                                    onmouseover="this.style.background='#F3F4F6'"
+                                    onmouseout="this.style.background='#F9FAFB'">−</button>
+                            <span style="padding:0 12px; font-size:14px; font-weight:600;
+                                         color:#111827; min-width:36px; text-align:center;"
+                                  th:text="${item.cantidad}"></span>
+                            <button type="submit" name="cantidad"
+                                    th:value="${item.cantidad + 1}"
+                                    style="width:32px; height:32px; border:none; background:#F9FAFB;
+                                           cursor:pointer; font-size:16px; font-weight:700;
+                                           color:#6B7280; transition:background .15s;"
+                                    onmouseover="this.style.background='#F3F4F6'"
+                                    onmouseout="this.style.background='#F9FAFB'">+</button>
+                        </div>
+                    </form>
+
+                    <!-- Subtotal -->
+                    <div style="font-size:15px; font-weight:800; color:#111827;
+                                min-width:100px; text-align:right;">
+                        $<span th:text="${#numbers.formatDecimal(item.subtotal, 1, 'COMMA', 0, 'POINT')}"></span>
+                    </div>
+
+                    <!-- Quitar -->
+                    <form action="/carrito/quitar" method="post">
+                        <input type="hidden" name="idProducto" th:value="${item.idProducto}"/>
+                        <button type="submit"
+                                style="width:32px; height:32px; border-radius:8px; border:none;
+                                       background:#FEE2E2; color:#EF4444; cursor:pointer;
+                                       display:flex; align-items:center; justify-content:center;
+                                       transition:background .15s;"
+                                onmouseover="this.style.background='#EF4444';this.style.color='#fff'"
+                                onmouseout="this.style.background='#FEE2E2';this.style.color='#EF4444'"
+                                title="Quitar">
+                            <i class="bi bi-x-lg" style="font-size:13px;"></i>
+                        </button>
+                    </form>
+
+                </div>
+                <!-- fin th:each -->
+
+            </div>
+
+            <a href="/marketplace"
+               style="display:inline-flex; align-items:center; gap:6px; font-size:13px;
+                      font-weight:600; color:#6B7280; text-decoration:none; margin-top:4px;">
+                <i class="bi bi-arrow-left"></i> Seguir comprando
+            </a>
+        </div>
+
+        <!-- ── RESUMEN DEL PEDIDO ─────────────────────────── -->
+        <div style="width:300px; flex-shrink:0;">
+            <div class="card-custom">
+
+                <div style="font-size:16px; font-weight:800; color:#111827;
+                            margin-bottom:20px; letter-spacing:-.3px;">
+                    Resumen del pedido
+                </div>
+
+                <!-- Desglose por emprendimiento -->
+                <div th:each="item : ${items}"
+                     style="display:flex; justify-content:space-between; align-items:center;
+                            margin-bottom:10px;">
+                    <span style="font-size:13px; color:#6B7280; max-width:160px;
+                                 white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"
+                          th:text="${item.nombreProducto} + ' x' + ${item.cantidad}"></span>
+                    <span style="font-size:13px; font-weight:600; color:#111827;">
+                        $<span th:text="${#numbers.formatDecimal(item.subtotal, 1, 'COMMA', 0, 'POINT')}"></span>
+                    </span>
+                </div>
+
+                <div style="border-top:2px solid #E5E7EB; margin:16px 0; padding-top:16px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <span style="font-size:15px; font-weight:700; color:#111827;">Total</span>
+                        <span style="font-size:20px; font-weight:800; color:#6366F1;">
+                            $<span th:text="${#numbers.formatDecimal(total, 1, 'COMMA', 0, 'POINT')}"></span>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Nota de entrega -->
+                <div style="background:#F9FAFB; border-radius:10px; padding:12px;
+                            margin-bottom:16px; font-size:12.5px; color:#6B7280;
+                            display:flex; gap:8px;">
+                    <i class="bi bi-geo-alt-fill" style="color:#6366F1; flex-shrink:0; margin-top:1px;"></i>
+                    <span>Entrega en el campus Icesi según acuerdo con el emprendedor.</span>
+                </div>
+
+                <!-- Botón confirmar -->
+                <form action="/carrito/confirmar" method="post">
+                    <button type="submit" class="btn btn-success"
+                            style="width:100%; justify-content:center; font-size:14px; padding:12px !important;"
+                            onclick="return confirm('¿Confirmar el pedido?')">
+                        <i class="bi bi-check-circle-fill"></i>
+                        Confirmar pedido
+                    </button>
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+    <!-- fin carrito con items -->
+
+</div>
+
+</body>
+</html>

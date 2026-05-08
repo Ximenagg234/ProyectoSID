@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="contenido">
+
+    <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+        <div>
+            <h1>Mis Emprendimientos</h1>
+            <p>Gestiona tus negocios en IcesiEmprende</p>
+        </div>
+        <a th:href="@{/mis-emprendimientos/nuevo}" class="btn btn-primary">
+            <i class="bi bi-plus-lg"></i> Nuevo Emprendimiento
+        </a>
+    </div>
+
+    <div th:if="${exito}"
+         style="background:#DCFCE7;color:#15803D;border-radius:12px;padding:12px 16px;
+                font-size:13.5px;font-weight:500;margin-bottom:20px;display:flex;align-items:center;gap:8px;">
+        <i class="bi bi-check-circle-fill"></i> <span th:text="${exito}"></span>
+    </div>
+
+    <div th:if="${#lists.isEmpty(emprendimientos)}"
+         style="text-align:center;padding:80px 0;">
+        <div style="width:80px;height:80px;background:#EEF2FF;border-radius:50%;
+                    display:flex;align-items:center;justify-content:center;margin:0 auto 20px;">
+            <i class="bi bi-rocket-takeoff" style="font-size:36px;color:#6366F1;"></i>
+        </div>
+        <h3 style="font-size:18px;font-weight:700;color:#111827;margin-bottom:8px;">Sin emprendimientos aún</h3>
+        <p style="font-size:14px;color:#6B7280;margin-bottom:20px;">Crea tu primer negocio y empieza a vender</p>
+        <a th:href="@{/mis-emprendimientos/nuevo}" class="btn btn-primary">Crear emprendimiento</a>
+    </div>
+
+    <div th:if="${!#lists.isEmpty(emprendimientos)}"
+         style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px;">
+
+        <div th:each="emp : ${emprendimientos}"
+             style="background:#fff;border-radius:16px;border:1px solid #E5E7EB;
+                    box-shadow:0 1px 4px rgba(0,0,0,.06);overflow:hidden;">
+
+            <!-- Banner -->
+            <div style="height:100px;display:flex;align-items:center;justify-content:center;
+                        background:linear-gradient(135deg,#6366F1,#8B5CF6);">
+                <i class="bi bi-rocket-takeoff-fill" style="font-size:40px;color:rgba(255,255,255,.7);"></i>
+            </div>
+
+            <div style="padding:16px;">
+                <div style="font-size:15px;font-weight:800;color:#111827;margin-bottom:4px;"
+                     th:text="${emp.nombre}"></div>
+                <div style="font-size:12px;color:#6366F1;font-weight:600;margin-bottom:6px;"
+                     th:text="${emp.categoria.nombre}"></div>
+                <div style="font-size:12.5px;color:#6B7280;margin-bottom:14px;
+                            overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;"
+                     th:text="${emp.descripcion}"></div>
+
+                <div style="display:flex;gap:8px;">
+                    <a th:href="@{'/mis-emprendimientos/' + ${emp.idEmprendimiento} + '/productos'}"
+                       class="btn btn-primary btn-sm" style="flex:1;justify-content:center;">
+                        <i class="bi bi-bag"></i> Productos
+                    </a>
+                    <a th:href="@{'/mis-emprendimientos/editar/' + ${emp.idEmprendimiento}}"
+                       class="btn btn-secondary btn-sm">
+                        <i class="bi bi-pencil"></i>
+                    </a>
+                    <a th:href="@{'/mis-emprendimientos/eliminar/' + ${emp.idEmprendimiento}}"
+                       class="btn btn-secondary btn-sm"
+                       style="color:#EF4444;"
+                       onclick="return confirm('¿Eliminar este emprendimiento?')">
+                        <i class="bi bi-trash3"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+</body>
+</html>

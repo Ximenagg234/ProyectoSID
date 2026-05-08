@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface PedidoRepository extends JpaRepository<Pedido, Integer> {
     List<Pedido> findByUsuario_IdUsuario(Integer idUsuario);
+    List<Pedido> findByEmprendimiento_IdEmprendimiento(Integer idEmprendimiento);
+    List<Pedido> findByEmprendimiento_Usuario_IdUsuario(Integer idUsuario);
 }

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="contenido">
+
+    <div class="page-header">
+        <h1 th:text="${producto.idProducto != null} ? 'Editar Producto' : 'Nuevo Producto'"></h1>
+        <p th:text="'En: ' + ${emprendimiento.nombre}"></p>
+    </div>
+
+    <div class="card-custom" style="max-width:560px;">
+        <form th:action="${producto.idProducto != null}
+                          ? @{'/mis-emprendimientos/' + ${idEmprendimiento} + '/productos/actualizar/' + ${producto.idProducto}}
+                          : @{'/mis-emprendimientos/' + ${idEmprendimiento} + '/productos'}"
+              th:object="${producto}" method="post">
+
+            <div style="display:flex;flex-direction:column;gap:16px;">
+
+                <div>
+                    <label class="form-label">Nombre del producto</label>
+                    <input type="text" th:field="*{nombre}" class="form-control"
+                           placeholder="Ej. Cappuccino Especial" required/>
+                </div>
+
+                <div>
+                    <label class="form-label">Descripción</label>
+                    <textarea th:field="*{descripcion}" class="form-control" rows="3"
+                              placeholder="Describe tu producto..."></textarea>
+                </div>
+
+                <div style="display:flex;gap:12px;">
+                    <div style="flex:1;">
+                        <label class="form-label">Precio (COP)</label>
+                        <input type="number" th:field="*{precio}" class="form-control"
+                               placeholder="Ej. 8000" min="0" step="100" required/>
+                    </div>
+                    <div style="flex:1;">
+                        <label class="form-label">Stock disponible</label>
+                        <input type="number" th:field="*{stockDisponible}" class="form-control"
+                               placeholder="Ej. 20" min="0" required/>
+                    </div>
+                </div>
+
+            </div>
+
+            <div style="display:flex;gap:10px;margin-top:24px;padding-top:20px;border-top:1px solid #E5E7EB;">
+                <button type="submit" class="btn btn-success">
+                    <i class="bi bi-check-lg"></i>
+                    <span th:text="${producto.idProducto != null} ? 'Actualizar' : 'Agregar'"></span>
+                </button>
+                <a th:href="@{'/mis-emprendimientos/' + ${idEmprendimiento} + '/productos'}"
+                   class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Cancelar
+                </a>
+            </div>
+        </form>
+    </div>
+
+</div>
+</body>
+</html>

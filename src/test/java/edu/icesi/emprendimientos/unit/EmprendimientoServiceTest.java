@@ -4,7 +4,9 @@ import edu.icesi.emprendimientos.entity.Emprendimiento;
 import edu.icesi.emprendimientos.entity.Usuario;
 import edu.icesi.emprendimientos.entity.Categoria;
 import edu.icesi.emprendimientos.entity.Estado;
+import edu.icesi.emprendimientos.entity.Semestre;
 import edu.icesi.emprendimientos.repository.EmprendimientoRepository;
+import edu.icesi.emprendimientos.repository.SemestreRepository;
 import edu.icesi.emprendimientos.service.impl.EmprendimientoServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,6 +27,9 @@ public class EmprendimientoServiceTest {
 
     @Mock
     private EmprendimientoRepository emprendimientoRepository;
+
+    @Mock
+    private SemestreRepository semestreRepository;
 
     @InjectMocks
     private EmprendimientoServiceImpl emprendimientoService;
@@ -51,6 +56,10 @@ public class EmprendimientoServiceTest {
 
     @Test
     void guardarEmprendimiento_Valido_SeGuardaCorrectamente() {
+        Semestre semestre = new Semestre();
+        semestre.setIdSemestre(1);
+        when(semestreRepository.findFirstByEstado_NombreOrderByFechaInicioDesc("ACTIVO"))
+                .thenReturn(Optional.of(semestre));
         when(emprendimientoRepository.save(any(Emprendimiento.class))).thenReturn(emprendimiento);
         Emprendimiento result = emprendimientoService.guardar(emprendimiento);
         assertNotNull(result);

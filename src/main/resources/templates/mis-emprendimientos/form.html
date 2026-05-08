@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="contenido">
+
+    <div class="page-header">
+        <h1 th:text="${emprendimiento.idEmprendimiento != null} ? 'Editar Emprendimiento' : 'Nuevo Emprendimiento'"></h1>
+        <p>Completa la información de tu negocio</p>
+    </div>
+
+    <div class="card-custom" style="max-width:600px;">
+        <form th:action="${emprendimiento.idEmprendimiento != null}
+                          ? @{'/mis-emprendimientos/actualizar/' + ${emprendimiento.idEmprendimiento}}
+                          : @{/mis-emprendimientos}"
+              th:object="${emprendimiento}" method="post">
+
+            <div style="display:flex;flex-direction:column;gap:16px;">
+
+                <div>
+                    <label class="form-label">Nombre del negocio</label>
+                    <input type="text" th:field="*{nombre}" class="form-control"
+                           placeholder="Ej. CaféIcesi" required/>
+                </div>
+
+                <div>
+                    <label class="form-label">Descripción</label>
+                    <textarea th:field="*{descripcion}" class="form-control" rows="3"
+                              placeholder="Cuéntanos de qué se trata tu negocio..." required></textarea>
+                </div>
+
+                <div>
+                    <label class="form-label">Categoría</label>
+                    <select th:field="*{categoria.idCategoria}" class="form-control">
+                        <option value="">Selecciona una categoría</option>
+                        <option th:each="cat : ${categorias}"
+                                th:value="${cat.idCategoria}"
+                                th:text="${cat.nombre}"></option>
+                    </select>
+                </div>
+
+            </div>
+
+            <div style="display:flex;gap:10px;margin-top:24px;padding-top:20px;border-top:1px solid #E5E7EB;">
+                <button type="submit" class="btn btn-success">
+                    <i class="bi bi-check-lg"></i>
+                    <span th:text="${emprendimiento.idEmprendimiento != null} ? 'Actualizar' : 'Crear'"></span>
+                </button>
+                <a th:href="@{/mis-emprendimientos}" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Volver
+                </a>
+            </div>
+        </form>
+    </div>
+
+</div>
+</body>
+</html>

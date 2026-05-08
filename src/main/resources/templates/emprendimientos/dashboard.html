@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="contenido">
+
+    <div class="page-header">
+        <h1>Mi Dashboard</h1>
+        <p>Resumen de tu actividad como emprendedor</p>
+    </div>
+
+    <!-- ── MÉTRICAS ─────────────────────────────────────────────────── -->
+    <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(200px,1fr)); gap:16px; margin-bottom:28px;">
+
+        <!-- Total pedidos -->
+        <div class="card-custom" style="padding:20px; display:flex; align-items:center; gap:16px;">
+            <div style="width:48px; height:48px; background:#EEF2FF; border-radius:14px;
+                        display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                <i class="bi bi-bag-check-fill" style="font-size:22px; color:#6366F1;"></i>
+            </div>
+            <div>
+                <div style="font-size:26px; font-weight:800; color:#111827; line-height:1;"
+                     th:text="${totalPedidos}">0</div>
+                <div style="font-size:12px; color:#6B7280; margin-top:2px;">Pedidos recibidos</div>
+            </div>
+        </div>
+
+        <!-- Pendientes -->
+        <div class="card-custom" style="padding:20px; display:flex; align-items:center; gap:16px;">
+            <div style="width:48px; height:48px; background:#FEF3C7; border-radius:14px;
+                        display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                <i class="bi bi-hourglass-split" style="font-size:22px; color:#D97706;"></i>
+            </div>
+            <div>
+                <div style="font-size:26px; font-weight:800; color:#111827; line-height:1;"
+                     th:text="${pedidosPendientes}">0</div>
+                <div style="font-size:12px; color:#6B7280; margin-top:2px;">Pedidos pendientes</div>
+            </div>
+        </div>
+
+        <!-- Ingresos -->
+        <div class="card-custom" style="padding:20px; display:flex; align-items:center; gap:16px;">
+            <div style="width:48px; height:48px; background:#DCFCE7; border-radius:14px;
+                        display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                <i class="bi bi-cash-coin" style="font-size:22px; color:#15803D;"></i>
+            </div>
+            <div>
+                <div style="font-size:22px; font-weight:800; color:#111827; line-height:1;">
+                    $<span th:text="${#numbers.formatDecimal(ingresos,1,'COMMA',0,'POINT')}">0</span>
+                </div>
+                <div style="font-size:12px; color:#6B7280; margin-top:2px;">Ingresos totales</div>
+            </div>
+        </div>
+
+        <!-- Emprendimientos -->
+        <div class="card-custom" style="padding:20px; display:flex; align-items:center; gap:16px;">
+            <div style="width:48px; height:48px; background:#F0FDF4; border-radius:14px;
+                        display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                <i class="bi bi-shop" style="font-size:22px; color:#16A34A;"></i>
+            </div>
+            <div>
+                <div style="font-size:26px; font-weight:800; color:#111827; line-height:1;"
+                     th:text="${misEmps.size()}">0</div>
+                <div style="font-size:12px; color:#6B7280; margin-top:2px;">Mis emprendimientos</div>
+            </div>
+        </div>
+
+    </div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:20px;">
+
+        <!-- ── MIS EMPRENDIMIENTOS ─────────────────────────────────── -->
+        <div class="card-custom" style="margin-bottom:0;">
+            <div class="section-header">
+                <div class="section-header-info">
+                    <h2>Mis Emprendimientos</h2>
+                    <p>Estado actual de cada uno</p>
+                </div>
+                <a th:href="@{/emprendimientos/nuevo}" class="btn btn-primary btn-sm">
+                    <i class="bi bi-plus-lg"></i> Nuevo
+                </a>
+            </div>
+
+            <div th:if="${misEmps.isEmpty()}"
+                 style="text-align:center; padding:32px 0; color:#9CA3AF;">
+                <i class="bi bi-rocket-takeoff" style="font-size:32px; display:block; margin-bottom:8px;"></i>
+                <p style="font-size:14px;">Aún no tienes emprendimientos.</p>
+            </div>
+
+            <div th:each="emp : ${misEmps}"
+                 style="display:flex; align-items:center; justify-content:space-between;
+                        padding:12px 0; border-bottom:1px solid #F3F4F6;">
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <div style="width:36px; height:36px; background:linear-gradient(135deg,#6366F1,#818CF8);
+                                border-radius:10px; display:flex; align-items:center; justify-content:center;">
+                        <i class="bi bi-rocket-takeoff-fill" style="font-size:15px; color:#fff;"></i>
+                    </div>
+                    <div>
+                        <div style="font-size:13.5px; font-weight:700; color:#111827;"
+                             th:text="${emp.nombre}"></div>
+                        <div style="font-size:11.5px; color:#9CA3AF;"
+                             th:text="${emp.categoria?.nombre}"></div>
+                    </div>
+                </div>
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <span th:text="${emp.estado?.nombre}"
+                          style="font-size:10px; font-weight:700; padding:3px 10px; border-radius:50px;"
+                          th:style="${emp.estado?.nombre == 'ACTIVO'}
+                                     ? 'background:#DCFCE7; color:#15803D;'
+                                     : 'background:#FEE2E2; color:#B91C1C;'">
+                    </span>
+                    <a th:href="@{'/emprendimientos/editar/' + ${emp.idEmprendimiento}}"
+                       style="font-size:12px; color:#6366F1; text-decoration:none; font-weight:600;">
+                        Editar
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── GRÁFICO: ESTADO DE PEDIDOS ──────────────────────────── -->
+        <div class="card-custom" style="margin-bottom:0;">
+            <div class="section-header">
+                <div class="section-header-info">
+                    <h2>Estado de Pedidos</h2>
+                    <p>Distribución por estado</p>
+                </div>
+            </div>
+            <div th:if="${pedidosPorEstado.isEmpty()}"
+                 style="text-align:center; padding:32px 0; color:#9CA3AF;">
+                <i class="bi bi-pie-chart" style="font-size:32px; display:block; margin-bottom:8px;"></i>
+                <p style="font-size:14px;">Sin pedidos registrados aún.</p>
+            </div>
+            <div th:if="${!pedidosPorEstado.isEmpty()}" style="display:flex; justify-content:center; align-items:center; height:200px;">
+                <canvas id="chartEstados" style="max-height:200px;"></canvas>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ── GRÁFICO: TOP PRODUCTOS (barra) ────────────────────────── -->
+    <div class="card-custom">
+        <div class="section-header">
+            <div class="section-header-info">
+                <h2>Top Productos Más Vendidos</h2>
+                <p>Unidades vendidas por producto</p>
+            </div>
+        </div>
+
+        <div th:if="${topProductos.isEmpty()}"
+             style="text-align:center; padding:32px 0; color:#9CA3AF;">
+            <i class="bi bi-bar-chart" style="font-size:32px; display:block; margin-bottom:8px;"></i>
+            <p style="font-size:14px;">Sin ventas registradas aún.</p>
+        </div>
+
+        <div th:if="${!topProductos.isEmpty()}" style="height:220px;">
+            <canvas id="chartTopProductos"></canvas>
+        </div>
+    </div>
+
+    <!-- ── ACCESOS RÁPIDOS ─────────────────────────────────────────── -->
+    <div style="display:flex; gap:12px; flex-wrap:wrap;">
+        <a th:href="@{/emprendimientos/mis-emprendimientos}" class="btn btn-outline-primary">
+            <i class="bi bi-rocket-takeoff"></i> Mis Emprendimientos
+        </a>
+        <a th:href="@{/productos}" class="btn btn-outline-primary">
+            <i class="bi bi-bag"></i> Mis Productos
+        </a>
+        <a th:href="@{/pedidos/recibidos}" class="btn btn-outline-primary">
+            <i class="bi bi-inbox"></i> Pedidos Recibidos
+        </a>
+        <a th:href="@{/emprendimientos/reporte}" class="btn btn-outline-primary">
+            <i class="bi bi-file-earmark-pdf"></i> Descargar Reporte PDF
+        </a>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script th:inline="javascript">
+    /*<![CDATA[*/
+    // Gráfico de barras: Top Productos
+    const topLabels = [];
+    const topValues = [];
+    /*[# th:each="entry : ${topProductos}"]*/
+    topLabels.push([[${entry.key}]]);
+    topValues.push([[${entry.value}]]);
+    /*[/]*/
+
+    if (topLabels.length > 0) {
+        new Chart(document.getElementById('chartTopProductos'), {
+            type: 'bar',
+            data: {
+                labels: topLabels,
+                datasets: [{
+                    label: 'Unidades vendidas',
+                    data: topValues,
+                    backgroundColor: 'rgba(99,102,241,0.7)',
+                    borderColor: '#6366F1',
+                    borderWidth: 1,
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { beginAtZero: true, ticks: { precision: 0 } }
+                }
+            }
+        });
+    }
+
+    // Gráfico doughnut: Estado de Pedidos
+    const estadoLabels = [];
+    const estadoValues = [];
+    const estadoColors = {
+        'PENDIENTE': '#F59E0B',
+        'CONFIRMADO': '#6366F1',
+        'PREPARANDO': '#3B82F6',
+        'ENTREGADO': '#22C55E',
+        'CANCELADO': '#EF4444'
+    };
+    const estadoBgs = [];
+    /*[# th:each="entry : ${pedidosPorEstado}"]*/
+    estadoLabels.push([[${entry.key}]]);
+    estadoValues.push([[${entry.value}]]);
+    estadoBgs.push(estadoColors[[[${entry.key}]]] || '#9CA3AF');
+    /*[/]*/
+
+    if (estadoLabels.length > 0) {
+        new Chart(document.getElementById('chartEstados'), {
+            type: 'doughnut',
+            data: {
+                labels: estadoLabels,
+                datasets: [{
+                    data: estadoValues,
+                    backgroundColor: estadoBgs,
+                    borderWidth: 2,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'right', labels: { font: { size: 11 } } }
+                }
+            }
+        });
+    }
+    /*]]>*/
+    </script>
+
+</div>
+
+</body>
+</html>

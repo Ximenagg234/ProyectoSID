@@ -597,33 +597,55 @@
 
         <div class="sidebar-section-label">Principal</div>
 
-        <a th:href="@{/usuarios}" class="sidebar-link">
+        <a th:href="@{/home}" class="sidebar-link">
             <i class="bi bi-grid-1x2"></i>
             Inicio
         </a>
 
-        <div class="sidebar-section-label">Emprendimientos</div>
+        <!-- COMPRADOR o EMPRENDEDOR -->
+        <div class="sidebar-section-label"
+             sec:authorize="hasAnyRole('COMPRADOR','EMPRENDEDOR','ADMIN')">Marketplace</div>
 
-        <a href="#" class="sidebar-link">
-            <i class="bi bi-rocket-takeoff"></i>
-            Mis Emprendimientos
-        </a>
-
-        <a th:href="@{/marketplace}" class="sidebar-link">
+        <a th:href="@{/marketplace}"
+           class="sidebar-link"
+           sec:authorize="hasAnyRole('COMPRADOR','EMPRENDEDOR','ADMIN')">
             <i class="bi bi-bag"></i>
             Marketplace
         </a>
 
-        <a th:href="@{/pedidos/mis-pedidos}" class="sidebar-link">
+        <a th:href="@{/carrito}"
+           class="sidebar-link"
+           sec:authorize="hasAnyRole('COMPRADOR','ADMIN')">
             <i class="bi bi-cart3"></i>
+            Carrito
+        </a>
+
+        <a th:href="@{/pedidos/mis-pedidos}"
+           class="sidebar-link"
+           sec:authorize="hasAnyRole('COMPRADOR','ADMIN')">
+            <i class="bi bi-bag-check"></i>
             Mis Pedidos
         </a>
 
-        <a th:href="@{/pedidos/recibidos}" class="sidebar-link">
+        <!-- EMPRENDEDOR -->
+        <div class="sidebar-section-label"
+             sec:authorize="hasAnyRole('EMPRENDEDOR','ADMIN')">Mi Negocio</div>
+
+        <a th:href="@{/mis-emprendimientos}"
+           class="sidebar-link"
+           sec:authorize="hasAnyRole('EMPRENDEDOR','ADMIN')">
+            <i class="bi bi-rocket-takeoff"></i>
+            Mis Emprendimientos
+        </a>
+
+        <a th:href="@{/pedidos/recibidos}"
+           class="sidebar-link"
+           sec:authorize="hasAnyRole('EMPRENDEDOR','ADMIN')">
             <i class="bi bi-inbox"></i>
             Pedidos Recibidos
         </a>
 
+        <!-- ADMIN -->
         <div class="sidebar-section-label" sec:authorize="hasRole('ADMIN')">Administración</div>
 
         <a th:href="@{/usuarios}" class="sidebar-link" sec:authorize="hasRole('ADMIN')">
@@ -634,11 +656,6 @@
         <a th:href="@{/roles}" class="sidebar-link" sec:authorize="hasRole('ADMIN')">
             <i class="bi bi-shield-check"></i>
             Roles
-        </a>
-
-        <a href="#" class="sidebar-link" sec:authorize="hasRole('ADMIN')">
-            <i class="bi bi-key"></i>
-            Permisos
         </a>
 
     </nav>
@@ -667,6 +684,16 @@
         </div>
 
         <div class="topbar-right">
+            <!-- Carrito (solo COMPRADOR) -->
+            <a href="/carrito" sec:authorize="hasRole('COMPRADOR')"
+               style="position:relative; width:36px; height:36px; border-radius:12px;
+                      border:1.5px solid #E5E7EB; background:#F9FAFB;
+                      display:flex; align-items:center; justify-content:center;
+                      color:#6B7280; text-decoration:none; transition:border-color .2s, color .2s;"
+               onmouseover="this.style.borderColor='#6366F1';this.style.color='#6366F1'"
+               onmouseout="this.style.borderColor='#E5E7EB';this.style.color='#6B7280'">
+                <i class="bi bi-cart3" style="font-size:15px;"></i>
+            </a>
             <div class="topbar-notify">
                 <i class="bi bi-bell"></i>
             </div>

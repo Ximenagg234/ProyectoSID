@@ -55,6 +55,9 @@ public class ProductoServiceImpl implements ProductoService {
         existente.setDescripcion(actualizado.getDescripcion());
         existente.setPrecio(actualizado.getPrecio());
         existente.setStockDisponible(actualizado.getStockDisponible());
+        if (actualizado.getEstado() != null) {
+            existente.setEstado(actualizado.getEstado());
+        }
         return productoRepository.save(existente);
     }
 
@@ -71,5 +74,15 @@ public class ProductoServiceImpl implements ProductoService {
     @Override
     public List<Producto> listarPorCategoria(Integer idCategoria) {
         return productoRepository.findByEmprendimiento_Categoria_IdCategoria(idCategoria);
+    }
+
+    @Override
+    public List<Producto> listarActivos() {
+        return productoRepository.findByEstado_Nombre("ACTIVO");
+    }
+
+    @Override
+    public List<Producto> listarActivosPorCategoria(Integer idCategoria) {
+        return productoRepository.findByEmprendimiento_Categoria_IdCategoriaAndEstado_Nombre(idCategoria, "ACTIVO");
     }
 }

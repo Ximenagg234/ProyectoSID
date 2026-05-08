@@ -50,6 +50,7 @@ public class UsuarioServiceTest {
         usuario = new Usuario();
         usuario.setIdUsuario(1);
         usuario.setNombreCompleto("Ximena Gomez");
+        usuario.setCorreoInstitucional("ximena@icesi.edu.co");
         usuario.setClave("1234");
         usuario.setRoles(new ArrayList<>(Arrays.asList(new UsuarioRol())));
     }
@@ -60,6 +61,8 @@ public class UsuarioServiceTest {
 
     @Test
     void guardarUsuario_WhenTieneRol_SeGuardaCorrectamente() {
+        when(usuarioRepository.findByCorreoInstitucional("ximena@icesi.edu.co"))
+                .thenReturn(Optional.empty());
         when(passwordEncoder.encode("1234")).thenReturn("encodedPassword");
         when(usuarioRepository.save(usuario)).thenReturn(usuario);
 
@@ -71,15 +74,16 @@ public class UsuarioServiceTest {
 
     @Test
     void guardarUsuario_WhenNoTieneRol_SeGuardaConListaVacia() {
-        // guardar() ya no lanza excepción si roles es null — inicializa lista vacía
         usuario.setRoles(null);
+        when(usuarioRepository.findByCorreoInstitucional("ximena@icesi.edu.co"))
+                .thenReturn(Optional.empty());
         when(passwordEncoder.encode("1234")).thenReturn("encodedPassword");
         when(usuarioRepository.save(usuario)).thenReturn(usuario);
 
         Usuario result = usuarioService.guardar(usuario);
 
         assertNotNull(result);
-        assertNotNull(result.getRoles()); // se inicializó la lista
+        assertNotNull(result.getRoles());
     }
 
     @Test
