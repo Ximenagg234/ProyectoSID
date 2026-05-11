@@ -223,7 +223,7 @@
     /*[# th:each="entry : ${pedidosPorEstado}"]*/
     estadoLabels.push([[${entry.key}]]);
     estadoValues.push([[${entry.value}]]);
-    estadoBgs.push(estadoColors[[[${entry.key}]]] || '#9CA3AF');
+    estadoBgs.push(estadoColors[ [[${entry.key}]] ] || '#9CA3AF');
     /*[/]*/
 
     if (estadoLabels.length > 0) {

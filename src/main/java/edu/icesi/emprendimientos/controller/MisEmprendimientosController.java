@@ -2,6 +2,7 @@ package edu.icesi.emprendimientos.controller;
 
 import edu.icesi.emprendimientos.entity.*;
 import edu.icesi.emprendimientos.repository.EstadoRepository;
+import edu.icesi.emprendimientos.repository.SemestreRepository;
 import edu.icesi.emprendimientos.repository.UsuarioRepository;
 import edu.icesi.emprendimientos.service.*;
 import org.springframework.security.core.Authentication;
@@ -22,19 +23,22 @@ public class MisEmprendimientosController {
     private final EstadoService estadoService;
     private final UsuarioRepository usuarioRepository;
     private final EstadoRepository estadoRepository;
+    private final SemestreRepository semestreRepository;
 
     public MisEmprendimientosController(EmprendimientoService emprendimientoService,
                                         ProductoService productoService,
                                         CategoriaService categoriaService,
                                         EstadoService estadoService,
                                         UsuarioRepository usuarioRepository,
-                                        EstadoRepository estadoRepository) {
+                                        EstadoRepository estadoRepository,
+                                        SemestreRepository semestreRepository) {
         this.emprendimientoService = emprendimientoService;
         this.productoService = productoService;
         this.categoriaService = categoriaService;
         this.estadoService = estadoService;
         this.usuarioRepository = usuarioRepository;
         this.estadoRepository = estadoRepository;
+        this.semestreRepository = semestreRepository;
     }
 
     // LISTAR MIS EMPRENDIMIENTOS
