@@ -1,0 +1,438 @@
+{
+  "info": {
+    "name": "Taller 4 — Emprendimientos API",
+    "description": "Colección REST API con JWT — Computación en Internet II",
+    "_postman_id": "taller4-emprendimientos-2026",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl",           "value": "http://localhost:8081" },
+    { "key": "token",             "value": "" },
+    { "key": "userId",            "value": "" },
+    { "key": "categoriaId",       "value": "" },
+    { "key": "emprendimientoId",  "value": "" },
+    { "key": "productoId",        "value": "" },
+    { "key": "pedidoId",          "value": "" },
+    { "key": "rolId",             "value": "" }
+  ],
+  "item": [
+    {
+      "name": "1. Auth",
+      "item": [
+        {
+          "name": "Registrar usuario",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/auth/register", "host": ["{{baseUrl}}"], "path": ["api","auth","register"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombreCompleto\": \"Test User\",\n  \"correoInstitucional\": \"testuser@icesi.edu.co\",\n  \"programaAcademico\": \"Ingenieria de Sistemas\",\n  \"semestreAcademico\": 5,\n  \"clave\": \"test1234\"\n}"
+            }
+          },
+          "event": [{ "listen": "test", "script": { "exec": ["var json = pm.response.json();", "pm.environment.set('userId', json.idUsuario);"] } }]
+        },
+        {
+          "name": "Login (obtener token)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/auth/login", "host": ["{{baseUrl}}"], "path": ["api","auth","login"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"correoInstitucional\": \"ximena@icesi.edu.co\",\n  \"clave\": \"1234\"\n}"
+            }
+          },
+          "event": [{ "listen": "test", "script": { "exec": ["var json = pm.response.json();", "pm.environment.set('token', json.token);", "pm.test('Token recibido', function(){ pm.expect(json.token).to.not.be.empty; });"] } }]
+        },
+        {
+          "name": "Login como Comprador (juan)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/auth/login", "host": ["{{baseUrl}}"], "path": ["api","auth","login"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"correoInstitucional\": \"juan@icesi.edu.co\",\n  \"clave\": \"1234\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Usuarios",
+      "item": [
+        {
+          "name": "GET todos los usuarios",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/usuarios", "host": ["{{baseUrl}}"], "path": ["api","usuarios"] }
+          }
+        },
+        {
+          "name": "GET usuario por ID",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/usuarios/{{userId}}", "host": ["{{baseUrl}}"], "path": ["api","usuarios","{{userId}}"] }
+          }
+        },
+        {
+          "name": "PUT actualizar usuario",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/usuarios/{{userId}}", "host": ["{{baseUrl}}"], "path": ["api","usuarios","{{userId}}"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombreCompleto\": \"Test User Actualizado\",\n  \"programaAcademico\": \"Ingenieria de Sistemas\",\n  \"semestreAcademico\": 6\n}"
+            }
+          }
+        },
+        {
+          "name": "DELETE usuario (solo ADMIN)",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/usuarios/{{userId}}", "host": ["{{baseUrl}}"], "path": ["api","usuarios","{{userId}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Categorias",
+      "item": [
+        {
+          "name": "POST crear categoría",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/categorias", "host": ["{{baseUrl}}"], "path": ["api","categorias"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Manualidades\",\n  \"descripcion\": \"Productos artesanales y manuales\"\n}"
+            }
+          },
+          "event": [{ "listen": "test", "script": { "exec": ["var json = pm.response.json();", "pm.environment.set('categoriaId', json.idCategoria);"] } }]
+        },
+        {
+          "name": "GET todas las categorías",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/categorias", "host": ["{{baseUrl}}"], "path": ["api","categorias"] }
+          }
+        },
+        {
+          "name": "GET categoría por ID",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/categorias/{{categoriaId}}", "host": ["{{baseUrl}}"], "path": ["api","categorias","{{categoriaId}}"] }
+          }
+        },
+        {
+          "name": "PUT actualizar categoría",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/categorias/{{categoriaId}}", "host": ["{{baseUrl}}"], "path": ["api","categorias","{{categoriaId}}"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Manualidades y Arte\",\n  \"descripcion\": \"Productos artesanales, manuales y artisticos\"\n}"
+            }
+          }
+        },
+        {
+          "name": "DELETE categoría",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/categorias/{{categoriaId}}", "host": ["{{baseUrl}}"], "path": ["api","categorias","{{categoriaId}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Emprendimientos",
+      "item": [
+        {
+          "name": "POST crear emprendimiento",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/emprendimientos", "host": ["{{baseUrl}}"], "path": ["api","emprendimientos"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Emprendimiento API Test\",\n  \"descripcion\": \"Creado via REST API\",\n  \"idUsuario\": 1,\n  \"idCategoria\": 1,\n  \"idSemestre\": 1,\n  \"idEstado\": 1\n}"
+            }
+          },
+          "event": [{ "listen": "test", "script": { "exec": ["var json = pm.response.json();", "pm.environment.set('emprendimientoId', json.idEmprendimiento);"] } }]
+        },
+        {
+          "name": "GET todos los emprendimientos",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/emprendimientos", "host": ["{{baseUrl}}"], "path": ["api","emprendimientos"] }
+          }
+        },
+        {
+          "name": "GET emprendimiento por ID",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/emprendimientos/{{emprendimientoId}}", "host": ["{{baseUrl}}"], "path": ["api","emprendimientos","{{emprendimientoId}}"] }
+          }
+        },
+        {
+          "name": "PUT actualizar emprendimiento",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/emprendimientos/{{emprendimientoId}}", "host": ["{{baseUrl}}"], "path": ["api","emprendimientos","{{emprendimientoId}}"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Emprendimiento API Actualizado\",\n  \"descripcion\": \"Actualizado via REST API\",\n  \"idUsuario\": 1,\n  \"idCategoria\": 1,\n  \"idSemestre\": 1,\n  \"idEstado\": 1\n}"
+            }
+          }
+        },
+        {
+          "name": "DELETE emprendimiento",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/emprendimientos/{{emprendimientoId}}", "host": ["{{baseUrl}}"], "path": ["api","emprendimientos","{{emprendimientoId}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Productos",
+      "item": [
+        {
+          "name": "POST crear producto",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/productos", "host": ["{{baseUrl}}"], "path": ["api","productos"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Producto API Test\",\n  \"descripcion\": \"Producto creado via REST\",\n  \"precio\": 50000,\n  \"stockDisponible\": 10,\n  \"idEmprendimiento\": 1,\n  \"idEstado\": 1\n}"
+            }
+          },
+          "event": [{ "listen": "test", "script": { "exec": ["var json = pm.response.json();", "pm.environment.set('productoId', json.idProducto);"] } }]
+        },
+        {
+          "name": "GET todos los productos",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/productos", "host": ["{{baseUrl}}"], "path": ["api","productos"] }
+          }
+        },
+        {
+          "name": "GET producto por ID",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/productos/{{productoId}}", "host": ["{{baseUrl}}"], "path": ["api","productos","{{productoId}}"] }
+          }
+        },
+        {
+          "name": "PUT actualizar producto",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/productos/{{productoId}}", "host": ["{{baseUrl}}"], "path": ["api","productos","{{productoId}}"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Producto API Actualizado\",\n  \"descripcion\": \"Actualizado via REST\",\n  \"precio\": 65000,\n  \"stockDisponible\": 20,\n  \"idEmprendimiento\": 1,\n  \"idEstado\": 1\n}"
+            }
+          }
+        },
+        {
+          "name": "DELETE producto",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/productos/{{productoId}}", "host": ["{{baseUrl}}"], "path": ["api","productos","{{productoId}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Pedidos",
+      "item": [
+        {
+          "name": "POST crear pedido",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/pedidos", "host": ["{{baseUrl}}"], "path": ["api","pedidos"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idEmprendimiento\": 1,\n  \"idUsuario\": 4,\n  \"idEstado\": 3,\n  \"detalles\": [\n    {\n      \"idProducto\": 1,\n      \"cantidad\": 1,\n      \"precioUnitario\": 3500000\n    }\n  ]\n}"
+            }
+          },
+          "event": [{ "listen": "test", "script": { "exec": ["var json = pm.response.json();", "pm.environment.set('pedidoId', json.idPedido);"] } }]
+        },
+        {
+          "name": "GET todos los pedidos",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/pedidos", "host": ["{{baseUrl}}"], "path": ["api","pedidos"] }
+          }
+        },
+        {
+          "name": "GET pedido por ID",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/pedidos/{{pedidoId}}", "host": ["{{baseUrl}}"], "path": ["api","pedidos","{{pedidoId}}"] }
+          }
+        },
+        {
+          "name": "GET mis pedidos (comprador)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/pedidos/mis-pedidos", "host": ["{{baseUrl}}"], "path": ["api","pedidos","mis-pedidos"] }
+          }
+        },
+        {
+          "name": "PUT actualizar estado pedido",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/pedidos/{{pedidoId}}", "host": ["{{baseUrl}}"], "path": ["api","pedidos","{{pedidoId}}"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idEmprendimiento\": 1,\n  \"idUsuario\": 4,\n  \"idEstado\": 4\n}"
+            }
+          }
+        },
+        {
+          "name": "DELETE pedido",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/pedidos/{{pedidoId}}", "host": ["{{baseUrl}}"], "path": ["api","pedidos","{{pedidoId}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "7. Roles (ADMIN)",
+      "item": [
+        {
+          "name": "POST crear rol",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/roles", "host": ["{{baseUrl}}"], "path": ["api","roles"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"MODERADOR\"\n}"
+            }
+          },
+          "event": [{ "listen": "test", "script": { "exec": ["var json = pm.response.json();", "pm.environment.set('rolId', json.idRol);"] } }]
+        },
+        {
+          "name": "GET todos los roles",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/roles", "host": ["{{baseUrl}}"], "path": ["api","roles"] }
+          }
+        },
+        {
+          "name": "GET rol por ID",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/roles/{{rolId}}", "host": ["{{baseUrl}}"], "path": ["api","roles","{{rolId}}"] }
+          }
+        },
+        {
+          "name": "PUT actualizar rol",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/roles/{{rolId}}", "host": ["{{baseUrl}}"], "path": ["api","roles","{{rolId}}"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"MODERADOR_SENIOR\"\n}"
+            }
+          }
+        },
+        {
+          "name": "DELETE rol",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/roles/{{rolId}}", "host": ["{{baseUrl}}"], "path": ["api","roles","{{rolId}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "8. Pruebas de Seguridad",
+      "item": [
+        {
+          "name": "401 - Sin token",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/emprendimientos", "host": ["{{baseUrl}}"], "path": ["api","emprendimientos"] }
+          },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('Debe retornar 401', function(){ pm.response.to.have.status(401); });"] } }]
+        },
+        {
+          "name": "403 - Comprador accede a roles (token juan)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/roles", "host": ["{{baseUrl}}"], "path": ["api","roles"] }
+          },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('Debe retornar 403', function(){ pm.response.to.have.status(403); });"] } }]
+        }
+      ]
+    }
+  ]
+}
