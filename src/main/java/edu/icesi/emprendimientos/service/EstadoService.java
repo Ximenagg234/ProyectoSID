@@ -9,4 +9,6 @@ public interface EstadoService {
     List<Estado> listar();
 
     Estado buscarPorId(Integer id);
+
+    Estado buscarPorNombre(String nombre);
 }

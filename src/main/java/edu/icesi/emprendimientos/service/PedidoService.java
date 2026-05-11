@@ -10,6 +10,7 @@ public interface PedidoService {
     Pedido buscarPorId(Integer id);
     List<Pedido> listarPorUsuario(Integer idUsuario);
     List<Pedido> listarPorEmprendedor(Integer idUsuario);
+    List<Pedido> listarRecibidosPorEmprendedor(Integer idUsuario);
     void actualizarEstado(Integer idPedido, Integer idEstado);
     void eliminar(Integer id);
 }

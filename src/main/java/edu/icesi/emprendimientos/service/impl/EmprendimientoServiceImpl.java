@@ -59,4 +59,17 @@ public class EmprendimientoServiceImpl implements EmprendimientoService {
     public List<Emprendimiento> listarPorUsuario(Integer idUsuario) {
         return emprendimientoRepository.findByUsuario_IdUsuario(idUsuario);
     }
+
+    @Override
+    public List<Emprendimiento> listarDestacados() {
+        return emprendimientoRepository.findByDestacadoTrue();
+    }
+
+    @Override
+    public void toggleDestacado(Integer id) {
+        Emprendimiento e = emprendimientoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Emprendimiento no encontrado"));
+        e.setDestacado(e.getDestacado() == null || !e.getDestacado());
+        emprendimientoRepository.save(e);
+    }
 }

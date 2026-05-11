@@ -26,4 +26,10 @@ public class EstadoServiceImpl implements EstadoService {
         return estadoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Estado no encontrado"));
     }
+
+    @Override
+    public Estado buscarPorNombre(String nombre) {
+        return estadoRepository.findByNombre(nombre)
+                .orElseThrow(() -> new RuntimeException("Estado no encontrado: " + nombre));
+    }
 }

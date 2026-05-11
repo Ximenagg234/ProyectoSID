@@ -10,4 +10,6 @@ public interface EmprendimientoService {
     Emprendimiento actualizar(Integer id, Emprendimiento emprendimiento);
     void eliminar(Integer id);
     List<Emprendimiento> listarPorUsuario(Integer idUsuario);
+    List<Emprendimiento> listarDestacados();
+    void toggleDestacado(Integer id);
 }

@@ -13,4 +13,5 @@ public interface UsuarioService {
     Usuario actualizar(Integer id, Usuario usuarioActualizado);
     void asignarRol(Integer idUsuario, Integer idRol);
     void quitarRol(Integer idUsuario, Integer idRol);
+    Usuario buscarPorCorreo(String correo);
 }

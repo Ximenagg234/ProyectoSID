@@ -59,6 +59,11 @@ public class PedidoServiceImpl implements PedidoService {
     }
 
     @Override
+    public List<Pedido> listarRecibidosPorEmprendedor(Integer idUsuario) {
+        return pedidoRepository.findByEmprendimiento_Usuario_IdUsuario(idUsuario);
+    }
+
+    @Override
     public void actualizarEstado(Integer idPedido, Integer idEstado) {
         Pedido pedido = pedidoRepository.findById(idPedido)
                 .orElseThrow(() -> new RuntimeException("Pedido no encontrado"));

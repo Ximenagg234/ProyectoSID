@@ -21,6 +21,9 @@ public class Emprendimiento {
     @Column(name = "logo_url")
     private String logoUrl;
 
+    @Column(name = "destacado", nullable = false)
+    private Boolean destacado = false;
+
     @ManyToOne
     @JoinColumn(name = "id_usuario", nullable = false)
     private Usuario usuario;
@@ -71,6 +74,9 @@ public class Emprendimiento {
 
     public String getLogoUrl() { return logoUrl; }
     public void setLogoUrl(String logoUrl) { this.logoUrl = logoUrl; }
+
+    public Boolean getDestacado() { return destacado; }
+    public void setDestacado(Boolean destacado) { this.destacado = destacado; }
 
     public Usuario getUsuario() { return usuario; }
     public void setUsuario(Usuario usuario) { this.usuario = usuario; }

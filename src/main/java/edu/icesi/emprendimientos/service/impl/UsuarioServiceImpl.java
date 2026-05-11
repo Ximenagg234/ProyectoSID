@@ -106,4 +106,10 @@ public class UsuarioServiceImpl implements UsuarioService {
         UsuarioRolId id = new UsuarioRolId(idUsuario, idRol);
         usuarioRolRepository.deleteById(id);
     }
+
+    @Override
+    public Usuario buscarPorCorreo(String correo) {
+        return usuarioRepository.findByCorreoInstitucional(correo)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+    }
 }

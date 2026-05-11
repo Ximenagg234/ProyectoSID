@@ -10,4 +10,6 @@ public interface EmprendimientoRepository extends JpaRepository<Emprendimiento, 
     List<Emprendimiento> findByEstado_Nombre(String estadoNombre);
 
     List<Emprendimiento> findByUsuario_IdUsuario(Integer idUsuario);
+
+    List<Emprendimiento> findByDestacadoTrue();
 }
