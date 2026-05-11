@@ -73,40 +73,13 @@ Serás redirigido automáticamente al login.
  
 ---
 
-## Despliegue en servidor (IAsLab)
+## Despliegue
 
-El sistema fue desplegado manualmente en un equipo del laboratorio IAsLab utilizando Apache Tomcat en un entorno Linux.
-
-### Proceso realizado
-
-1. Se verificó que el servidor no contaba con una instalación previa de Tomcat
-2. Se descargó Apache Tomcat (versión 9) desde el repositorio oficial
-3. Se descomprimió el servidor en el directorio del usuario
-4. Se copió el archivo `emprendimientos-0.0.1-SNAPSHOT.war` en la carpeta `webapps`
-5. Se inició el servidor ejecutando:
-```bash
-./startup.sh
-```
-
-6. Apache Tomcat desplegó automáticamente la aplicación al expandir el archivo WAR
-7. Se verificó el despliegue accediendo desde el navegador:
-```
-http://localhost:8081/emprendimientos-0.0.1-SNAPSHOT
-```
-
-### Acceso remoto
-
-Gracias al uso de ZeroTier, la aplicación puede ser accedida desde otra máquina dentro de la misma red virtual mediante la siguiente dirección:
+La aplicación está desplegada en el equipo **205m18** de la Universidad Icesi y es accesible en:
 
 ```
-http://10.147.20.78:8081/emprendimientos-0.0.1-SNAPSHOT
+http://10.147.20.80:8080/emprendimientos-0.0.1-SNAPSHOT/
 ```
-
-### Notas
-
-- El despliegue se realizó de forma manual sin herramientas de automatización.
-- Tomcat realiza la descompresión automática del archivo WAR dentro de la carpeta `webapps`.
-- Es necesario que el puerto `8081` esté habilitado para el acceso remoto.
 ---
 
 ## Credenciales de prueba
