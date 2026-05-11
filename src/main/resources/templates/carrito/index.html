@@ -50,7 +50,7 @@
                 <div class="section-header">
                     <div class="section-header-info">
                         <h2>Productos seleccionados</h2>
-                        <p th:text="${#lists.size(items)} + ' ' + (${#lists.size(items)} == 1 ? 'producto' : 'productos')"></p>
+                        <p th:text="${#lists.size(items) + ' ' + (#lists.size(items) == 1 ? 'producto' : 'productos')}"></p>
                     </div>
                     <form action="/carrito/vaciar" method="post">
                         <button type="submit" class="btn btn-secondary btn-sm"
@@ -161,7 +161,7 @@
                             margin-bottom:10px;">
                     <span style="font-size:13px; color:#6B7280; max-width:160px;
                                  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"
-                          th:text="${item.nombreProducto} + ' x' + ${item.cantidad}"></span>
+                          th:text="${item.nombreProducto + ' x' + item.cantidad}"></span>
                     <span style="font-size:13px; font-weight:600; color:#111827;">
                         $<span th:text="${#numbers.formatDecimal(item.subtotal, 1, 'COMMA', 0, 'POINT')}"></span>
                     </span>

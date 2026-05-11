@@ -75,7 +75,7 @@ public class SecurityConfig {
                 .authenticationProvider(authenticationProvider())
                 .authorizeHttpRequests(auth -> auth
                         // Públicas
-                        .requestMatchers("/login", "/usuarios/nuevo").permitAll()
+                        .requestMatchers("/login", "/usuarios/nuevo", "/acceso-denegado").permitAll()
                         .requestMatchers(HttpMethod.POST, "/usuarios").permitAll()
                         // Recursos estáticos
                         .requestMatchers("/uploads/**", "/css/**", "/js/**", "/images/**").permitAll()

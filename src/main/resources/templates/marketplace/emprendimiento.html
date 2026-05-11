@@ -13,11 +13,7 @@
     </a>
 
     <!-- ── BANNER DEL EMPRENDIMIENTO ────────────────────────── -->
-    <div th:style="'border-radius:20px; padding:28px 32px; margin-bottom:24px; overflow:hidden; position:relative;' +
-                   'background: linear-gradient(135deg,' +
-                   (${emprendimiento.categoria.nombre == 'Tecnologia'} ? '#667eea,#764ba2' :
-                    ${emprendimiento.categoria.nombre == 'Moda'} ? '#f093fb,#f5576c' :
-                    '#f7971e,#ffd200') + ');'">
+    <div th:style="'border-radius:20px; padding:28px 32px; margin-bottom:24px; overflow:hidden; position:relative; background: linear-gradient(135deg,' + (${emprendimiento.categoria?.nombre == 'Tecnologia' ? '#667eea,#764ba2' : (emprendimiento.categoria?.nombre == 'Moda' ? '#f093fb,#f5576c' : '#f7971e,#ffd200')}) + ');'">
 
         <div style="display:flex; align-items:center; gap:20px; position:relative; z-index:1;">
 
