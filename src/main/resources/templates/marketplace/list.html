@@ -10,6 +10,53 @@
         <p>Descubre lo que crean tus compañeros 🚀</p>
     </div>
 
+    <!-- ── EMPRENDIMIENTOS DESTACADOS ───────────────────────────── -->
+    <div th:if="${destacados != null and !destacados.isEmpty()}" style="margin-bottom:28px;">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
+            <div>
+                <h2 style="font-size:16px; font-weight:800; color:#111827; margin:0 0 2px;">
+                    <i class="bi bi-star-fill" style="color:#F59E0B; margin-right:6px;"></i>
+                    Emprendimientos Destacados
+                </h2>
+                <p style="font-size:12px; color:#6B7280; margin:0;">Los mejores del campus este semestre</p>
+            </div>
+            <a th:href="@{/marketplace/ranking}"
+               style="font-size:12px; font-weight:600; color:#6366F1; text-decoration:none; display:flex; align-items:center; gap:4px;">
+                Ver ranking <i class="bi bi-arrow-right"></i>
+            </a>
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(180px,1fr)); gap:12px;">
+            <a th:each="emp : ${destacados}"
+               th:href="@{'/marketplace/emprendimiento/' + ${emp.idEmprendimiento}}"
+               style="text-decoration:none;">
+                <div style="background:#fff; border-radius:14px; overflow:hidden; border:1px solid #E5E7EB;
+                            box-shadow:0 1px 3px rgba(0,0,0,.05); transition:transform .18s, box-shadow .18s;"
+                     onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 8px 20px rgba(0,0,0,.09)'"
+                     onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 1px 3px rgba(0,0,0,.05)'">
+                    <!-- Banner de color por categoría -->
+                    <div th:with="cat=${emp.categoria?.nombre}"
+                         style="height:60px; display:flex; align-items:center; justify-content:center;"
+                         th:style="${cat == 'Tecnologia'} ? 'height:60px;background:linear-gradient(135deg,#667eea,#764ba2);display:flex;align-items:center;justify-content:center;' :
+                                   (${cat == 'Moda'} ? 'height:60px;background:linear-gradient(135deg,#f093fb,#f5576c);display:flex;align-items:center;justify-content:center;' :
+                                   (${cat == 'Comida' or cat == 'Bebidas'} ? 'height:60px;background:linear-gradient(135deg,#f7971e,#ffd200);display:flex;align-items:center;justify-content:center;' :
+                                   'height:60px;background:linear-gradient(135deg,#4facfe,#00f2fe);display:flex;align-items:center;justify-content:center;'))">
+                        <i class="bi bi-rocket-takeoff-fill" style="font-size:26px; color:rgba(255,255,255,.85);"></i>
+                    </div>
+                    <div style="padding:10px 12px;">
+                        <div style="font-size:13px; font-weight:700; color:#111827;
+                                    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"
+                             th:text="${emp.nombre}"></div>
+                        <div style="font-size:11px; color:#6B7280; margin-top:2px;" th:text="${emp.categoria?.nombre}"></div>
+                        <div style="margin-top:6px; display:flex; align-items:center; gap:2px;">
+                            <i class="bi bi-star-fill" style="font-size:10px; color:#F59E0B;"></i>
+                            <span style="font-size:11px; font-weight:600; color:#374151;">Destacado</span>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+
     <div style="display:flex; gap:24px; align-items:flex-start;">
 
         <!-- ── FILTROS LATERAL ───────────────────────────── -->
@@ -79,28 +126,36 @@
                      onmouseover="this.style.boxShadow='0 8px 24px rgba(0,0,0,.1)';this.style.transform='translateY(-3px)'"
                      onmouseout="this.style.boxShadow='0 1px 3px rgba(0,0,0,.06)';this.style.transform='translateY(0)'">
 
-                    <!-- Banner color por categoría -->
-                    <div th:with="cat=${p.emprendimiento?.categoria?.nombre}"
-                         style="height:130px; display:flex; align-items:center; justify-content:center;">
-                        <div th:if="${cat == 'Tecnologia'}"
-                             style="width:100%; height:100%; background:linear-gradient(135deg,#667eea,#764ba2);
-                                    display:flex; align-items:center; justify-content:center;">
-                            <i class="bi bi-cpu-fill" style="font-size:44px; color:rgba(255,255,255,.75);"></i>
-                        </div>
-                        <div th:if="${cat == 'Moda'}"
-                             style="width:100%; height:100%; background:linear-gradient(135deg,#f093fb,#f5576c);
-                                    display:flex; align-items:center; justify-content:center;">
-                            <i class="bi bi-bag-heart-fill" style="font-size:44px; color:rgba(255,255,255,.75);"></i>
-                        </div>
-                        <div th:if="${cat == 'Comida' or cat == 'Bebidas'}"
-                             style="width:100%; height:100%; background:linear-gradient(135deg,#f7971e,#ffd200);
-                                    display:flex; align-items:center; justify-content:center;">
-                            <i class="bi bi-cup-hot-fill" style="font-size:44px; color:rgba(255,255,255,.75);"></i>
-                        </div>
-                        <div th:if="${cat != 'Tecnologia' and cat != 'Moda' and cat != 'Comida' and cat != 'Bebidas'}"
-                             style="width:100%; height:100%; background:linear-gradient(135deg,#4facfe,#00f2fe);
-                                    display:flex; align-items:center; justify-content:center;">
-                            <i class="bi bi-box-seam-fill" style="font-size:44px; color:rgba(255,255,255,.75);"></i>
+                    <!-- Imagen real o gradiente por categoría -->
+                    <div style="height:130px; overflow:hidden; position:relative;">
+                        <!-- Imagen real si existe -->
+                        <img th:if="${p.imagenes != null and !p.imagenes.isEmpty()}"
+                             th:src="${p.imagenes[0].urlImagen}"
+                             style="width:100%; height:130px; object-fit:cover;" alt="Foto del producto"/>
+                        <!-- Gradiente fallback -->
+                        <div th:if="${p.imagenes == null or p.imagenes.isEmpty()}"
+                             th:with="cat=${p.emprendimiento?.categoria?.nombre}"
+                             style="height:130px; display:flex; align-items:center; justify-content:center;">
+                            <div th:if="${cat == 'Tecnologia'}"
+                                 style="width:100%; height:100%; background:linear-gradient(135deg,#667eea,#764ba2);
+                                        display:flex; align-items:center; justify-content:center;">
+                                <i class="bi bi-cpu-fill" style="font-size:44px; color:rgba(255,255,255,.75);"></i>
+                            </div>
+                            <div th:if="${cat == 'Moda'}"
+                                 style="width:100%; height:100%; background:linear-gradient(135deg,#f093fb,#f5576c);
+                                        display:flex; align-items:center; justify-content:center;">
+                                <i class="bi bi-bag-heart-fill" style="font-size:44px; color:rgba(255,255,255,.75);"></i>
+                            </div>
+                            <div th:if="${cat == 'Comida' or cat == 'Bebidas'}"
+                                 style="width:100%; height:100%; background:linear-gradient(135deg,#f7971e,#ffd200);
+                                        display:flex; align-items:center; justify-content:center;">
+                                <i class="bi bi-cup-hot-fill" style="font-size:44px; color:rgba(255,255,255,.75);"></i>
+                            </div>
+                            <div th:if="${cat != 'Tecnologia' and cat != 'Moda' and cat != 'Comida' and cat != 'Bebidas'}"
+                                 style="width:100%; height:100%; background:linear-gradient(135deg,#4facfe,#00f2fe);
+                                        display:flex; align-items:center; justify-content:center;">
+                                <i class="bi bi-box-seam-fill" style="font-size:44px; color:rgba(255,255,255,.75);"></i>
+                            </div>
                         </div>
                     </div>
 

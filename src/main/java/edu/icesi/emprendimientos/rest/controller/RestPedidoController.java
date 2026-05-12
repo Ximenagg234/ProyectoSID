@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -51,6 +52,7 @@ public class RestPedidoController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Listar todos los pedidos")
     @ApiResponse(responseCode = "200", description = "Éxito")
     public ResponseEntity<List<PedidoResponseDTO>> getAll() {
@@ -68,6 +70,7 @@ public class RestPedidoController {
     }
 
     @GetMapping("/mis-pedidos")
+    @PreAuthorize("hasAnyRole('COMPRADOR','ADMIN')")
     @Operation(summary = "Ver mis pedidos (comprador autenticado)")
     @ApiResponse(responseCode = "200", description = "Éxito")
     public ResponseEntity<List<PedidoResponseDTO>> getMisPedidos(Authentication auth) {
@@ -78,6 +81,7 @@ public class RestPedidoController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('COMPRADOR','ADMIN')")
     @Operation(summary = "Crear pedido")
     @ApiResponse(responseCode = "201", description = "Creado")
     public ResponseEntity<PedidoResponseDTO> create(@RequestBody PedidoRequestDTO dto) {
@@ -119,6 +123,7 @@ public class RestPedidoController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('EMPRENDEDOR','ADMIN')")
     @Operation(summary = "Actualizar pedido")
     @ApiResponse(responseCode = "200", description = "Actualizado")
     public ResponseEntity<PedidoResponseDTO> update(@PathVariable Integer id,
@@ -134,6 +139,7 @@ public class RestPedidoController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Eliminar pedido")
     @ApiResponse(responseCode = "204", description = "Eliminado")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {

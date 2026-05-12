@@ -61,8 +61,6 @@ public class UsuarioServiceTest {
 
     @Test
     void guardarUsuario_WhenTieneRol_SeGuardaCorrectamente() {
-        when(usuarioRepository.findByCorreoInstitucional("ximena@icesi.edu.co"))
-                .thenReturn(Optional.empty());
         when(passwordEncoder.encode("1234")).thenReturn("encodedPassword");
         when(usuarioRepository.save(usuario)).thenReturn(usuario);
 
@@ -75,8 +73,6 @@ public class UsuarioServiceTest {
     @Test
     void guardarUsuario_WhenNoTieneRol_SeGuardaConListaVacia() {
         usuario.setRoles(null);
-        when(usuarioRepository.findByCorreoInstitucional("ximena@icesi.edu.co"))
-                .thenReturn(Optional.empty());
         when(passwordEncoder.encode("1234")).thenReturn("encodedPassword");
         when(usuarioRepository.save(usuario)).thenReturn(usuario);
 

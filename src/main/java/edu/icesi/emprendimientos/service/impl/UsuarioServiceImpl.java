@@ -8,6 +8,7 @@ import edu.icesi.emprendimientos.repository.RolRepository;
 import edu.icesi.emprendimientos.repository.UsuarioRepository;
 import edu.icesi.emprendimientos.repository.UsuarioRolRepository;
 import edu.icesi.emprendimientos.service.UsuarioService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -62,19 +63,24 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     public Usuario buscarPorId(Integer id) {
         return usuarioRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
     }
 
     @Override
     public Usuario actualizar(Integer id, Usuario usuarioActualizado) {
         Usuario existente = usuarioRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
 
-        existente.setNombreCompleto(usuarioActualizado.getNombreCompleto());
-
-        if (usuarioActualizado.getClave() != null && !usuarioActualizado.getClave().isEmpty()) {
+        if (usuarioActualizado.getNombreCompleto() != null)
+            existente.setNombreCompleto(usuarioActualizado.getNombreCompleto());
+        if (usuarioActualizado.getProgramaAcademico() != null)
+            existente.setProgramaAcademico(usuarioActualizado.getProgramaAcademico());
+        if (usuarioActualizado.getSemestreAcademico() != null)
+            existente.setSemestreAcademico(usuarioActualizado.getSemestreAcademico());
+        if (usuarioActualizado.getFotoPerfil() != null)
+            existente.setFotoPerfil(usuarioActualizado.getFotoPerfil());
+        if (usuarioActualizado.getClave() != null && !usuarioActualizado.getClave().isEmpty())
             existente.setClave(passwordEncoder.encode(usuarioActualizado.getClave()));
-        }
 
         return usuarioRepository.save(existente);
     }
@@ -87,10 +93,10 @@ public class UsuarioServiceImpl implements UsuarioService {
         if (usuarioRolRepository.existsById(id)) return;
 
         Usuario usuario = usuarioRepository.findById(idUsuario)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
 
         Rol rol = rolRepository.findById(idRol)
-                .orElseThrow(() -> new RuntimeException("Rol no encontrado"));
+                .orElseThrow(() -> new EntityNotFoundException("Rol no encontrado"));
 
         UsuarioRol usuarioRol = new UsuarioRol();
         usuarioRol.setId(id);
@@ -110,6 +116,6 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     public Usuario buscarPorCorreo(String correo) {
         return usuarioRepository.findByCorreoInstitucional(correo)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
     }
 }

@@ -12,7 +12,7 @@
         <form th:action="${producto.idProducto != null}
                           ? @{'/mis-emprendimientos/' + ${idEmprendimiento} + '/productos/actualizar/' + ${producto.idProducto}}
                           : @{'/mis-emprendimientos/' + ${idEmprendimiento} + '/productos'}"
-              th:object="${producto}" method="post">
+              th:object="${producto}" method="post" enctype="multipart/form-data">
 
             <div style="display:flex;flex-direction:column;gap:16px;">
 
@@ -39,6 +39,51 @@
                         <input type="number" th:field="*{stockDisponible}" class="form-control"
                                placeholder="Ej. 20" min="0" required/>
                     </div>
+                </div>
+
+                <!-- Imagen del producto -->
+                <div>
+                    <label class="form-label">Foto del producto</label>
+
+                    <!-- Preview imagen actual (modo edición) -->
+                    <div th:if="${imagenActual != null}" style="margin-bottom:10px;">
+                        <img th:src="${imagenActual}" alt="Imagen actual"
+                             style="width:100%; max-height:160px; object-fit:cover;
+                                    border-radius:12px; border:2px solid #E5E7EB;"/>
+                        <div style="font-size:11px; color:#6B7280; margin-top:4px;">
+                            Imagen actual · Sube una nueva para reemplazarla
+                        </div>
+                    </div>
+
+                    <div style="border:2px dashed #D1D5DB; border-radius:12px; padding:20px;
+                                text-align:center; cursor:pointer; transition:border-color .2s;"
+                         onmouseover="this.style.borderColor='#6366F1'"
+                         onmouseout="this.style.borderColor='#D1D5DB'"
+                         onclick="document.getElementById('imagenInput').click()">
+                        <i class="bi bi-image" style="font-size:28px; color:#6366F1; display:block; margin-bottom:8px;"></i>
+                        <div style="font-size:13px; font-weight:600; color:#374151;">
+                            Haz clic para subir una foto
+                        </div>
+                        <div style="font-size:11px; color:#9CA3AF; margin-top:4px;">
+                            PNG, JPG, WEBP · máx. 10MB
+                        </div>
+                        <div id="imagenNombre" style="font-size:12px; color:#6366F1; margin-top:8px; font-weight:600;"></div>
+                    </div>
+                    <input type="file" id="imagenInput" name="imagen" accept="image/*"
+                           style="display:none;"
+                           onchange="document.getElementById('imagenNombre').textContent = this.files[0]?.name || '';
+                                     if(this.files[0]){
+                                         var reader=new FileReader();
+                                         reader.onload=function(e){
+                                             var prev=document.getElementById('imagenPreview');
+                                             prev.src=e.target.result;
+                                             prev.style.display='block';
+                                         };
+                                         reader.readAsDataURL(this.files[0]);
+                                     }"/>
+                    <img id="imagenPreview" src="#" alt="Preview"
+                         style="display:none; width:100%; max-height:160px; object-fit:cover;
+                                border-radius:12px; border:2px solid #6366F1; margin-top:10px;"/>
                 </div>
 
             </div>

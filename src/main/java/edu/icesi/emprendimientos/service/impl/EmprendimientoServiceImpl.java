@@ -3,6 +3,7 @@ package edu.icesi.emprendimientos.service.impl;
 import edu.icesi.emprendimientos.entity.Emprendimiento;
 import edu.icesi.emprendimientos.repository.EmprendimientoRepository;
 import edu.icesi.emprendimientos.service.EmprendimientoService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -36,13 +37,13 @@ public class EmprendimientoServiceImpl implements EmprendimientoService {
     @Override
     public Emprendimiento buscarPorId(Integer id) {
         return emprendimientoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Emprendimiento no encontrado"));
+                .orElseThrow(() -> new EntityNotFoundException("Emprendimiento no encontrado"));
     }
 
     @Override
     public Emprendimiento actualizar(Integer id, Emprendimiento actualizado) {
         Emprendimiento existente = emprendimientoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Emprendimiento no encontrado"));
+                .orElseThrow(() -> new EntityNotFoundException("Emprendimiento no encontrado"));
         existente.setNombre(actualizado.getNombre());
         existente.setDescripcion(actualizado.getDescripcion());
         existente.setLogoUrl(actualizado.getLogoUrl());
@@ -68,7 +69,7 @@ public class EmprendimientoServiceImpl implements EmprendimientoService {
     @Override
     public void toggleDestacado(Integer id) {
         Emprendimiento e = emprendimientoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Emprendimiento no encontrado"));
+                .orElseThrow(() -> new EntityNotFoundException("Emprendimiento no encontrado"));
         e.setDestacado(e.getDestacado() == null || !e.getDestacado());
         emprendimientoRepository.save(e);
     }

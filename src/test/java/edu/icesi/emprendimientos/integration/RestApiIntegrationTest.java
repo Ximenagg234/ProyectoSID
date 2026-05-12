@@ -112,11 +112,12 @@ public class RestApiIntegrationTest {
 
     @Test
     @Order(12)
-    void getEmprendimientos_RolComprador_Retorna403() throws Exception {
+    void getEmprendimientos_RolComprador_Retorna200() throws Exception {
         Assumptions.assumeTrue(tokenComprador != null, "Token COMPRADOR no disponible");
+        // Cualquier usuario autenticado puede listar emprendimientos (sin @PreAuthorize en GET)
         mockMvc.perform(get("/api/emprendimientos")
                         .header("Authorization", "Bearer " + tokenComprador))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isOk());
     }
 
     // ─── /api/emprendimientos — rol correcto (EMPRENDEDOR) → 200 ─────────────
@@ -146,12 +147,12 @@ public class RestApiIntegrationTest {
 
     @Test
     @Order(15)
-    void getEmprendimientoPorId_NoExiste_Retorna400() throws Exception {
+    void getEmprendimientoPorId_NoExiste_Retorna404() throws Exception {
         Assumptions.assumeTrue(tokenEmprendedor != null, "Token EMPRENDEDOR no disponible");
-        // buscarPorId lanza RuntimeException → GlobalRestExceptionHandler → 400
+        // buscarPorId lanza EntityNotFoundException → GlobalRestExceptionHandler → 404
         mockMvc.perform(get("/api/emprendimientos/9999")
                         .header("Authorization", "Bearer " + tokenEmprendedor))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isNotFound());
     }
 
     // ─── /api/emprendimientos POST — 201 Created ──────────────────────────────
@@ -226,12 +227,12 @@ public class RestApiIntegrationTest {
 
     @Test
     @Order(24)
-    void getCategoriaPorId_NoExiste_Retorna400() throws Exception {
+    void getCategoriaPorId_NoExiste_Retorna404() throws Exception {
         Assumptions.assumeTrue(tokenAdmin != null, "Token ADMIN no disponible");
-        // buscarPorId lanza RuntimeException → GlobalRestExceptionHandler → 400
+        // buscarPorId lanza EntityNotFoundException → GlobalRestExceptionHandler → 404
         mockMvc.perform(get("/api/categorias/9999")
                         .header("Authorization", "Bearer " + tokenAdmin))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isNotFound());
     }
 
     // ─── /api/roles — solo ADMIN ──────────────────────────────────────────────
@@ -282,21 +283,22 @@ public class RestApiIntegrationTest {
 
     @Test
     @Order(42)
-    void getProductos_RolComprador_Retorna403() throws Exception {
+    void getProductos_RolComprador_Retorna200() throws Exception {
         Assumptions.assumeTrue(tokenComprador != null, "Token COMPRADOR no disponible");
+        // Cualquier usuario autenticado puede listar productos (sin @PreAuthorize en GET)
         mockMvc.perform(get("/api/productos")
                         .header("Authorization", "Bearer " + tokenComprador))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isOk());
     }
 
     @Test
     @Order(43)
-    void getProductoPorId_NoExiste_Retorna400() throws Exception {
+    void getProductoPorId_NoExiste_Retorna404() throws Exception {
         Assumptions.assumeTrue(tokenEmprendedor != null, "Token EMPRENDEDOR no disponible");
-        // buscarPorId lanza RuntimeException → GlobalRestExceptionHandler → 400
+        // buscarPorId lanza EntityNotFoundException → GlobalRestExceptionHandler → 404
         mockMvc.perform(get("/api/productos/9999")
                         .header("Authorization", "Bearer " + tokenEmprendedor))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isNotFound());
     }
 
     // ─── /api/usuarios ────────────────────────────────────────────────────────
@@ -329,12 +331,12 @@ public class RestApiIntegrationTest {
 
     @Test
     @Order(53)
-    void getUsuarioPorId_NoExiste_Retorna400() throws Exception {
+    void getUsuarioPorId_NoExiste_Retorna404() throws Exception {
         Assumptions.assumeTrue(tokenAdmin != null, "Token ADMIN no disponible");
-        // buscarPorId lanza RuntimeException → GlobalRestExceptionHandler → 400
+        // buscarPorId lanza EntityNotFoundException → GlobalRestExceptionHandler → 404
         mockMvc.perform(get("/api/usuarios/9999")
                         .header("Authorization", "Bearer " + tokenAdmin))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isNotFound());
     }
 
     // ─── /api/pedidos ─────────────────────────────────────────────────────────

@@ -105,28 +105,36 @@ INSERT INTO user_role (id_usuario, id_rol) VALUES (8, 3);  -- david: COMPRADOR
 -- EMPRENDIMIENTOS
 -- ===============================================================
 INSERT INTO emprendimiento (id_emprendimiento, nombre, descripcion, logo_url, destacado, id_usuario, id_categoria, id_semestre, id_estado)
-VALUES (1, 'TechStore', 'Accesorios y gadgets tecnologicos de calidad para estudiantes de Icesi. Celulares, audifonos y perifericos al mejor precio.', NULL, TRUE, 1, 1, 1, 1);
+VALUES (1, 'TechStore', 'Accesorios y gadgets tecnologicos de calidad para estudiantes de Icesi. Celulares, audifonos y perifericos al mejor precio.',
+        'https://images.unsplash.com/photo-1518770660439-4636190af475?w=300&h=300&fit=crop', TRUE, 1, 1, 1, 1);
 
 INSERT INTO emprendimiento (id_emprendimiento, nombre, descripcion, logo_url, destacado, id_usuario, id_categoria, id_semestre, id_estado)
-VALUES (2, 'IcesiWear', 'Ropa urbana y accesorios de moda universitaria. Disenos exclusivos pensados para el estudiante de Icesi.', NULL, TRUE, 2, 2, 1, 1);
+VALUES (2, 'IcesiWear', 'Ropa urbana y accesorios de moda universitaria. Disenos exclusivos pensados para el estudiante de Icesi.',
+        'https://images.unsplash.com/photo-1445205170230-053b83016050?w=300&h=300&fit=crop', TRUE, 2, 2, 1, 1);
 
 INSERT INTO emprendimiento (id_emprendimiento, nombre, descripcion, logo_url, destacado, id_usuario, id_categoria, id_semestre, id_estado)
-VALUES (3, 'CafeIcesi', 'Cafe de especialidad preparado con amor por estudiantes de Icesi. Granos seleccionados y preparaciones artesanales.', NULL, TRUE, 3, 4, 1, 1);
+VALUES (3, 'CafeIcesi', 'Cafe de especialidad preparado con amor por estudiantes de Icesi. Granos seleccionados y preparaciones artesanales.',
+        'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=300&h=300&fit=crop', TRUE, 3, 4, 1, 1);
 
 INSERT INTO emprendimiento (id_emprendimiento, nombre, descripcion, logo_url, destacado, id_usuario, id_categoria, id_semestre, id_estado)
-VALUES (4, 'ArteU', 'Ilustraciones, productos artisticos y personalizados con identidad universitaria. Arte hecho por estudiantes para estudiantes.', NULL, FALSE, 3, 5, 1, 1);
+VALUES (4, 'ArteU', 'Ilustraciones, productos artisticos y personalizados con identidad universitaria. Arte hecho por estudiantes para estudiantes.',
+        'https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=300&h=300&fit=crop', FALSE, 3, 5, 1, 1);
 
 INSERT INTO emprendimiento (id_emprendimiento, nombre, descripcion, logo_url, destacado, id_usuario, id_categoria, id_semestre, id_estado)
-VALUES (5, 'FoodLab Icesi', 'Comida saludable y deliciosa preparada por estudiantes de Gastronomia. Bowls, wraps y postres artesanales cada semana.', NULL, TRUE, 5, 3, 1, 1);
+VALUES (5, 'FoodLab Icesi', 'Comida saludable y deliciosa preparada por estudiantes de Gastronomia. Bowls, wraps y postres artesanales cada semana.',
+        'https://images.unsplash.com/photo-1547592180-85f173990554?w=300&h=300&fit=crop', TRUE, 5, 3, 1, 1);
 
 INSERT INTO emprendimiento (id_emprendimiento, nombre, descripcion, logo_url, destacado, id_usuario, id_categoria, id_semestre, id_estado)
-VALUES (6, 'Manos Creativas', 'Manualidades, ceramica y productos hechos a mano con materiales sostenibles. Cada pieza es unica e irrepetible.', NULL, FALSE, 5, 5, 1, 1);
+VALUES (6, 'Manos Creativas', 'Manualidades, ceramica y productos hechos a mano con materiales sostenibles. Cada pieza es unica e irrepetible.',
+        'https://images.unsplash.com/photo-1452860606245-08befc0ff44b?w=300&h=300&fit=crop', FALSE, 5, 5, 1, 1);
 
 INSERT INTO emprendimiento (id_emprendimiento, nombre, descripcion, logo_url, destacado, id_usuario, id_categoria, id_semestre, id_estado)
-VALUES (7, 'CodeByte Solutions', 'Servicios de desarrollo web, apps y soporte tecnico para la comunidad universitaria. Soluciones digitales accesibles.', NULL, FALSE, 6, 6, 1, 1);
+VALUES (7, 'CodeByte Solutions', 'Servicios de desarrollo web, apps y soporte tecnico para la comunidad universitaria. Soluciones digitales accesibles.',
+        'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=300&h=300&fit=crop', FALSE, 6, 6, 1, 1);
 
 INSERT INTO emprendimiento (id_emprendimiento, nombre, descripcion, logo_url, destacado, id_usuario, id_categoria, id_semestre, id_estado)
-VALUES (8, 'GreenFit', 'Suplementos naturales, proteinas vegetales y snacks fitness para estudiantes activos. Salud y energia para tu dia.', NULL, FALSE, 2, 3, 1, 1);
+VALUES (8, 'GreenFit', 'Suplementos naturales, proteinas vegetales y snacks fitness para estudiantes activos. Salud y energia para tu dia.',
+        'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=300&h=300&fit=crop', FALSE, 2, 3, 1, 1);
 
 -- ===============================================================
 -- PRODUCTOS
@@ -249,55 +257,49 @@ INSERT INTO producto (id_producto, nombre, descripcion, precio, stock_disponible
 VALUES (36, 'Collageno en Polvo 200g', 'Colageno marino hidrolizado sin sabor. Se disuelve en cualquier bebida. 30 porciones.', 65000, 10, 8, 1);
 
 -- ===============================================================
--- IMAGENES DE PRODUCTO (loremflickr.com - imagenes reales por categoria)
+-- IMAGENES DE PRODUCTO (Unsplash - fotos fijas y relevantes por producto)
 -- ===============================================================
--- TechStore
-INSERT INTO imagen_producto (id_imagen, url_imagen, id_producto) VALUES (1,  'https://loremflickr.com/400/300/iphone,smartphone', 1);
-INSERT INTO imagen_producto (id_imagen, url_imagen, id_producto) VALUES (2,  'https://loremflickr.com/400/300/iphone,screen', 1);
-INSERT INTO imagen_producto (id_imagen, url_imagen, id_producto) VALUES (3,  'https://loremflickr.com/400/300/airpods,earbuds', 2);
-INSERT INTO imagen_producto (id_imagen, url_imagen, id_producto) VALUES (4,  'https://loremflickr.com/400/300/usb,charger', 3);
-INSERT INTO imagen_producto (id_imagen, url_imagen, id_producto) VALUES (5,  'https://loremflickr.com/400/300/mouse,logitech', 4);
-INSERT INTO imagen_producto (id_imagen, url_imagen, id_producto) VALUES (6,  'https://loremflickr.com/400/300/computer,mouse', 4);
-INSERT INTO imagen_producto (id_imagen, url_imagen, id_producto) VALUES (7,  'https://loremflickr.com/400/300/usb,hub', 5);
--- IcesiWear
-INSERT INTO imagen_producto (id_imagen, url_imagen, id_producto) VALUES (8,  'https://loremflickr.com/400/300/tshirt,fashion', 7);
-INSERT INTO imagen_producto (id_imagen, url_imagen, id_producto) VALUES (9,  'https://loremflickr.com/400/300/oversize,shirt', 7);
-INSERT INTO imagen_producto (id_imagen, url_imagen, id_producto) VALUES (10, 'https://loremflickr.com/400/300/tote,bag', 8);
-INSERT INTO imagen_producto (id_imagen, url_imagen, id_producto) VALUES (11, 'https://loremflickr.com/400/300/hoodie,sweatshirt', 9);
-INSERT INTO imagen_producto (id_imagen, url_imagen, id_producto) VALUES (12, 'https://loremflickr.com/400/300/snapback,cap', 10);
--- CafeIcesi
-INSERT INTO imagen_producto (id_imagen, url_imagen, id_producto) VALUES (13, 'https://loremflickr.com/400/300/cappuccino,coffee', 12);
-INSERT INTO imagen_producto (id_imagen, url_imagen, id_producto) VALUES (14, 'https://loremflickr.com/400/300/espresso,foam', 12);
-INSERT INTO imagen_producto (id_imagen, url_imagen, id_producto) VALUES (15, 'https://loremflickr.com/400/300/latte,caramel', 13);
-INSERT INTO imagen_producto (id_imagen, url_imagen, id_producto) VALUES (16, 'https://loremflickr.com/400/300/cold,brew', 14);
-INSERT INTO imagen_producto (id_imagen, url_imagen, id_producto) VALUES (17, 'https://loremflickr.com/400/300/brownie,chocolate', 15);
-INSERT INTO imagen_producto (id_imagen, url_imagen, id_producto) VALUES (18, 'https://loremflickr.com/400/300/smoothie,tropical', 16);
--- ArteU
-INSERT INTO imagen_producto (id_imagen, url_imagen, id_producto) VALUES (19, 'https://loremflickr.com/400/300/stickers,colorful', 17);
-INSERT INTO imagen_producto (id_imagen, url_imagen, id_producto) VALUES (20, 'https://loremflickr.com/400/300/illustration,portrait', 18);
-INSERT INTO imagen_producto (id_imagen, url_imagen, id_producto) VALUES (21, 'https://loremflickr.com/400/300/poster,art', 19);
-INSERT INTO imagen_producto (id_imagen, url_imagen, id_producto) VALUES (22, 'https://loremflickr.com/400/300/notebook,journal', 20);
--- FoodLab Icesi
-INSERT INTO imagen_producto (id_imagen, url_imagen, id_producto) VALUES (23, 'https://loremflickr.com/400/300/bowl,chicken', 21);
-INSERT INTO imagen_producto (id_imagen, url_imagen, id_producto) VALUES (24, 'https://loremflickr.com/400/300/quinoa,avocado', 21);
-INSERT INTO imagen_producto (id_imagen, url_imagen, id_producto) VALUES (25, 'https://loremflickr.com/400/300/wrap,vegan', 22);
-INSERT INTO imagen_producto (id_imagen, url_imagen, id_producto) VALUES (26, 'https://loremflickr.com/400/300/cheesecake,berries', 23);
-INSERT INTO imagen_producto (id_imagen, url_imagen, id_producto) VALUES (27, 'https://loremflickr.com/400/300/granola,oats', 24);
--- Manos Creativas
-INSERT INTO imagen_producto (id_imagen, url_imagen, id_producto) VALUES (28, 'https://loremflickr.com/400/300/ceramic,mug', 26);
-INSERT INTO imagen_producto (id_imagen, url_imagen, id_producto) VALUES (29, 'https://loremflickr.com/400/300/pottery,handmade', 26);
-INSERT INTO imagen_producto (id_imagen, url_imagen, id_producto) VALUES (30, 'https://loremflickr.com/400/300/macrame,plant', 27);
-INSERT INTO imagen_producto (id_imagen, url_imagen, id_producto) VALUES (31, 'https://loremflickr.com/400/300/candle,soy', 28);
-INSERT INTO imagen_producto (id_imagen, url_imagen, id_producto) VALUES (32, 'https://loremflickr.com/400/300/bracelet,handmade', 29);
--- CodeByte Solutions
-INSERT INTO imagen_producto (id_imagen, url_imagen, id_producto) VALUES (33, 'https://loremflickr.com/400/300/website,laptop', 30);
-INSERT INTO imagen_producto (id_imagen, url_imagen, id_producto) VALUES (34, 'https://loremflickr.com/400/300/programming,code', 31);
-INSERT INTO imagen_producto (id_imagen, url_imagen, id_producto) VALUES (35, 'https://loremflickr.com/400/300/computer,repair', 32);
-INSERT INTO imagen_producto (id_imagen, url_imagen, id_producto) VALUES (36, 'https://loremflickr.com/400/300/video,editing', 33);
--- GreenFit
-INSERT INTO imagen_producto (id_imagen, url_imagen, id_producto) VALUES (37, 'https://loremflickr.com/400/300/protein,powder', 34);
-INSERT INTO imagen_producto (id_imagen, url_imagen, id_producto) VALUES (38, 'https://loremflickr.com/400/300/snacks,healthy', 35);
-INSERT INTO imagen_producto (id_imagen, url_imagen, id_producto) VALUES (39, 'https://loremflickr.com/400/300/collagen,supplement', 36);
+-- TechStore — Tecnologia
+INSERT INTO imagen_producto (id_imagen, url_imagen, id_producto) VALUES (1,  'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=400&h=300&fit=crop', 1);
+INSERT INTO imagen_producto (id_imagen, url_imagen, id_producto) VALUES (2,  'https://images.unsplash.com/photo-1603351154351-5e2d0600bb77?w=400&h=300&fit=crop', 2);
+INSERT INTO imagen_producto (id_imagen, url_imagen, id_producto) VALUES (3,  'https://images.unsplash.com/photo-1601524909162-ae8725290836?w=400&h=300&fit=crop', 3);
+INSERT INTO imagen_producto (id_imagen, url_imagen, id_producto) VALUES (4,  'https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=400&h=300&fit=crop', 4);
+INSERT INTO imagen_producto (id_imagen, url_imagen, id_producto) VALUES (5,  'https://images.unsplash.com/photo-1625842268584-8f3296236761?w=400&h=300&fit=crop', 5);
+-- IcesiWear — Moda
+INSERT INTO imagen_producto (id_imagen, url_imagen, id_producto) VALUES (6,  'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=300&fit=crop', 7);
+INSERT INTO imagen_producto (id_imagen, url_imagen, id_producto) VALUES (7,  'https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=400&h=300&fit=crop', 8);
+INSERT INTO imagen_producto (id_imagen, url_imagen, id_producto) VALUES (8,  'https://images.unsplash.com/photo-1620799140188-3b2a02fd9a77?w=400&h=300&fit=crop', 9);
+INSERT INTO imagen_producto (id_imagen, url_imagen, id_producto) VALUES (9,  'https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=400&h=300&fit=crop', 10);
+-- CafeIcesi — Bebidas
+INSERT INTO imagen_producto (id_imagen, url_imagen, id_producto) VALUES (10, 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=400&h=300&fit=crop', 12);
+INSERT INTO imagen_producto (id_imagen, url_imagen, id_producto) VALUES (11, 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=300&fit=crop', 13);
+INSERT INTO imagen_producto (id_imagen, url_imagen, id_producto) VALUES (12, 'https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=400&h=300&fit=crop', 14);
+INSERT INTO imagen_producto (id_imagen, url_imagen, id_producto) VALUES (13, 'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=400&h=300&fit=crop', 15);
+INSERT INTO imagen_producto (id_imagen, url_imagen, id_producto) VALUES (14, 'https://images.unsplash.com/photo-1553530666-ba11a7da3888?w=400&h=300&fit=crop', 16);
+-- ArteU — Arte
+INSERT INTO imagen_producto (id_imagen, url_imagen, id_producto) VALUES (15, 'https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?w=400&h=300&fit=crop', 17);
+INSERT INTO imagen_producto (id_imagen, url_imagen, id_producto) VALUES (16, 'https://images.unsplash.com/photo-1605721911519-3dfeb3be25e7?w=400&h=300&fit=crop', 18);
+INSERT INTO imagen_producto (id_imagen, url_imagen, id_producto) VALUES (17, 'https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=400&h=300&fit=crop', 19);
+INSERT INTO imagen_producto (id_imagen, url_imagen, id_producto) VALUES (18, 'https://images.unsplash.com/photo-1531346878377-a5be20888e57?w=400&h=300&fit=crop', 20);
+-- FoodLab Icesi — Comida saludable
+INSERT INTO imagen_producto (id_imagen, url_imagen, id_producto) VALUES (19, 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=300&fit=crop', 21);
+INSERT INTO imagen_producto (id_imagen, url_imagen, id_producto) VALUES (20, 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&h=300&fit=crop', 22);
+INSERT INTO imagen_producto (id_imagen, url_imagen, id_producto) VALUES (21, 'https://images.unsplash.com/photo-1533134242443-d4fd215305ad?w=400&h=300&fit=crop', 23);
+INSERT INTO imagen_producto (id_imagen, url_imagen, id_producto) VALUES (22, 'https://images.unsplash.com/photo-1686182689848-283fdd34e72f?w=400&h=300&fit=crop', 24);
+-- Manos Creativas — Artesanias
+INSERT INTO imagen_producto (id_imagen, url_imagen, id_producto) VALUES (23, 'https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?w=400&h=300&fit=crop', 26);
+INSERT INTO imagen_producto (id_imagen, url_imagen, id_producto) VALUES (24, 'https://images.unsplash.com/photo-1633594308237-3dcfa56b4e69?w=400&h=300&fit=crop', 27);
+INSERT INTO imagen_producto (id_imagen, url_imagen, id_producto) VALUES (25, 'https://images.unsplash.com/photo-1602607203588-d6d0eda790e3?w=400&h=300&fit=crop', 28);
+INSERT INTO imagen_producto (id_imagen, url_imagen, id_producto) VALUES (26, 'https://images.unsplash.com/photo-1611085583191-a3b181a88401?w=400&h=300&fit=crop', 29);
+-- CodeByte Solutions — Servicios tecnologicos
+INSERT INTO imagen_producto (id_imagen, url_imagen, id_producto) VALUES (27, 'https://images.unsplash.com/photo-1547658719-da2b51169166?w=400&h=300&fit=crop', 30);
+INSERT INTO imagen_producto (id_imagen, url_imagen, id_producto) VALUES (28, 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=400&h=300&fit=crop', 31);
+INSERT INTO imagen_producto (id_imagen, url_imagen, id_producto) VALUES (29, 'https://images.unsplash.com/photo-1597852074816-d933c7d2b988?w=400&h=300&fit=crop', 32);
+INSERT INTO imagen_producto (id_imagen, url_imagen, id_producto) VALUES (30, 'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?w=400&h=300&fit=crop', 33);
+-- GreenFit — Suplementos y snacks saludables
+INSERT INTO imagen_producto (id_imagen, url_imagen, id_producto) VALUES (31, 'https://images.unsplash.com/photo-1593095948071-474c5cc2989d?w=400&h=300&fit=crop', 34);
+INSERT INTO imagen_producto (id_imagen, url_imagen, id_producto) VALUES (32, 'https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=400&h=300&fit=crop', 35);
+INSERT INTO imagen_producto (id_imagen, url_imagen, id_producto) VALUES (33, 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400&h=300&fit=crop', 36);
 
 -- ===============================================================
 -- PEDIDOS  (todos los estados representados)

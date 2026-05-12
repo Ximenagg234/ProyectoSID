@@ -18,10 +18,15 @@
         <div style="display:flex; align-items:center; gap:20px; position:relative; z-index:1;">
 
             <!-- Logo / ícono -->
-            <div style="width:72px; height:72px; background:rgba(255,255,255,.2);
-                        border-radius:16px; display:flex; align-items:center;
-                        justify-content:center; flex-shrink:0;">
-                <i class="bi bi-rocket-takeoff-fill" style="font-size:32px; color:#fff;"></i>
+            <div style="width:72px; height:72px; border-radius:16px; flex-shrink:0; overflow:hidden;">
+                <img th:if="${emprendimiento.logoUrl != null}"
+                     th:src="${emprendimiento.logoUrl}" alt="Logo"
+                     style="width:100%; height:100%; object-fit:cover;"/>
+                <div th:if="${emprendimiento.logoUrl == null}"
+                     style="width:72px; height:72px; background:rgba(255,255,255,.2);
+                            border-radius:16px; display:flex; align-items:center; justify-content:center;">
+                    <i class="bi bi-rocket-takeoff-fill" style="font-size:32px; color:#fff;"></i>
+                </div>
             </div>
 
             <div>
@@ -70,6 +75,155 @@
            th:text="${emprendimiento.descripcion}"></p>
     </div>
 
+    <!-- ── RESEÑAS ─────────────────────────────────────────── -->
+    <div class="card-custom" style="margin-bottom:24px;">
+        <div class="section-header" style="margin-bottom:16px;">
+            <div class="section-header-info">
+                <h2>Reseñas</h2>
+                <p th:if="${calificaciones != null}"
+                   th:text="${calificaciones.size()} + ' reseñas'"></p>
+            </div>
+            <!-- Promedio -->
+            <div th:if="${promedio != null and promedio > 0}"
+                 style="display:flex; align-items:center; gap:6px;">
+                <span style="font-size:24px; font-weight:800; color:#111827;"
+                      th:text="${#numbers.formatDecimal(promedio, 1, 1)}"></span>
+                <div>
+                    <div style="display:flex; gap:2px;">
+                        <i th:each="i : ${#numbers.sequence(1,5)}"
+                           th:class="${i <= promedio} ? 'bi bi-star-fill' : 'bi bi-star'"
+                           style="font-size:14px; color:#F59E0B;"></i>
+                    </div>
+                    <div style="font-size:11px; color:#6B7280;">Calificación promedio</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lista de reseñas existentes -->
+        <div th:if="${calificaciones == null or calificaciones.isEmpty()}"
+             style="text-align:center; padding:24px; color:#9CA3AF;">
+            <i class="bi bi-chat-dots" style="font-size:32px; display:block; margin-bottom:8px;"></i>
+            <p style="font-size:13px;">Aún no hay reseñas para este emprendimiento.</p>
+        </div>
+
+        <div th:if="${calificaciones != null and !calificaciones.isEmpty()}"
+             style="display:flex; flex-direction:column; gap:12px; margin-bottom:20px;">
+            <div th:each="cal : ${calificaciones}"
+                 style="background:#F9FAFB; border-radius:12px; padding:14px 16px; border:1px solid #E5E7EB;">
+                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <div style="width:32px; height:32px; border-radius:50%; background:#EEF2FF;
+                                    display:flex; align-items:center; justify-content:center;">
+                            <i class="bi bi-person-fill" style="font-size:14px; color:#6366F1;"></i>
+                        </div>
+                        <span style="font-size:13px; font-weight:600; color:#111827;"
+                              th:text="${cal.usuario?.nombreCompleto}"></span>
+                    </div>
+                    <div style="display:flex; gap:2px;">
+                        <i th:each="i : ${#numbers.sequence(1,5)}"
+                           th:class="${i <= cal.puntuacion} ? 'bi bi-star-fill' : 'bi bi-star'"
+                           style="font-size:12px; color:#F59E0B;"></i>
+                    </div>
+                </div>
+                <p th:if="${cal.comentario != null and !cal.comentario.isEmpty()}"
+                   style="font-size:13px; color:#374151; margin:0; line-height:1.6;"
+                   th:text="${cal.comentario}"></p>
+                <div style="font-size:11px; color:#9CA3AF; margin-top:6px;"
+                     th:text="${#dates.format(cal.fecha, 'dd/MM/yyyy')}"></div>
+            </div>
+        </div>
+
+        <!-- Formulario para dejar reseña (solo si tiene pedidos ENTREGADO sin calificar) -->
+        <div th:if="${pedidosParaCalificar != null and !pedidosParaCalificar.isEmpty()}"
+             style="border-top:1px solid #E5E7EB; padding-top:20px;">
+            <h3 style="font-size:14px; font-weight:700; color:#111827; margin:0 0 14px;">
+                <i class="bi bi-pencil-square" style="color:#6366F1; margin-right:6px;"></i>
+                Deja tu reseña
+            </h3>
+            <form th:action="@{/marketplace/calificar}" method="post">
+                <input type="hidden" name="idEmprendimiento" th:value="${emprendimiento.idEmprendimiento}"/>
+
+                <!-- Si hay varios pedidos entregados, mostrar selector -->
+                <div th:if="${pedidosParaCalificar.size() > 1}" style="margin-bottom:12px;">
+                    <label style="font-size:12px; font-weight:600; color:#374151; display:block; margin-bottom:6px;">
+                        Pedido a calificar
+                    </label>
+                    <select name="idPedido"
+                            style="width:100%; padding:8px 12px; border:1px solid #D1D5DB;
+                                   border-radius:8px; font-size:13px; color:#374151;">
+                        <option th:each="ped : ${pedidosParaCalificar}"
+                                th:value="${ped.idPedido}"
+                                th:text="'Pedido #PED-' + ${ped.idPedido}"></option>
+                    </select>
+                </div>
+                <!-- Si solo hay uno, ocultarlo -->
+                <input th:if="${pedidosParaCalificar.size() == 1}"
+                       type="hidden" name="idPedido"
+                       th:value="${pedidosParaCalificar[0].idPedido}"/>
+
+                <!-- Estrellas -->
+                <div style="margin-bottom:12px;">
+                    <label style="font-size:12px; font-weight:600; color:#374151; display:block; margin-bottom:8px;">
+                        Puntuación
+                    </label>
+                    <div style="display:flex; gap:8px;">
+                        <th:block th:each="i : ${#numbers.sequence(1,5)}">
+                            <label style="cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:2px;">
+                                <input type="radio" name="puntuacion" th:value="${i}" required
+                                       style="display:none;"
+                                       th:id="'star' + ${i}"/>
+                                <i class="bi bi-star-fill" th:id="'icon' + ${i}"
+                                   style="font-size:26px; color:#D1D5DB; transition:color .15s;"
+                                   th:attr="onclick='setStars(' + ${i} + ')',data-val=${i}"
+                                   onmouseover="hoverStars(this.getAttribute('data-val'))"></i>
+                                <span style="font-size:10px; color:#9CA3AF;" th:text="${i}"></span>
+                            </label>
+                        </th:block>
+                    </div>
+                </div>
+
+                <!-- Comentario -->
+                <div style="margin-bottom:14px;">
+                    <label style="font-size:12px; font-weight:600; color:#374151; display:block; margin-bottom:6px;">
+                        Comentario (opcional)
+                    </label>
+                    <textarea name="comentario" rows="3"
+                              placeholder="¿Cómo fue tu experiencia con este emprendimiento?"
+                              style="width:100%; padding:10px 12px; border:1px solid #D1D5DB;
+                                     border-radius:8px; font-size:13px; color:#374151;
+                                     resize:vertical; box-sizing:border-box;"></textarea>
+                </div>
+
+                <button type="submit"
+                        style="background:#6366F1; color:#fff; border:none; border-radius:8px;
+                               padding:9px 20px; font-size:13px; font-weight:600; cursor:pointer;
+                               transition:background .18s;"
+                        onmouseover="this.style.background='#4F46E5'"
+                        onmouseout="this.style.background='#6366F1'">
+                    <i class="bi bi-send-fill"></i> Enviar reseña
+                </button>
+            </form>
+            <script>
+                function setStars(val) {
+                    for (let i = 1; i <= 5; i++) {
+                        const icon = document.getElementById('icon' + i);
+                        icon.style.color = i <= val ? '#F59E0B' : '#D1D5DB';
+                        document.getElementById('star' + i).checked = (i == val);
+                    }
+                }
+            </script>
+        </div>
+
+        <!-- Mensaje si ya calificó o no es comprador -->
+        <div th:if="${pedidosParaCalificar == null or pedidosParaCalificar.isEmpty()}"
+             sec:authorize="hasRole('COMPRADOR')"
+             style="border-top:1px solid #E5E7EB; padding-top:14px;
+                    font-size:12.5px; color:#9CA3AF; text-align:center;">
+            <i class="bi bi-info-circle"></i>
+            Podrás dejar una reseña cuando tengas un pedido entregado de este emprendimiento.
+        </div>
+    </div>
+
     <!-- ── PRODUCTOS DEL EMPRENDIMIENTO ─────────────────────── -->
     <div class="card-custom">
         <div class="section-header">
@@ -96,10 +250,16 @@
                  onmouseover="this.style.boxShadow='0 6px 20px rgba(0,0,0,.08)';this.style.transform='translateY(-2px)'"
                  onmouseout="this.style.boxShadow='none';this.style.transform='translateY(0)'">
 
-                <!-- Color background imagen -->
-                <div style="height:120px; display:flex; align-items:center; justify-content:center;
-                            background:linear-gradient(135deg,rgba(99,102,241,.15),rgba(99,102,241,.05));">
-                    <i class="bi bi-bag-fill" style="font-size:36px; color:#6366F1; opacity:.6;"></i>
+                <!-- Imagen real o gradiente fallback -->
+                <div style="height:120px; overflow:hidden;">
+                    <img th:if="${p.imagenes != null and !p.imagenes.isEmpty()}"
+                         th:src="${p.imagenes[0].urlImagen}"
+                         style="width:100%; height:120px; object-fit:cover;" alt="Foto producto"/>
+                    <div th:if="${p.imagenes == null or p.imagenes.isEmpty()}"
+                         style="height:120px; display:flex; align-items:center; justify-content:center;
+                                background:linear-gradient(135deg,rgba(99,102,241,.15),rgba(99,102,241,.05));">
+                        <i class="bi bi-bag-fill" style="font-size:36px; color:#6366F1; opacity:.6;"></i>
+                    </div>
                 </div>
 
                 <div style="padding:12px;">

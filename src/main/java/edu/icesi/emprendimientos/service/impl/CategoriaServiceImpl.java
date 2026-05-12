@@ -3,6 +3,7 @@ package edu.icesi.emprendimientos.service.impl;
 import edu.icesi.emprendimientos.entity.Categoria;
 import edu.icesi.emprendimientos.repository.CategoriaRepository;
 import edu.icesi.emprendimientos.service.CategoriaService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -34,14 +35,14 @@ public class CategoriaServiceImpl implements CategoriaService {
     @Override
     public Categoria buscarPorId(Integer id) {
         return categoriaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Categoria no encontrada"));
+                .orElseThrow(() -> new EntityNotFoundException("Categoria no encontrada"));
     }
 
     @Override
     public Categoria actualizar(Integer id, Categoria actualizada) {
 
         Categoria existente = categoriaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Categoria no encontrada"));
+                .orElseThrow(() -> new EntityNotFoundException("Categoria no encontrada"));
 
         existente.setNombre(actualizada.getNombre());
         existente.setDescripcion(actualizada.getDescripcion());

@@ -661,7 +661,7 @@
     </nav>
 
     <div class="sidebar-footer">
-        <a href="#" class="sidebar-link">
+        <a th:href="@{/perfil}" class="sidebar-link">
             <i class="bi bi-person-circle"></i>
             Mi Perfil
         </a>
@@ -697,15 +697,21 @@
             <div class="topbar-notify">
                 <i class="bi bi-bell"></i>
             </div>
-            <div class="topbar-user">
-                <div class="topbar-avatar">
-                    <i class="bi bi-person-fill"></i>
+            <a th:href="@{/perfil}" class="topbar-user" style="text-decoration:none;">
+                <div class="topbar-avatar" id="topbarAvatar">
+                    <img th:if="${currentUser != null and currentUser.fotoPerfil != null}"
+                         th:src="${currentUser.fotoPerfil}"
+                         style="width:100%;height:100%;object-fit:cover;border-radius:50%;"/>
+                    <span th:if="${currentUser != null and currentUser.fotoPerfil == null}"
+                          th:text="${#strings.substring(currentUser.nombreCompleto,0,2).toUpperCase()}"></span>
+                    <i th:if="${currentUser == null}" class="bi bi-person-fill"></i>
                 </div>
                 <div>
-                    <div class="topbar-username" sec:authentication="name">Estudiante</div>
+                    <div class="topbar-username"
+                         th:text="${currentUser != null ? currentUser.nombreCompleto : 'Estudiante'}"></div>
                     <div class="topbar-status">En línea</div>
                 </div>
-            </div>
+            </a>
         </div>
     </header>
 

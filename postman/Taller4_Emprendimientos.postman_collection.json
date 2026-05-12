@@ -7,7 +7,9 @@
   },
   "variable": [
     { "key": "baseUrl",           "value": "http://localhost:8081" },
-    { "key": "token",             "value": "" },
+    { "key": "tokenAdmin",        "value": "" },
+    { "key": "tokenEmprendedor",  "value": "" },
+    { "key": "tokenComprador",    "value": "" },
     { "key": "userId",            "value": "" },
     { "key": "categoriaId",       "value": "" },
     { "key": "emprendimientoId",  "value": "" },
@@ -16,423 +18,924 @@
     { "key": "rolId",             "value": "" }
   ],
   "item": [
+
     {
       "name": "1. Auth",
       "item": [
         {
-          "name": "Registrar usuario",
+          "name": "1.1 Login Admin (ximena)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/auth/login", "host": ["{{baseUrl}}"], "path": ["api","auth","login"] },
+            "body": { "mode": "raw", "raw": "{\n  \"correoInstitucional\": \"ximena@icesi.edu.co\",\n  \"clave\": \"1234\"\n}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', function(){ pm.response.to.have.status(200); });",
+            "var json = pm.response.json();",
+            "pm.test('Token presente', function(){ pm.expect(json.token).to.be.a('string').and.not.empty; });",
+            "pm.test('Rol ADMIN incluido', function(){ pm.expect(json.roles).to.include('ROLE_ADMIN'); });",
+            "pm.collectionVariables.set('tokenAdmin', json.token);"
+          ]}}]
+        },
+        {
+          "name": "1.2 Login Emprendedor (carlos)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/auth/login", "host": ["{{baseUrl}}"], "path": ["api","auth","login"] },
+            "body": { "mode": "raw", "raw": "{\n  \"correoInstitucional\": \"carlos@icesi.edu.co\",\n  \"clave\": \"1234\"\n}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', function(){ pm.response.to.have.status(200); });",
+            "var json = pm.response.json();",
+            "pm.test('Token presente', function(){ pm.expect(json.token).to.be.a('string').and.not.empty; });",
+            "pm.collectionVariables.set('tokenEmprendedor', json.token);"
+          ]}}]
+        },
+        {
+          "name": "1.3 Login Comprador (juan)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/auth/login", "host": ["{{baseUrl}}"], "path": ["api","auth","login"] },
+            "body": { "mode": "raw", "raw": "{\n  \"correoInstitucional\": \"juan@icesi.edu.co\",\n  \"clave\": \"1234\"\n}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', function(){ pm.response.to.have.status(200); });",
+            "var json = pm.response.json();",
+            "pm.test('Token presente', function(){ pm.expect(json.token).to.be.a('string').and.not.empty; });",
+            "pm.test('Rol COMPRADOR incluido', function(){ pm.expect(json.roles).to.include('ROLE_COMPRADOR'); });",
+            "pm.collectionVariables.set('tokenComprador', json.token);"
+          ]}}]
+        },
+        {
+          "name": "1.4 Registrar nuevo usuario",
           "request": {
             "method": "POST",
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "url": { "raw": "{{baseUrl}}/api/auth/register", "host": ["{{baseUrl}}"], "path": ["api","auth","register"] },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"nombreCompleto\": \"Test User\",\n  \"correoInstitucional\": \"testuser@icesi.edu.co\",\n  \"programaAcademico\": \"Ingenieria de Sistemas\",\n  \"semestreAcademico\": 5,\n  \"clave\": \"test1234\"\n}"
-            }
+            "body": { "mode": "raw", "raw": "{\n  \"nombreCompleto\": \"Test API User\",\n  \"correoInstitucional\": \"testapi@icesi.edu.co\",\n  \"programaAcademico\": \"Ingenieria de Sistemas\",\n  \"semestreAcademico\": 5,\n  \"clave\": \"test1234\"\n}" }
           },
-          "event": [{ "listen": "test", "script": { "exec": ["var json = pm.response.json();", "pm.environment.set('userId', json.idUsuario);"] } }]
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 201', function(){ pm.response.to.have.status(201); });",
+            "var json = pm.response.json();",
+            "pm.test('idUsuario presente', function(){ pm.expect(json.idUsuario).to.be.a('number'); });",
+            "pm.test('Correo correcto', function(){ pm.expect(json.correoInstitucional).to.eql('testapi@icesi.edu.co'); });",
+            "pm.collectionVariables.set('userId', json.idUsuario);"
+          ]}}]
         },
         {
-          "name": "Login (obtener token)",
+          "name": "1.5 [Error 400] Registrar con correo duplicado",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/auth/register", "host": ["{{baseUrl}}"], "path": ["api","auth","register"] },
+            "body": { "mode": "raw", "raw": "{\n  \"nombreCompleto\": \"Duplicado\",\n  \"correoInstitucional\": \"ximena@icesi.edu.co\",\n  \"programaAcademico\": \"Ingenieria\",\n  \"semestreAcademico\": 3,\n  \"clave\": \"1234\"\n}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Correo duplicado debe fallar (400/409/500)', function(){ pm.expect(pm.response.code).to.be.oneOf([400, 409, 500]); });"
+          ]}}]
+        },
+        {
+          "name": "1.6 [Error 401] Login con clave incorrecta",
           "request": {
             "method": "POST",
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "url": { "raw": "{{baseUrl}}/api/auth/login", "host": ["{{baseUrl}}"], "path": ["api","auth","login"] },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"correoInstitucional\": \"ximena@icesi.edu.co\",\n  \"clave\": \"1234\"\n}"
-            }
+            "body": { "mode": "raw", "raw": "{\n  \"correoInstitucional\": \"ximena@icesi.edu.co\",\n  \"clave\": \"claveincorrecta\"\n}" }
           },
-          "event": [{ "listen": "test", "script": { "exec": ["var json = pm.response.json();", "pm.environment.set('token', json.token);", "pm.test('Token recibido', function(){ pm.expect(json.token).to.not.be.empty; });"] } }]
-        },
-        {
-          "name": "Login como Comprador (juan)",
-          "request": {
-            "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "url": { "raw": "{{baseUrl}}/api/auth/login", "host": ["{{baseUrl}}"], "path": ["api","auth","login"] },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"correoInstitucional\": \"juan@icesi.edu.co\",\n  \"clave\": \"1234\"\n}"
-            }
-          }
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Credenciales inválidas deben retornar 401 o 403', function(){ pm.expect(pm.response.code).to.be.oneOf([401, 403]); });"
+          ]}}]
         }
       ]
     },
+
     {
       "name": "2. Usuarios",
       "item": [
         {
-          "name": "GET todos los usuarios",
+          "name": "2.1 GET todos los usuarios (ADMIN)",
           "request": {
             "method": "GET",
-            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "header": [{ "key": "Authorization", "value": "Bearer {{tokenAdmin}}" }],
             "url": { "raw": "{{baseUrl}}/api/usuarios", "host": ["{{baseUrl}}"], "path": ["api","usuarios"] }
-          }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', function(){ pm.response.to.have.status(200); });",
+            "pm.test('Respuesta es un array', function(){ pm.expect(pm.response.json()).to.be.an('array'); });",
+            "pm.test('Al menos un usuario existe', function(){ pm.expect(pm.response.json().length).to.be.above(0); });"
+          ]}}]
         },
         {
-          "name": "GET usuario por ID",
+          "name": "2.2 [Error 403] Comprador intenta listar usuarios",
           "request": {
             "method": "GET",
-            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
-            "url": { "raw": "{{baseUrl}}/api/usuarios/{{userId}}", "host": ["{{baseUrl}}"], "path": ["api","usuarios","{{userId}}"] }
-          }
+            "header": [{ "key": "Authorization", "value": "Bearer {{tokenComprador}}" }],
+            "url": { "raw": "{{baseUrl}}/api/usuarios", "host": ["{{baseUrl}}"], "path": ["api","usuarios"] }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Solo ADMIN puede listar usuarios — debe retornar 403', function(){ pm.response.to.have.status(403); });"
+          ]}}]
         },
         {
-          "name": "PUT actualizar usuario",
+          "name": "2.3 GET usuario por ID",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{tokenAdmin}}" }],
+            "url": { "raw": "{{baseUrl}}/api/usuarios/{{userId}}", "host": ["{{baseUrl}}"], "path": ["api","usuarios","{{userId}}"] }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', function(){ pm.response.to.have.status(200); });",
+            "pm.test('ID coincide', function(){ pm.expect(pm.response.json().idUsuario).to.eql(parseInt(pm.collectionVariables.get('userId'))); });",
+            "pm.test('Tiene correo institucional', function(){ pm.expect(pm.response.json().correoInstitucional).to.be.a('string'); });"
+          ]}}]
+        },
+        {
+          "name": "2.4 PUT actualizar usuario",
           "request": {
             "method": "PUT",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Authorization", "value": "Bearer {{tokenAdmin}}" },
               { "key": "Content-Type", "value": "application/json" }
             ],
             "url": { "raw": "{{baseUrl}}/api/usuarios/{{userId}}", "host": ["{{baseUrl}}"], "path": ["api","usuarios","{{userId}}"] },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"nombreCompleto\": \"Test User Actualizado\",\n  \"programaAcademico\": \"Ingenieria de Sistemas\",\n  \"semestreAcademico\": 6\n}"
-            }
-          }
+            "body": { "mode": "raw", "raw": "{\n  \"nombreCompleto\": \"Test API User Actualizado\",\n  \"programaAcademico\": \"Ingenieria de Sistemas\",\n  \"semestreAcademico\": 6\n}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', function(){ pm.response.to.have.status(200); });",
+            "pm.test('Nombre actualizado', function(){ pm.expect(pm.response.json().nombreCompleto).to.eql('Test API User Actualizado'); });",
+            "pm.test('Semestre actualizado', function(){ pm.expect(pm.response.json().semestreAcademico).to.eql(6); });"
+          ]}}]
         },
         {
-          "name": "DELETE usuario (solo ADMIN)",
+          "name": "2.5 [Error 404] GET usuario inexistente",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{tokenAdmin}}" }],
+            "url": { "raw": "{{baseUrl}}/api/usuarios/99999", "host": ["{{baseUrl}}"], "path": ["api","usuarios","99999"] }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Debe retornar 404', function(){ pm.response.to.have.status(404); });"
+          ]}}]
+        },
+        {
+          "name": "2.6 [Error 404] PUT usuario inexistente",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{tokenAdmin}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/usuarios/99999", "host": ["{{baseUrl}}"], "path": ["api","usuarios","99999"] },
+            "body": { "mode": "raw", "raw": "{\n  \"nombreCompleto\": \"Nadie\",\n  \"programaAcademico\": \"X\",\n  \"semestreAcademico\": 1\n}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Debe retornar 404', function(){ pm.response.to.have.status(404); });"
+          ]}}]
+        },
+        {
+          "name": "2.7 DELETE usuario (ADMIN)",
           "request": {
             "method": "DELETE",
-            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "header": [{ "key": "Authorization", "value": "Bearer {{tokenAdmin}}" }],
             "url": { "raw": "{{baseUrl}}/api/usuarios/{{userId}}", "host": ["{{baseUrl}}"], "path": ["api","usuarios","{{userId}}"] }
-          }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 204', function(){ pm.response.to.have.status(204); });"
+          ]}}]
+        },
+        {
+          "name": "2.8 [Error 403] Comprador intenta eliminar usuario",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{tokenComprador}}" }],
+            "url": { "raw": "{{baseUrl}}/api/usuarios/1", "host": ["{{baseUrl}}"], "path": ["api","usuarios","1"] }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Solo ADMIN puede eliminar usuarios — debe retornar 403', function(){ pm.response.to.have.status(403); });"
+          ]}}]
         }
       ]
     },
+
     {
       "name": "3. Categorias",
       "item": [
         {
-          "name": "POST crear categoría",
+          "name": "3.1 POST crear categoría (ADMIN)",
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Authorization", "value": "Bearer {{tokenAdmin}}" },
               { "key": "Content-Type", "value": "application/json" }
             ],
             "url": { "raw": "{{baseUrl}}/api/categorias", "host": ["{{baseUrl}}"], "path": ["api","categorias"] },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"nombre\": \"Manualidades\",\n  \"descripcion\": \"Productos artesanales y manuales\"\n}"
-            }
+            "body": { "mode": "raw", "raw": "{\n  \"nombre\": \"Manualidades Test\",\n  \"descripcion\": \"Categoria creada por prueba automatica\"\n}" }
           },
-          "event": [{ "listen": "test", "script": { "exec": ["var json = pm.response.json();", "pm.environment.set('categoriaId', json.idCategoria);"] } }]
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200 o 201', function(){ pm.expect(pm.response.code).to.be.oneOf([200,201]); });",
+            "var json = pm.response.json();",
+            "pm.test('idCategoria presente', function(){ pm.expect(json.idCategoria).to.be.a('number'); });",
+            "pm.test('Nombre correcto', function(){ pm.expect(json.nombre).to.eql('Manualidades Test'); });",
+            "pm.collectionVariables.set('categoriaId', json.idCategoria);"
+          ]}}]
         },
         {
-          "name": "GET todas las categorías",
+          "name": "3.2 [Error 403] Comprador intenta crear categoría",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{tokenComprador}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/categorias", "host": ["{{baseUrl}}"], "path": ["api","categorias"] },
+            "body": { "mode": "raw", "raw": "{\n  \"nombre\": \"No permitido\",\n  \"descripcion\": \"Test\"\n}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Solo ADMIN puede crear categorías — debe retornar 403', function(){ pm.response.to.have.status(403); });"
+          ]}}]
+        },
+        {
+          "name": "3.3 GET todas las categorías (ADMIN)",
           "request": {
             "method": "GET",
-            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "header": [{ "key": "Authorization", "value": "Bearer {{tokenAdmin}}" }],
             "url": { "raw": "{{baseUrl}}/api/categorias", "host": ["{{baseUrl}}"], "path": ["api","categorias"] }
-          }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', function(){ pm.response.to.have.status(200); });",
+            "pm.test('Respuesta es un array', function(){ pm.expect(pm.response.json()).to.be.an('array'); });",
+            "pm.test('Al menos una categoría existe', function(){ pm.expect(pm.response.json().length).to.be.above(0); });"
+          ]}}]
         },
         {
-          "name": "GET categoría por ID",
+          "name": "3.4 GET categoría por ID",
           "request": {
             "method": "GET",
-            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "header": [{ "key": "Authorization", "value": "Bearer {{tokenAdmin}}" }],
             "url": { "raw": "{{baseUrl}}/api/categorias/{{categoriaId}}", "host": ["{{baseUrl}}"], "path": ["api","categorias","{{categoriaId}}"] }
-          }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', function(){ pm.response.to.have.status(200); });",
+            "pm.test('Nombre correcto', function(){ pm.expect(pm.response.json().nombre).to.eql('Manualidades Test'); });"
+          ]}}]
         },
         {
-          "name": "PUT actualizar categoría",
+          "name": "3.5 PUT actualizar categoría",
           "request": {
             "method": "PUT",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Authorization", "value": "Bearer {{tokenAdmin}}" },
               { "key": "Content-Type", "value": "application/json" }
             ],
             "url": { "raw": "{{baseUrl}}/api/categorias/{{categoriaId}}", "host": ["{{baseUrl}}"], "path": ["api","categorias","{{categoriaId}}"] },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"nombre\": \"Manualidades y Arte\",\n  \"descripcion\": \"Productos artesanales, manuales y artisticos\"\n}"
-            }
-          }
+            "body": { "mode": "raw", "raw": "{\n  \"nombre\": \"Manualidades y Arte\",\n  \"descripcion\": \"Categoría actualizada por prueba\"\n}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', function(){ pm.response.to.have.status(200); });",
+            "pm.test('Nombre actualizado', function(){ pm.expect(pm.response.json().nombre).to.eql('Manualidades y Arte'); });"
+          ]}}]
         },
         {
-          "name": "DELETE categoría",
+          "name": "3.6 [Error 404] GET categoría inexistente",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{tokenAdmin}}" }],
+            "url": { "raw": "{{baseUrl}}/api/categorias/99999", "host": ["{{baseUrl}}"], "path": ["api","categorias","99999"] }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Debe retornar 404', function(){ pm.response.to.have.status(404); });"
+          ]}}]
+        },
+        {
+          "name": "3.7 [Error 404] PUT categoría inexistente",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{tokenAdmin}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/categorias/99999", "host": ["{{baseUrl}}"], "path": ["api","categorias","99999"] },
+            "body": { "mode": "raw", "raw": "{\n  \"nombre\": \"Nada\",\n  \"descripcion\": \"Nada\"\n}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Debe retornar 404', function(){ pm.response.to.have.status(404); });"
+          ]}}]
+        },
+        {
+          "name": "3.8 DELETE categoría",
           "request": {
             "method": "DELETE",
-            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "header": [{ "key": "Authorization", "value": "Bearer {{tokenAdmin}}" }],
             "url": { "raw": "{{baseUrl}}/api/categorias/{{categoriaId}}", "host": ["{{baseUrl}}"], "path": ["api","categorias","{{categoriaId}}"] }
-          }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 204', function(){ pm.response.to.have.status(204); });"
+          ]}}]
         }
       ]
     },
+
     {
       "name": "4. Emprendimientos",
       "item": [
         {
-          "name": "POST crear emprendimiento",
+          "name": "4.1 GET todos (cualquier usuario autenticado)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{tokenComprador}}" }],
+            "url": { "raw": "{{baseUrl}}/api/emprendimientos", "host": ["{{baseUrl}}"], "path": ["api","emprendimientos"] }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200 — cualquier usuario puede listar emprendimientos', function(){ pm.response.to.have.status(200); });",
+            "pm.test('Respuesta es un array', function(){ pm.expect(pm.response.json()).to.be.an('array'); });",
+            "pm.test('Al menos un emprendimiento existe', function(){ pm.expect(pm.response.json().length).to.be.above(0); });"
+          ]}}]
+        },
+        {
+          "name": "4.2 POST crear emprendimiento (EMPRENDEDOR)",
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Authorization", "value": "Bearer {{tokenEmprendedor}}" },
               { "key": "Content-Type", "value": "application/json" }
             ],
             "url": { "raw": "{{baseUrl}}/api/emprendimientos", "host": ["{{baseUrl}}"], "path": ["api","emprendimientos"] },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"nombre\": \"Emprendimiento API Test\",\n  \"descripcion\": \"Creado via REST API\",\n  \"idUsuario\": 1,\n  \"idCategoria\": 1,\n  \"idSemestre\": 1,\n  \"idEstado\": 1\n}"
-            }
+            "body": { "mode": "raw", "raw": "{\n  \"nombre\": \"Emprendimiento API Test\",\n  \"descripcion\": \"Creado via REST API\",\n  \"idUsuario\": 2,\n  \"idCategoria\": 1,\n  \"idSemestre\": 1,\n  \"idEstado\": 1\n}" }
           },
-          "event": [{ "listen": "test", "script": { "exec": ["var json = pm.response.json();", "pm.environment.set('emprendimientoId', json.idEmprendimiento);"] } }]
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200 o 201', function(){ pm.expect(pm.response.code).to.be.oneOf([200,201]); });",
+            "var json = pm.response.json();",
+            "pm.test('idEmprendimiento presente', function(){ pm.expect(json.idEmprendimiento).to.be.a('number'); });",
+            "pm.test('Nombre correcto', function(){ pm.expect(json.nombre).to.eql('Emprendimiento API Test'); });",
+            "pm.collectionVariables.set('emprendimientoId', json.idEmprendimiento);"
+          ]}}]
         },
         {
-          "name": "GET todos los emprendimientos",
+          "name": "4.3 [Error 403] Comprador intenta crear emprendimiento",
           "request": {
-            "method": "GET",
-            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
-            "url": { "raw": "{{baseUrl}}/api/emprendimientos", "host": ["{{baseUrl}}"], "path": ["api","emprendimientos"] }
-          }
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{tokenComprador}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/emprendimientos", "host": ["{{baseUrl}}"], "path": ["api","emprendimientos"] },
+            "body": { "mode": "raw", "raw": "{\n  \"nombre\": \"No permitido\",\n  \"descripcion\": \"Test\",\n  \"idUsuario\": 4,\n  \"idCategoria\": 1,\n  \"idSemestre\": 1,\n  \"idEstado\": 1\n}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Comprador no puede crear emprendimientos — debe retornar 403', function(){ pm.response.to.have.status(403); });"
+          ]}}]
         },
         {
-          "name": "GET emprendimiento por ID",
+          "name": "4.4 GET emprendimiento por ID",
           "request": {
             "method": "GET",
-            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "header": [{ "key": "Authorization", "value": "Bearer {{tokenComprador}}" }],
             "url": { "raw": "{{baseUrl}}/api/emprendimientos/{{emprendimientoId}}", "host": ["{{baseUrl}}"], "path": ["api","emprendimientos","{{emprendimientoId}}"] }
-          }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', function(){ pm.response.to.have.status(200); });",
+            "pm.test('ID coincide', function(){ pm.expect(pm.response.json().idEmprendimiento).to.eql(parseInt(pm.collectionVariables.get('emprendimientoId'))); });",
+            "pm.test('Tiene nombre', function(){ pm.expect(pm.response.json().nombre).to.be.a('string').and.not.empty; });"
+          ]}}]
         },
         {
-          "name": "PUT actualizar emprendimiento",
+          "name": "4.5 PUT actualizar emprendimiento (ADMIN)",
           "request": {
             "method": "PUT",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Authorization", "value": "Bearer {{tokenAdmin}}" },
               { "key": "Content-Type", "value": "application/json" }
             ],
             "url": { "raw": "{{baseUrl}}/api/emprendimientos/{{emprendimientoId}}", "host": ["{{baseUrl}}"], "path": ["api","emprendimientos","{{emprendimientoId}}"] },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"nombre\": \"Emprendimiento API Actualizado\",\n  \"descripcion\": \"Actualizado via REST API\",\n  \"idUsuario\": 1,\n  \"idCategoria\": 1,\n  \"idSemestre\": 1,\n  \"idEstado\": 1\n}"
-            }
-          }
+            "body": { "mode": "raw", "raw": "{\n  \"nombre\": \"Emprendimiento API Actualizado\",\n  \"descripcion\": \"Actualizado via REST API\",\n  \"idUsuario\": 2,\n  \"idCategoria\": 1,\n  \"idSemestre\": 1,\n  \"idEstado\": 1\n}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', function(){ pm.response.to.have.status(200); });",
+            "pm.test('Nombre actualizado', function(){ pm.expect(pm.response.json().nombre).to.eql('Emprendimiento API Actualizado'); });"
+          ]}}]
         },
         {
-          "name": "DELETE emprendimiento",
+          "name": "4.6 [Error 404] GET emprendimiento inexistente",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{tokenAdmin}}" }],
+            "url": { "raw": "{{baseUrl}}/api/emprendimientos/99999", "host": ["{{baseUrl}}"], "path": ["api","emprendimientos","99999"] }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Debe retornar 404', function(){ pm.response.to.have.status(404); });"
+          ]}}]
+        },
+        {
+          "name": "4.7 [Error 404] PUT emprendimiento inexistente",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{tokenAdmin}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/emprendimientos/99999", "host": ["{{baseUrl}}"], "path": ["api","emprendimientos","99999"] },
+            "body": { "mode": "raw", "raw": "{\n  \"nombre\": \"Nada\",\n  \"descripcion\": \"Nada\",\n  \"idUsuario\": 1,\n  \"idCategoria\": 1,\n  \"idSemestre\": 1,\n  \"idEstado\": 1\n}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Debe retornar 404', function(){ pm.response.to.have.status(404); });"
+          ]}}]
+        },
+        {
+          "name": "4.8 DELETE emprendimiento (ADMIN)",
           "request": {
             "method": "DELETE",
-            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "header": [{ "key": "Authorization", "value": "Bearer {{tokenAdmin}}" }],
             "url": { "raw": "{{baseUrl}}/api/emprendimientos/{{emprendimientoId}}", "host": ["{{baseUrl}}"], "path": ["api","emprendimientos","{{emprendimientoId}}"] }
-          }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 204', function(){ pm.response.to.have.status(204); });"
+          ]}}]
         }
       ]
     },
+
     {
       "name": "5. Productos",
       "item": [
         {
-          "name": "POST crear producto",
+          "name": "5.1 GET todos (cualquier usuario autenticado)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{tokenComprador}}" }],
+            "url": { "raw": "{{baseUrl}}/api/productos", "host": ["{{baseUrl}}"], "path": ["api","productos"] }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', function(){ pm.response.to.have.status(200); });",
+            "pm.test('Respuesta es un array', function(){ pm.expect(pm.response.json()).to.be.an('array'); });",
+            "pm.test('Al menos un producto existe', function(){ pm.expect(pm.response.json().length).to.be.above(0); });"
+          ]}}]
+        },
+        {
+          "name": "5.2 POST crear producto (EMPRENDEDOR)",
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Authorization", "value": "Bearer {{tokenEmprendedor}}" },
               { "key": "Content-Type", "value": "application/json" }
             ],
             "url": { "raw": "{{baseUrl}}/api/productos", "host": ["{{baseUrl}}"], "path": ["api","productos"] },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"nombre\": \"Producto API Test\",\n  \"descripcion\": \"Producto creado via REST\",\n  \"precio\": 50000,\n  \"stockDisponible\": 10,\n  \"idEmprendimiento\": 1,\n  \"idEstado\": 1\n}"
-            }
+            "body": { "mode": "raw", "raw": "{\n  \"nombre\": \"Producto API Test\",\n  \"descripcion\": \"Producto creado via REST\",\n  \"precio\": 50000,\n  \"stockDisponible\": 10,\n  \"idEmprendimiento\": 1,\n  \"idEstado\": 1\n}" }
           },
-          "event": [{ "listen": "test", "script": { "exec": ["var json = pm.response.json();", "pm.environment.set('productoId', json.idProducto);"] } }]
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200 o 201', function(){ pm.expect(pm.response.code).to.be.oneOf([200,201]); });",
+            "var json = pm.response.json();",
+            "pm.test('idProducto presente', function(){ pm.expect(json.idProducto).to.be.a('number'); });",
+            "pm.test('Precio correcto', function(){ pm.expect(json.precio).to.eql(50000); });",
+            "pm.test('Stock correcto', function(){ pm.expect(json.stockDisponible).to.eql(10); });",
+            "pm.collectionVariables.set('productoId', json.idProducto);"
+          ]}}]
         },
         {
-          "name": "GET todos los productos",
+          "name": "5.3 [Error 403] Comprador intenta crear producto",
           "request": {
-            "method": "GET",
-            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
-            "url": { "raw": "{{baseUrl}}/api/productos", "host": ["{{baseUrl}}"], "path": ["api","productos"] }
-          }
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{tokenComprador}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/productos", "host": ["{{baseUrl}}"], "path": ["api","productos"] },
+            "body": { "mode": "raw", "raw": "{\n  \"nombre\": \"No permitido\",\n  \"precio\": 1000,\n  \"stockDisponible\": 5,\n  \"idEmprendimiento\": 1,\n  \"idEstado\": 1\n}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Comprador no puede crear productos — debe retornar 403', function(){ pm.response.to.have.status(403); });"
+          ]}}]
         },
         {
-          "name": "GET producto por ID",
+          "name": "5.4 GET producto por ID",
           "request": {
             "method": "GET",
-            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "header": [{ "key": "Authorization", "value": "Bearer {{tokenComprador}}" }],
             "url": { "raw": "{{baseUrl}}/api/productos/{{productoId}}", "host": ["{{baseUrl}}"], "path": ["api","productos","{{productoId}}"] }
-          }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', function(){ pm.response.to.have.status(200); });",
+            "pm.test('Tiene nombre', function(){ pm.expect(pm.response.json().nombre).to.be.a('string'); });",
+            "pm.test('Tiene precio', function(){ pm.expect(pm.response.json().precio).to.be.a('number'); });",
+            "pm.test('Tiene stock', function(){ pm.expect(pm.response.json().stockDisponible).to.be.a('number'); });"
+          ]}}]
         },
         {
-          "name": "PUT actualizar producto",
+          "name": "5.5 PUT actualizar producto (EMPRENDEDOR)",
           "request": {
             "method": "PUT",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Authorization", "value": "Bearer {{tokenEmprendedor}}" },
               { "key": "Content-Type", "value": "application/json" }
             ],
             "url": { "raw": "{{baseUrl}}/api/productos/{{productoId}}", "host": ["{{baseUrl}}"], "path": ["api","productos","{{productoId}}"] },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"nombre\": \"Producto API Actualizado\",\n  \"descripcion\": \"Actualizado via REST\",\n  \"precio\": 65000,\n  \"stockDisponible\": 20,\n  \"idEmprendimiento\": 1,\n  \"idEstado\": 1\n}"
-            }
-          }
+            "body": { "mode": "raw", "raw": "{\n  \"nombre\": \"Producto API Actualizado\",\n  \"descripcion\": \"Actualizado via REST\",\n  \"precio\": 65000,\n  \"stockDisponible\": 20,\n  \"idEmprendimiento\": 1,\n  \"idEstado\": 1\n}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', function(){ pm.response.to.have.status(200); });",
+            "pm.test('Precio actualizado', function(){ pm.expect(pm.response.json().precio).to.eql(65000); });",
+            "pm.test('Stock actualizado', function(){ pm.expect(pm.response.json().stockDisponible).to.eql(20); });"
+          ]}}]
         },
         {
-          "name": "DELETE producto",
+          "name": "5.6 [Error 404] GET producto inexistente",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{tokenAdmin}}" }],
+            "url": { "raw": "{{baseUrl}}/api/productos/99999", "host": ["{{baseUrl}}"], "path": ["api","productos","99999"] }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Debe retornar 404', function(){ pm.response.to.have.status(404); });"
+          ]}}]
+        },
+        {
+          "name": "5.7 [Error 404] PUT producto inexistente",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{tokenAdmin}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/productos/99999", "host": ["{{baseUrl}}"], "path": ["api","productos","99999"] },
+            "body": { "mode": "raw", "raw": "{\n  \"nombre\": \"Nada\",\n  \"precio\": 100,\n  \"stockDisponible\": 0,\n  \"idEmprendimiento\": 1,\n  \"idEstado\": 1\n}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Debe retornar 404', function(){ pm.response.to.have.status(404); });"
+          ]}}]
+        },
+        {
+          "name": "5.8 [Error 404] DELETE producto inexistente",
           "request": {
             "method": "DELETE",
-            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "header": [{ "key": "Authorization", "value": "Bearer {{tokenAdmin}}" }],
+            "url": { "raw": "{{baseUrl}}/api/productos/99999", "host": ["{{baseUrl}}"], "path": ["api","productos","99999"] }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Debe retornar 404', function(){ pm.response.to.have.status(404); });"
+          ]}}]
+        },
+        {
+          "name": "5.9 DELETE producto (ADMIN)",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{tokenAdmin}}" }],
             "url": { "raw": "{{baseUrl}}/api/productos/{{productoId}}", "host": ["{{baseUrl}}"], "path": ["api","productos","{{productoId}}"] }
-          }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 204', function(){ pm.response.to.have.status(204); });"
+          ]}}]
         }
       ]
     },
+
     {
       "name": "6. Pedidos",
       "item": [
         {
-          "name": "POST crear pedido",
+          "name": "6.1 POST crear pedido (COMPRADOR)",
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Authorization", "value": "Bearer {{tokenComprador}}" },
               { "key": "Content-Type", "value": "application/json" }
             ],
             "url": { "raw": "{{baseUrl}}/api/pedidos", "host": ["{{baseUrl}}"], "path": ["api","pedidos"] },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"idEmprendimiento\": 1,\n  \"idUsuario\": 4,\n  \"idEstado\": 3,\n  \"detalles\": [\n    {\n      \"idProducto\": 1,\n      \"cantidad\": 1,\n      \"precioUnitario\": 3500000\n    }\n  ]\n}"
-            }
+            "body": { "mode": "raw", "raw": "{\n  \"idEmprendimiento\": 1,\n  \"idUsuario\": 4,\n  \"idEstado\": 3,\n  \"detalles\": [\n    {\n      \"idProducto\": 1,\n      \"cantidad\": 2,\n      \"precioUnitario\": 3500000\n    }\n  ]\n}" }
           },
-          "event": [{ "listen": "test", "script": { "exec": ["var json = pm.response.json();", "pm.environment.set('pedidoId', json.idPedido);"] } }]
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200 o 201', function(){ pm.expect(pm.response.code).to.be.oneOf([200,201]); });",
+            "var json = pm.response.json();",
+            "pm.test('idPedido presente', function(){ pm.expect(json.idPedido).to.be.a('number'); });",
+            "pm.test('Total = 2 × 3.500.000 = 7.000.000', function(){ pm.expect(json.total).to.eql(7000000); });",
+            "pm.test('Detalles presentes', function(){ pm.expect(json.detalles).to.be.an('array').with.length(1); });",
+            "pm.collectionVariables.set('pedidoId', json.idPedido);"
+          ]}}]
         },
         {
-          "name": "GET todos los pedidos",
+          "name": "6.2 [Error 403] Emprendedor intenta crear pedido",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{tokenEmprendedor}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/pedidos", "host": ["{{baseUrl}}"], "path": ["api","pedidos"] },
+            "body": { "mode": "raw", "raw": "{\n  \"idEmprendimiento\": 1,\n  \"idUsuario\": 2,\n  \"idEstado\": 3,\n  \"detalles\": []\n}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Emprendedor no puede crear pedidos — debe retornar 403', function(){ pm.response.to.have.status(403); });"
+          ]}}]
+        },
+        {
+          "name": "6.3 GET todos los pedidos (solo ADMIN)",
           "request": {
             "method": "GET",
-            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "header": [{ "key": "Authorization", "value": "Bearer {{tokenAdmin}}" }],
             "url": { "raw": "{{baseUrl}}/api/pedidos", "host": ["{{baseUrl}}"], "path": ["api","pedidos"] }
-          }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', function(){ pm.response.to.have.status(200); });",
+            "pm.test('Respuesta es un array', function(){ pm.expect(pm.response.json()).to.be.an('array'); });"
+          ]}}]
         },
         {
-          "name": "GET pedido por ID",
+          "name": "6.4 [Error 403] Comprador intenta ver todos los pedidos",
           "request": {
             "method": "GET",
-            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "header": [{ "key": "Authorization", "value": "Bearer {{tokenComprador}}" }],
+            "url": { "raw": "{{baseUrl}}/api/pedidos", "host": ["{{baseUrl}}"], "path": ["api","pedidos"] }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Solo ADMIN puede ver todos los pedidos — debe retornar 403', function(){ pm.response.to.have.status(403); });"
+          ]}}]
+        },
+        {
+          "name": "6.5 GET pedido por ID",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{tokenAdmin}}" }],
             "url": { "raw": "{{baseUrl}}/api/pedidos/{{pedidoId}}", "host": ["{{baseUrl}}"], "path": ["api","pedidos","{{pedidoId}}"] }
-          }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', function(){ pm.response.to.have.status(200); });",
+            "pm.test('ID coincide', function(){ pm.expect(pm.response.json().idPedido).to.eql(parseInt(pm.collectionVariables.get('pedidoId'))); });",
+            "pm.test('Detalles presentes', function(){ pm.expect(pm.response.json().detalles).to.be.an('array').with.length.above(0); });",
+            "pm.test('Total > 0', function(){ pm.expect(pm.response.json().total).to.be.above(0); });"
+          ]}}]
         },
         {
-          "name": "GET mis pedidos (comprador)",
+          "name": "6.6 GET mis pedidos (COMPRADOR)",
           "request": {
             "method": "GET",
-            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "header": [{ "key": "Authorization", "value": "Bearer {{tokenComprador}}" }],
             "url": { "raw": "{{baseUrl}}/api/pedidos/mis-pedidos", "host": ["{{baseUrl}}"], "path": ["api","pedidos","mis-pedidos"] }
-          }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', function(){ pm.response.to.have.status(200); });",
+            "pm.test('Respuesta es un array', function(){ pm.expect(pm.response.json()).to.be.an('array'); });",
+            "pm.test('El pedido recién creado aparece en mis pedidos', function(){",
+            "  var ids = pm.response.json().map(function(p){ return p.idPedido; });",
+            "  pm.expect(ids).to.include(parseInt(pm.collectionVariables.get('pedidoId')));",
+            "});"
+          ]}}]
         },
         {
-          "name": "PUT actualizar estado pedido",
+          "name": "6.7 [Error 403] Emprendedor intenta ver mis-pedidos",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{tokenEmprendedor}}" }],
+            "url": { "raw": "{{baseUrl}}/api/pedidos/mis-pedidos", "host": ["{{baseUrl}}"], "path": ["api","pedidos","mis-pedidos"] }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Emprendedor no puede ver mis-pedidos — debe retornar 403', function(){ pm.response.to.have.status(403); });"
+          ]}}]
+        },
+        {
+          "name": "6.8 PUT actualizar estado pedido (EMPRENDEDOR)",
           "request": {
             "method": "PUT",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Authorization", "value": "Bearer {{tokenEmprendedor}}" },
               { "key": "Content-Type", "value": "application/json" }
             ],
             "url": { "raw": "{{baseUrl}}/api/pedidos/{{pedidoId}}", "host": ["{{baseUrl}}"], "path": ["api","pedidos","{{pedidoId}}"] },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"idEmprendimiento\": 1,\n  \"idUsuario\": 4,\n  \"idEstado\": 4\n}"
-            }
-          }
+            "body": { "mode": "raw", "raw": "{\n  \"idEmprendimiento\": 1,\n  \"idUsuario\": 4,\n  \"idEstado\": 4\n}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', function(){ pm.response.to.have.status(200); });"
+          ]}}]
         },
         {
-          "name": "DELETE pedido",
+          "name": "6.9 [Error 403] Comprador intenta cambiar estado de pedido",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{tokenComprador}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/pedidos/{{pedidoId}}", "host": ["{{baseUrl}}"], "path": ["api","pedidos","{{pedidoId}}"] },
+            "body": { "mode": "raw", "raw": "{\n  \"idEmprendimiento\": 1,\n  \"idUsuario\": 4,\n  \"idEstado\": 5\n}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Comprador no puede cambiar estado — debe retornar 403', function(){ pm.response.to.have.status(403); });"
+          ]}}]
+        },
+        {
+          "name": "6.10 [Error 404] GET pedido inexistente",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{tokenAdmin}}" }],
+            "url": { "raw": "{{baseUrl}}/api/pedidos/99999", "host": ["{{baseUrl}}"], "path": ["api","pedidos","99999"] }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Debe retornar 404', function(){ pm.response.to.have.status(404); });"
+          ]}}]
+        },
+        {
+          "name": "6.11 DELETE pedido (ADMIN)",
           "request": {
             "method": "DELETE",
-            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "header": [{ "key": "Authorization", "value": "Bearer {{tokenAdmin}}" }],
             "url": { "raw": "{{baseUrl}}/api/pedidos/{{pedidoId}}", "host": ["{{baseUrl}}"], "path": ["api","pedidos","{{pedidoId}}"] }
-          }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 204', function(){ pm.response.to.have.status(204); });"
+          ]}}]
         }
       ]
     },
+
     {
       "name": "7. Roles (ADMIN)",
       "item": [
         {
-          "name": "POST crear rol",
+          "name": "7.1 POST crear rol (ADMIN)",
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Authorization", "value": "Bearer {{tokenAdmin}}" },
               { "key": "Content-Type", "value": "application/json" }
             ],
             "url": { "raw": "{{baseUrl}}/api/roles", "host": ["{{baseUrl}}"], "path": ["api","roles"] },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"nombre\": \"MODERADOR\"\n}"
-            }
+            "body": { "mode": "raw", "raw": "{\n  \"nombre\": \"MODERADOR\"\n}" }
           },
-          "event": [{ "listen": "test", "script": { "exec": ["var json = pm.response.json();", "pm.environment.set('rolId', json.idRol);"] } }]
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200 o 201', function(){ pm.expect(pm.response.code).to.be.oneOf([200,201]); });",
+            "var json = pm.response.json();",
+            "pm.test('idRol presente', function(){ pm.expect(json.idRol).to.be.a('number'); });",
+            "pm.test('Nombre correcto', function(){ pm.expect(json.nombre).to.eql('MODERADOR'); });",
+            "pm.collectionVariables.set('rolId', json.idRol);"
+          ]}}]
         },
         {
-          "name": "GET todos los roles",
+          "name": "7.2 [Error 403] Emprendedor intenta ver roles",
           "request": {
             "method": "GET",
-            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "header": [{ "key": "Authorization", "value": "Bearer {{tokenEmprendedor}}" }],
             "url": { "raw": "{{baseUrl}}/api/roles", "host": ["{{baseUrl}}"], "path": ["api","roles"] }
-          }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Solo ADMIN puede ver roles — debe retornar 403', function(){ pm.response.to.have.status(403); });"
+          ]}}]
         },
         {
-          "name": "GET rol por ID",
+          "name": "7.3 [Error 403] Comprador intenta ver roles",
           "request": {
             "method": "GET",
-            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
-            "url": { "raw": "{{baseUrl}}/api/roles/{{rolId}}", "host": ["{{baseUrl}}"], "path": ["api","roles","{{rolId}}"] }
-          }
+            "header": [{ "key": "Authorization", "value": "Bearer {{tokenComprador}}" }],
+            "url": { "raw": "{{baseUrl}}/api/roles", "host": ["{{baseUrl}}"], "path": ["api","roles"] }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Solo ADMIN puede ver roles — debe retornar 403', function(){ pm.response.to.have.status(403); });"
+          ]}}]
         },
         {
-          "name": "PUT actualizar rol",
+          "name": "7.4 GET todos los roles (ADMIN)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{tokenAdmin}}" }],
+            "url": { "raw": "{{baseUrl}}/api/roles", "host": ["{{baseUrl}}"], "path": ["api","roles"] }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', function(){ pm.response.to.have.status(200); });",
+            "pm.test('Respuesta es un array', function(){ pm.expect(pm.response.json()).to.be.an('array'); });",
+            "pm.test('Al menos un rol existe', function(){ pm.expect(pm.response.json().length).to.be.above(0); });"
+          ]}}]
+        },
+        {
+          "name": "7.5 GET rol por ID",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{tokenAdmin}}" }],
+            "url": { "raw": "{{baseUrl}}/api/roles/{{rolId}}", "host": ["{{baseUrl}}"], "path": ["api","roles","{{rolId}}"] }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', function(){ pm.response.to.have.status(200); });",
+            "pm.test('Nombre correcto', function(){ pm.expect(pm.response.json().nombre).to.eql('MODERADOR'); });"
+          ]}}]
+        },
+        {
+          "name": "7.6 PUT actualizar rol",
           "request": {
             "method": "PUT",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Authorization", "value": "Bearer {{tokenAdmin}}" },
               { "key": "Content-Type", "value": "application/json" }
             ],
             "url": { "raw": "{{baseUrl}}/api/roles/{{rolId}}", "host": ["{{baseUrl}}"], "path": ["api","roles","{{rolId}}"] },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"nombre\": \"MODERADOR_SENIOR\"\n}"
-            }
-          }
+            "body": { "mode": "raw", "raw": "{\n  \"nombre\": \"MODERADOR_SENIOR\"\n}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', function(){ pm.response.to.have.status(200); });",
+            "pm.test('Nombre actualizado', function(){ pm.expect(pm.response.json().nombre).to.eql('MODERADOR_SENIOR'); });"
+          ]}}]
         },
         {
-          "name": "DELETE rol",
+          "name": "7.7 [Error 404] GET rol inexistente",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{tokenAdmin}}" }],
+            "url": { "raw": "{{baseUrl}}/api/roles/99999", "host": ["{{baseUrl}}"], "path": ["api","roles","99999"] }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Debe retornar 404', function(){ pm.response.to.have.status(404); });"
+          ]}}]
+        },
+        {
+          "name": "7.8 DELETE rol",
           "request": {
             "method": "DELETE",
-            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "header": [{ "key": "Authorization", "value": "Bearer {{tokenAdmin}}" }],
             "url": { "raw": "{{baseUrl}}/api/roles/{{rolId}}", "host": ["{{baseUrl}}"], "path": ["api","roles","{{rolId}}"] }
-          }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 204', function(){ pm.response.to.have.status(204); });"
+          ]}}]
         }
       ]
     },
+
     {
-      "name": "8. Pruebas de Seguridad",
+      "name": "8. Pruebas de Seguridad Global",
       "item": [
         {
-          "name": "401 - Sin token",
+          "name": "8.1 [401] Sin token — GET emprendimientos",
           "request": {
             "method": "GET",
             "header": [],
             "url": { "raw": "{{baseUrl}}/api/emprendimientos", "host": ["{{baseUrl}}"], "path": ["api","emprendimientos"] }
           },
-          "event": [{ "listen": "test", "script": { "exec": ["pm.test('Debe retornar 401', function(){ pm.response.to.have.status(401); });"] } }]
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Sin token debe retornar 401', function(){ pm.response.to.have.status(401); });"
+          ]}}]
         },
         {
-          "name": "403 - Comprador accede a roles (token juan)",
+          "name": "8.2 [401] Sin token — GET productos",
           "request": {
             "method": "GET",
-            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/productos", "host": ["{{baseUrl}}"], "path": ["api","productos"] }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Sin token debe retornar 401', function(){ pm.response.to.have.status(401); });"
+          ]}}]
+        },
+        {
+          "name": "8.3 [401] Token inválido (string basura)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer token.invalido.xyz123" }],
+            "url": { "raw": "{{baseUrl}}/api/productos", "host": ["{{baseUrl}}"], "path": ["api","productos"] }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Token inválido debe retornar 401', function(){ pm.response.to.have.status(401); });"
+          ]}}]
+        },
+        {
+          "name": "8.4 Admin puede acceder a roles",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{tokenAdmin}}" }],
             "url": { "raw": "{{baseUrl}}/api/roles", "host": ["{{baseUrl}}"], "path": ["api","roles"] }
           },
-          "event": [{ "listen": "test", "script": { "exec": ["pm.test('Debe retornar 403', function(){ pm.response.to.have.status(403); });"] } }]
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Admin tiene acceso total a roles — debe ser 200', function(){ pm.response.to.have.status(200); });"
+          ]}}]
+        },
+        {
+          "name": "8.5 Admin puede crear pedido (como comprador)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{tokenAdmin}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/pedidos", "host": ["{{baseUrl}}"], "path": ["api","pedidos"] },
+            "body": { "mode": "raw", "raw": "{\n  \"idEmprendimiento\": 1,\n  \"idUsuario\": 1,\n  \"idEstado\": 3,\n  \"detalles\": [\n    {\n      \"idProducto\": 1,\n      \"cantidad\": 1,\n      \"precioUnitario\": 3500000\n    }\n  ]\n}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Admin puede crear pedidos — debe ser 200 o 201', function(){ pm.expect(pm.response.code).to.be.oneOf([200,201]); });"
+          ]}}]
+        },
+        {
+          "name": "8.6 Admin puede crear producto (como emprendedor)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{tokenAdmin}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/productos", "host": ["{{baseUrl}}"], "path": ["api","productos"] },
+            "body": { "mode": "raw", "raw": "{\n  \"nombre\": \"Producto Admin Test\",\n  \"descripcion\": \"Admin crea producto\",\n  \"precio\": 10000,\n  \"stockDisponible\": 5,\n  \"idEmprendimiento\": 1,\n  \"idEstado\": 1\n}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Admin puede crear productos — debe ser 200 o 201', function(){ pm.expect(pm.response.code).to.be.oneOf([200,201]); });"
+          ]}}]
         }
       ]
     }
+
   ]
 }

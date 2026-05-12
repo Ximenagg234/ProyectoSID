@@ -6,6 +6,7 @@ import edu.icesi.emprendimientos.entity.Pedido;
 import edu.icesi.emprendimientos.repository.EstadoRepository;
 import edu.icesi.emprendimientos.repository.PedidoRepository;
 import edu.icesi.emprendimientos.service.PedidoService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -45,7 +46,7 @@ public class PedidoServiceImpl implements PedidoService {
     @Override
     public Pedido buscarPorId(Integer id) {
         return pedidoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Pedido no encontrado"));
+                .orElseThrow(() -> new EntityNotFoundException("Pedido no encontrado"));
     }
 
     @Override
@@ -66,9 +67,9 @@ public class PedidoServiceImpl implements PedidoService {
     @Override
     public void actualizarEstado(Integer idPedido, Integer idEstado) {
         Pedido pedido = pedidoRepository.findById(idPedido)
-                .orElseThrow(() -> new RuntimeException("Pedido no encontrado"));
+                .orElseThrow(() -> new EntityNotFoundException("Pedido no encontrado"));
         Estado estado = estadoRepository.findById(idEstado)
-                .orElseThrow(() -> new RuntimeException("Estado no encontrado"));
+                .orElseThrow(() -> new EntityNotFoundException("Estado no encontrado"));
         pedido.setEstado(estado);
         pedidoRepository.save(pedido);
     }

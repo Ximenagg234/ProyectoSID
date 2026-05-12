@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <!-- Cropper.js -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css"/>
+    <style>
+        /* Recuadro de recorte circular */
+        .cropper-view-box,
+        .cropper-face {
+            border-radius: 50% !important;
+        }
+        .cropper-view-box {
+            outline: 3px solid #6366F1;
+            outline-color: rgba(99, 102, 241, 0.85);
+        }
+        /* Fondo oscuro semitransparente fuera del círculo */
+        .cropper-modal { opacity: 0.6; }
+    </style>
+</head>
+<body>
+<div th:fragment="contenido">
+
+    <div class="page-header">
+        <h1>Mi Perfil</h1>
+        <p>Administra tu información personal</p>
+    </div>
+
+    <!-- Flash -->
+    <div th:if="${exito}"
+         style="background:#DCFCE7;color:#15803D;border-radius:12px;padding:14px 18px;
+                font-size:13.5px;font-weight:600;margin-bottom:24px;
+                display:flex;align-items:center;gap:10px;">
+        <i class="bi bi-check-circle-fill" style="font-size:18px;"></i>
+        <span th:text="${exito}"></span>
+    </div>
+
+    <div style="display:flex;gap:24px;align-items:flex-start;flex-wrap:wrap;">
+
+        <!-- ── TARJETA FOTO ───────────────────────────────── -->
+        <div class="card-custom" style="width:260px;flex-shrink:0;text-align:center;">
+
+            <!-- Avatar -->
+            <div style="position:relative;width:120px;height:120px;margin:0 auto 16px;cursor:pointer;"
+                 onclick="document.getElementById('modalFoto').style.display='flex'">
+
+                <img th:if="${usuario.fotoPerfil != null}"
+                     th:src="${usuario.fotoPerfil}" id="avatarImg"
+                     style="width:120px;height:120px;border-radius:50%;object-fit:cover;
+                            border:3px solid #6366F1;"/>
+
+                <div th:if="${usuario.fotoPerfil == null}"
+                     style="width:120px;height:120px;border-radius:50%;background:#6366F1;
+                            display:flex;align-items:center;justify-content:center;
+                            font-size:36px;font-weight:800;color:#fff;border:3px solid #6366F1;">
+                    <span th:text="${#strings.substring(usuario.nombreCompleto,0,2).toUpperCase()}"></span>
+                </div>
+
+                <!-- Overlay editar -->
+                <div style="position:absolute;bottom:0;right:0;width:34px;height:34px;
+                            background:#6366F1;border-radius:50%;border:2px solid #fff;
+                            display:flex;align-items:center;justify-content:center;">
+                    <i class="bi bi-camera-fill" style="font-size:13px;color:#fff;"></i>
+                </div>
+            </div>
+
+            <div style="font-size:16px;font-weight:800;color:#111827;margin-bottom:4px;"
+                 th:text="${usuario.nombreCompleto}"></div>
+            <div style="font-size:12px;color:#6B7280;margin-bottom:16px;"
+                 th:text="${usuario.correoInstitucional}"></div>
+
+            <button onclick="document.getElementById('modalFoto').style.display='flex'"
+                    class="btn btn-primary" style="width:100%;justify-content:center;">
+                <i class="bi bi-camera"></i> Cambiar foto
+            </button>
+        </div>
+
+        <!-- ── TARJETA DATOS ──────────────────────────────── -->
+        <div class="card-custom" style="flex:1;min-width:280px;">
+            <div class="section-header">
+                <div class="section-header-info">
+                    <h2>Información personal</h2>
+                    <p>Tus datos en IcesiEmprende</p>
+                </div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                <div>
+                    <div style="font-size:11px;font-weight:700;text-transform:uppercase;
+                                letter-spacing:.8px;color:#6B7280;margin-bottom:4px;">Nombre completo</div>
+                    <div style="font-size:14px;font-weight:600;color:#111827;"
+                         th:text="${usuario.nombreCompleto}"></div>
+                </div>
+                <div>
+                    <div style="font-size:11px;font-weight:700;text-transform:uppercase;
+                                letter-spacing:.8px;color:#6B7280;margin-bottom:4px;">Correo institucional</div>
+                    <div style="font-size:14px;font-weight:600;color:#111827;"
+                         th:text="${usuario.correoInstitucional}"></div>
+                </div>
+                <div>
+                    <div style="font-size:11px;font-weight:700;text-transform:uppercase;
+                                letter-spacing:.8px;color:#6B7280;margin-bottom:4px;">Programa académico</div>
+                    <div style="font-size:14px;font-weight:600;color:#111827;"
+                         th:text="${usuario.programaAcademico}"></div>
+                </div>
+                <div>
+                    <div style="font-size:11px;font-weight:700;text-transform:uppercase;
+                                letter-spacing:.8px;color:#6B7280;margin-bottom:4px;">Semestre</div>
+                    <div style="font-size:14px;font-weight:600;color:#111827;"
+                         th:text="${usuario.semestreAcademico}"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════
+         MODAL FOTO DE PERFIL
+    ══════════════════════════════════════════════════ -->
+    <div id="modalFoto"
+         style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);
+                z-index:9999;align-items:center;justify-content:center;">
+
+        <div style="background:#fff;border-radius:20px;width:420px;max-width:95vw;
+                    box-shadow:0 20px 60px rgba(0,0,0,.3);overflow:hidden;">
+
+            <!-- Header -->
+            <div style="display:flex;align-items:center;justify-content:space-between;
+                        padding:20px 24px 16px;">
+                <div>
+                    <div style="font-size:16px;font-weight:800;color:#111827;">Foto de perfil</div>
+                    <div id="modalSubtitulo" style="font-size:12.5px;color:#6B7280;margin-top:2px;">
+                        JPG, PNG o WEBP. Máximo 8MB.
+                    </div>
+                </div>
+                <button onclick="cerrarModal()"
+                        style="width:32px;height:32px;border-radius:50%;border:none;
+                               background:#F3F4F6;cursor:pointer;display:flex;
+                               align-items:center;justify-content:center;font-size:16px;color:#6B7280;">
+                    ×
+                </button>
+            </div>
+
+            <!-- Paso 1: avatar actual + botón subir -->
+            <div id="paso1" style="padding:0 24px 24px;text-align:center;">
+                <div style="width:96px;height:96px;border-radius:50%;margin:0 auto 20px;
+                            overflow:hidden;border:3px solid #E5E7EB;">
+                    <img th:if="${usuario.fotoPerfil != null}" th:src="${usuario.fotoPerfil}"
+                         style="width:100%;height:100%;object-fit:cover;"/>
+                    <div th:if="${usuario.fotoPerfil == null}"
+                         style="width:100%;height:100%;background:#6366F1;display:flex;
+                                align-items:center;justify-content:center;
+                                font-size:28px;font-weight:800;color:#fff;">
+                        <span th:text="${#strings.substring(usuario.nombreCompleto,0,2).toUpperCase()}"></span>
+                    </div>
+                </div>
+                <button onclick="document.getElementById('inputFoto').click()"
+                        style="width:100%;padding:12px;border-radius:12px;border:none;
+                               background:#F3F4F6;font-size:14px;font-weight:600;
+                               color:#374151;cursor:pointer;display:flex;
+                               align-items:center;justify-content:center;gap:8px;
+                               transition:background .2s;"
+                        onmouseover="this.style.background='#E5E7EB'"
+                        onmouseout="this.style.background='#F3F4F6'">
+                    <i class="bi bi-upload" style="font-size:16px;"></i> Subir foto
+                </button>
+                <input type="file" id="inputFoto" accept="image/*" style="display:none;"
+                       onchange="fotoSeleccionada(this)"/>
+            </div>
+
+            <!-- Paso 2: cropper -->
+            <div id="paso2" style="display:none;">
+                <!-- Área de recorte — ancho y alto fijos, sin restricciones de imagen -->
+                <div style="width:100%;height:300px;overflow:hidden;background:#111;">
+                    <img id="imagenCrop" style="display:block;max-width:100%;"/>
+                </div>
+
+                <!-- Controles zoom / rotar -->
+                <div style="padding:10px 24px;display:flex;gap:10px;border-bottom:1px solid #F3F4F6;">
+                    <button onclick="cropper.zoom(0.1)"
+                            style="width:32px;height:32px;border-radius:8px;border:1px solid #E5E7EB;
+                                   background:#fff;cursor:pointer;font-size:16px;color:#6B7280;">
+                        <i class="bi bi-zoom-in"></i>
+                    </button>
+                    <button onclick="cropper.zoom(-0.1)"
+                            style="width:32px;height:32px;border-radius:8px;border:1px solid #E5E7EB;
+                                   background:#fff;cursor:pointer;font-size:16px;color:#6B7280;">
+                        <i class="bi bi-zoom-out"></i>
+                    </button>
+                    <button onclick="cropper.rotate(-90)"
+                            style="width:32px;height:32px;border-radius:8px;border:1px solid #E5E7EB;
+                                   background:#fff;cursor:pointer;font-size:16px;color:#6B7280;">
+                        <i class="bi bi-arrow-counterclockwise"></i>
+                    </button>
+                    <button onclick="cropper.rotate(90)"
+                            style="width:32px;height:32px;border-radius:8px;border:1px solid #E5E7EB;
+                                   background:#fff;cursor:pointer;font-size:16px;color:#6B7280;">
+                        <i class="bi bi-arrow-clockwise"></i>
+                    </button>
+
+                    <!-- Vista previa circular -->
+                    <div style="margin-left:auto;display:flex;gap:10px;align-items:center;">
+                        <div style="text-align:center;">
+                            <div id="preview1"
+                                 style="width:56px;height:56px;border-radius:50%;overflow:hidden;
+                                        border:2px solid #6366F1;margin:0 auto;"></div>
+                            <div style="font-size:10px;color:#9CA3AF;margin-top:3px;">Vista previa</div>
+                        </div>
+                        <div style="text-align:center;">
+                            <div id="preview2"
+                                 style="width:32px;height:32px;border-radius:50%;overflow:hidden;
+                                        border:2px solid #E5E7EB;margin:0 auto;"></div>
+                            <div style="font-size:10px;color:#9CA3AF;margin-top:3px;">Real</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botones -->
+                <div style="padding:16px 24px;display:flex;gap:10px;">
+                    <button onclick="elegirOtra()"
+                            style="flex:1;padding:11px;border-radius:50px;
+                                   border:1.5px solid #E5E7EB;background:#fff;
+                                   font-size:13px;font-weight:600;color:#374151;cursor:pointer;">
+                        <i class="bi bi-x"></i> Elegir otra
+                    </button>
+                    <button onclick="guardarFoto()"
+                            id="btnGuardar"
+                            style="flex:2;padding:11px;border-radius:50px;border:none;
+                                   background:#6366F1;color:#fff;font-size:13px;
+                                   font-weight:700;cursor:pointer;transition:background .2s;">
+                        Guardar foto
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ── SCRIPTS ────────────────────────────────────── -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.js"></script>
+    <script th:inline="javascript">
+        var cropper = null;
+
+        function fotoSeleccionada(input) {
+            if (!input.files || !input.files[0]) return;
+            var file = input.files[0];
+            if (file.size > 8 * 1024 * 1024) {
+                alert('La imagen supera los 8MB. Elige una más pequeña.');
+                return;
+            }
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('paso1').style.display = 'none';
+                document.getElementById('paso2').style.display = 'block';
+                document.getElementById('modalSubtitulo').textContent =
+                    'Arrastra para mover y usa el zoom para encuadrar la foto en el círculo.';
+
+                var img = document.getElementById('imagenCrop');
+                img.src = e.target.result;
+
+                if (cropper) { cropper.destroy(); cropper = null; }
+
+                cropper = new Cropper(img, {
+                    aspectRatio: 1,
+                    viewMode: 2,          // canvas siempre llena el contenedor — sin áreas negras
+                    dragMode: 'move',     // arrastrar mueve la imagen, NO el recuadro
+                    autoCropArea: 0.85,
+                    cropBoxMovable: false,
+                    cropBoxResizable: false,
+                    toggleDragModeOnDblclick: false,
+                    guides: false,
+                    center: false,
+                    highlight: false,
+                    background: false,
+                    minContainerHeight: 300,
+                    preview: [
+                        document.getElementById('preview1'),
+                        document.getElementById('preview2')
+                    ]
+                });
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function elegirOtra() {
+            if (cropper) { cropper.destroy(); cropper = null; }
+            document.getElementById('paso2').style.display = 'none';
+            document.getElementById('paso1').style.display = 'block';
+            document.getElementById('modalSubtitulo').textContent = 'JPG, PNG o WEBP. Máximo 8MB.';
+            document.getElementById('inputFoto').value = '';
+        }
+
+        function cerrarModal() {
+            elegirOtra();
+            document.getElementById('modalFoto').style.display = 'none';
+        }
+
+        function guardarFoto() {
+            if (!cropper) return;
+            var btn = document.getElementById('btnGuardar');
+            btn.textContent = 'Guardando...';
+            btn.disabled = true;
+
+            var canvas = cropper.getCroppedCanvas({ width: 400, height: 400 });
+            var dataUrl = canvas.toDataURL('image/jpeg', 0.88);
+
+            fetch('/perfil/foto', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json',
+                           'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]')?.content || '' },
+                body: JSON.stringify({ foto: dataUrl })
+            })
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                if (data.url) {
+                    // Actualizar avatar en la página sin recargar
+                    var avatarImg = document.getElementById('avatarImg');
+                    if (avatarImg) {
+                        avatarImg.src = data.url + '?t=' + Date.now();
+                    } else {
+                        // Era el div con iniciales, recargar para mostrar img
+                        location.reload();
+                        return;
+                    }
+                    // Actualizar topbar
+                    var topbarAvatar = document.getElementById('topbarAvatar');
+                    if (topbarAvatar) {
+                        topbarAvatar.innerHTML =
+                            '<img src="' + data.url + '?t=' + Date.now() +
+                            '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;"/>';
+                    }
+                    cerrarModal();
+                } else {
+                    alert('Error: ' + (data.error || 'No se pudo guardar'));
+                    btn.textContent = 'Guardar foto';
+                    btn.disabled = false;
+                }
+            })
+            .catch(function() {
+                alert('Error de conexión');
+                btn.textContent = 'Guardar foto';
+                btn.disabled = false;
+            });
+        }
+
+        // Cerrar modal al hacer clic fuera
+        document.getElementById('modalFoto').addEventListener('click', function(e) {
+            if (e.target === this) cerrarModal();
+        });
+    </script>
+
+</div>
+</body>
+</html>

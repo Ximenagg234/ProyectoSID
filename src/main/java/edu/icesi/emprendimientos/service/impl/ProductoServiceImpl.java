@@ -3,6 +3,7 @@ package edu.icesi.emprendimientos.service.impl;
 import edu.icesi.emprendimientos.entity.Producto;
 import edu.icesi.emprendimientos.repository.ProductoRepository;
 import edu.icesi.emprendimientos.service.ProductoService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -44,13 +45,13 @@ public class ProductoServiceImpl implements ProductoService {
     @Override
     public Producto buscarPorId(Integer id) {
         return productoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+                .orElseThrow(() -> new EntityNotFoundException("Producto no encontrado"));
     }
 
     @Override
     public Producto actualizar(Integer id, Producto actualizado) {
         Producto existente = productoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+                .orElseThrow(() -> new EntityNotFoundException("Producto no encontrado"));
         existente.setNombre(actualizado.getNombre());
         existente.setDescripcion(actualizado.getDescripcion());
         existente.setPrecio(actualizado.getPrecio());
@@ -63,6 +64,8 @@ public class ProductoServiceImpl implements ProductoService {
 
     @Override
     public void eliminar(Integer id) {
+        if (!productoRepository.existsById(id))
+            throw new EntityNotFoundException("Producto no encontrado con ID: " + id);
         productoRepository.deleteById(id);
     }
 

@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/roles")
 @Tag(name = "Roles", description = "CRUD de roles (solo ADMIN)")
 @SecurityRequirement(name = "BearerAuth")
+@PreAuthorize("hasRole('ADMIN')")
 public class RestRolController {
 
     private final RolService rolService;

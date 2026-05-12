@@ -126,6 +126,7 @@ public class ProductoServiceTest {
 
     @Test
     void eliminarProducto_Existe_EliminaCorrectamente() {
+        when(productoRepository.existsById(1)).thenReturn(true);
         doNothing().when(productoRepository).deleteById(1);
         productoService.eliminar(1);
         verify(productoRepository, times(1)).deleteById(1);

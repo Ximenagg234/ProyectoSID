@@ -8,6 +8,7 @@ import edu.icesi.emprendimientos.repository.PermissionRepository;
 import edu.icesi.emprendimientos.repository.RolPermissionRepository;
 import edu.icesi.emprendimientos.repository.RolRepository;
 import edu.icesi.emprendimientos.service.RolService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -44,13 +45,13 @@ public class RolServiceImpl implements RolService {
     @Override
     public Rol buscarPorId(Integer id) {
         return rolRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Rol no encontrado"));
+                .orElseThrow(() -> new EntityNotFoundException("Rol no encontrado"));
     }
 
     @Override
     public Rol actualizar(Integer id, Rol rolActualizado) {
         Rol existente = rolRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Rol no encontrado"));
+                .orElseThrow(() -> new EntityNotFoundException("Rol no encontrado"));
         existente.setNombre(rolActualizado.getNombre());
         return rolRepository.save(existente);
     }
@@ -68,10 +69,10 @@ public class RolServiceImpl implements RolService {
         if (rolPermissionRepository.existsById(id)) return;
 
         Rol rol = rolRepository.findById(idRol)
-                .orElseThrow(() -> new RuntimeException("Rol no encontrado"));
+                .orElseThrow(() -> new EntityNotFoundException("Rol no encontrado"));
 
         Permission permiso = permissionRepository.findById(idPermission)
-                .orElseThrow(() -> new RuntimeException("Permiso no encontrado"));
+                .orElseThrow(() -> new EntityNotFoundException("Permiso no encontrado"));
 
         RolPermission rp = new RolPermission();
         rp.setId(id);

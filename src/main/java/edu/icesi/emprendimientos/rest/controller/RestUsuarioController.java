@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,6 +32,7 @@ public class RestUsuarioController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Listar todos los usuarios")
     @ApiResponse(responseCode = "200", description = "Éxito")
     @ApiResponse(responseCode = "401", description = "No autorizado")
@@ -64,16 +66,13 @@ public class RestUsuarioController {
     @ApiResponse(responseCode = "404", description = "No encontrado")
     public ResponseEntity<UsuarioResponseDTO> update(@PathVariable Integer id,
                                                       @RequestBody UsuarioRequestDTO dto) {
-        Usuario existing = usuarioService.buscarPorId(id);
-        existing.setNombreCompleto(dto.getNombreCompleto());
-        existing.setProgramaAcademico(dto.getProgramaAcademico());
-        existing.setSemestreAcademico(dto.getSemestreAcademico());
-        existing.setFotoPerfil(dto.getFotoPerfil());
-        Usuario saved = usuarioService.guardar(existing);
+        Usuario toUpdate = usuarioMapper.toEntity(dto);
+        Usuario saved = usuarioService.actualizar(id, toUpdate);
         return ResponseEntity.ok(usuarioMapper.toDto(saved));
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Eliminar usuario (solo ADMIN)")
     @ApiResponse(responseCode = "204", description = "Eliminado")
     @ApiResponse(responseCode = "403", description = "Sin permisos")

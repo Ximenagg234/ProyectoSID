@@ -12,7 +12,7 @@
         <form th:action="${emprendimiento.idEmprendimiento != null}
                           ? @{'/mis-emprendimientos/actualizar/' + ${emprendimiento.idEmprendimiento}}
                           : @{/mis-emprendimientos}"
-              th:object="${emprendimiento}" method="post">
+              th:object="${emprendimiento}" method="post" enctype="multipart/form-data">
 
             <div style="display:flex;flex-direction:column;gap:16px;">
 
@@ -36,6 +36,46 @@
                                 th:value="${cat.idCategoria}"
                                 th:text="${cat.nombre}"></option>
                     </select>
+                </div>
+
+                <!-- Logo upload -->
+                <div>
+                    <label class="form-label">Logo del emprendimiento</label>
+
+                    <!-- Preview logo actual (modo edición) -->
+                    <div th:if="${emprendimiento.logoUrl != null}"
+                         style="margin-bottom:10px;">
+                        <img th:src="${emprendimiento.logoUrl}" alt="Logo actual"
+                             style="width:80px; height:80px; object-fit:cover;
+                                    border-radius:12px; border:2px solid #E5E7EB;"/>
+                        <div style="font-size:11px; color:#6B7280; margin-top:4px;">Logo actual</div>
+                    </div>
+
+                    <div style="border:2px dashed #D1D5DB; border-radius:12px; padding:20px;
+                                text-align:center; cursor:pointer; transition:border-color .2s;"
+                         onmouseover="this.style.borderColor='#6366F1'"
+                         onmouseout="this.style.borderColor='#D1D5DB'"
+                         onclick="document.getElementById('logoInput').click()">
+                        <i class="bi bi-cloud-upload" style="font-size:28px; color:#6366F1; display:block; margin-bottom:8px;"></i>
+                        <div style="font-size:13px; font-weight:600; color:#374151;">
+                            Haz clic para subir tu logo
+                        </div>
+                        <div style="font-size:11px; color:#9CA3AF; margin-top:4px;">
+                            PNG, JPG, WEBP · máx. 10MB
+                        </div>
+                        <div id="logoNombre" style="font-size:12px; color:#6366F1; margin-top:8px; font-weight:600;"></div>
+                    </div>
+                    <input type="file" id="logoInput" name="logo" accept="image/*"
+                           style="display:none;"
+                           onchange="document.getElementById('logoNombre').textContent = this.files[0]?.name || '';
+                                     if(this.files[0]){
+                                         var reader=new FileReader();
+                                         reader.onload=function(e){ document.getElementById('logoPreview').src=e.target.result; document.getElementById('logoPreview').style.display='block'; };
+                                         reader.readAsDataURL(this.files[0]);
+                                     }"/>
+                    <img id="logoPreview" src="#" alt="Preview"
+                         style="display:none; width:80px; height:80px; object-fit:cover;
+                                border-radius:12px; border:2px solid #6366F1; margin-top:10px;"/>
                 </div>
 
             </div>

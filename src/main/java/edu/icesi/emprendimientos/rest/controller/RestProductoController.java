@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -61,6 +62,7 @@ public class RestProductoController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('EMPRENDEDOR','ADMIN')")
     @Operation(summary = "Crear producto")
     @ApiResponse(responseCode = "201", description = "Creado")
     public ResponseEntity<ProductoResponseDTO> create(@RequestBody ProductoRequestDTO dto) {
@@ -71,6 +73,7 @@ public class RestProductoController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('EMPRENDEDOR','ADMIN')")
     @Operation(summary = "Actualizar producto")
     @ApiResponse(responseCode = "200", description = "Actualizado")
     @ApiResponse(responseCode = "404", description = "No encontrado")
@@ -87,6 +90,7 @@ public class RestProductoController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('EMPRENDEDOR','ADMIN')")
     @Operation(summary = "Eliminar producto")
     @ApiResponse(responseCode = "204", description = "Eliminado")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
