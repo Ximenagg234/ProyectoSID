@@ -11,6 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 public class PedidoResponseDTO {
     private Integer idPedido;
+    private Integer idEmprendimiento;
     private String nombreEmprendimiento;
     private String nombreUsuario;
     private String nombreEstado;

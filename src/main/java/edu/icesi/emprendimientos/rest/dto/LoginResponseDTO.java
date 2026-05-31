@@ -13,4 +13,5 @@ public class LoginResponseDTO {
     private String tipo = "Bearer";
     private String correoInstitucional;
     private List<String> roles;
+    private Integer idUsuario;
 }

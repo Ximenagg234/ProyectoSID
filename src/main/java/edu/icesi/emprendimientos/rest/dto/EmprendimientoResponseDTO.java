@@ -12,6 +12,7 @@ public class EmprendimientoResponseDTO {
     private String nombre;
     private String descripcion;
     private String logoUrl;
+    private Boolean destacado;
     private String nombreUsuario;
     private String nombreCategoria;
     private String nombreSemestre;
