@@ -1,0 +1,56 @@
+version: '3.9'
+
+services:
+
+  # ── Base de datos PostgreSQL ──────────────────────────────────────
+  db:
+    image: postgres:15-alpine
+    container_name: emprendimientos-db
+    environment:
+      POSTGRES_DB: emprendimientos
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d emprendimientos"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # ── Backend Spring Boot ───────────────────────────────────────────
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: emprendimientos-backend
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    ports:
+      - "8081:8081"
+    volumes:
+      - uploads_data:/app/uploads
+    restart: unless-stopped
+
+  # ── Frontend React + Nginx ────────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: emprendimientos-frontend
+    depends_on:
+      - backend
+    ports:
+      - "80:80"
+    restart: unless-stopped
+
+# ── Volúmenes persistentes ────────────────────────────────────────
+volumes:
+  postgres_data:
+  uploads_data:
