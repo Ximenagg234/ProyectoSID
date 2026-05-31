@@ -181,45 +181,33 @@ http://localhost
 
 ## Despliegue con Tomcat
 
-### 1. Generar el WAR
+La aplicacion fue desplegada en el equipo **205m03** de la Universidad Icesi usando Apache Tomcat 10.
 
-En la terminal, desde la raiz del proyecto:
+### Acceder a la aplicacion desplegada
+
+```
+http://10.147.20.63:8080/emprendimientos-0.0.1-SNAPSHOT/
+```
+
+### Iniciar Tomcat en el servidor (si no esta corriendo)
+
+Conectarse al servidor por SSH:
 
 ```bash
-./mvnw clean package -DskipTests
+ssh swarch@10.147.20.63
 ```
 
-El archivo generado queda en:
-```
-target/emprendimientos-0.0.1-SNAPSHOT.war
-```
-
-### 2. Instalar Tomcat en el servidor (sin permisos sudo)
+Iniciar Tomcat:
 
 ```bash
-cd ~
-wget https://downloads.apache.org/tomcat/tomcat-10/v10.1.55/bin/apache-tomcat-10.1.55.tar.gz
-tar -xzf apache-tomcat-10.1.55.tar.gz
-mv apache-tomcat-10.1.55 tomcat
-chmod +x ~/tomcat/bin/*.sh
 ~/tomcat/bin/startup.sh
 ```
 
-### 3. Copiar el WAR al servidor
-
-Desde la terminal de tu maquina local:
+Detener Tomcat:
 
 ```bash
-scp target/emprendimientos-0.0.1-SNAPSHOT.war usuario@IP_SERVIDOR:~/tomcat/webapps/
+~/tomcat/bin/shutdown.sh
 ```
-
-### 4. Acceder a la aplicacion
-
-```
-http://IP_SERVIDOR:8080/emprendimientos-0.0.1-SNAPSHOT/
-```
-
-Tomcat despliega automaticamente cualquier archivo WAR colocado en la carpeta `webapps/`.
 
 ---
 
@@ -469,6 +457,6 @@ target/site/jacoco/index.html
 
 ## Autores
 
-Proyecto desarrollado por el equipo **MergeMasters**
+Proyecto desarrollado por el equipo **MergeMasters** compuesto por Ximena Gomez y Natalia Delgado
 
 Universidad Icesi — Computacion en Internet II — 2026-1
