@@ -34,9 +34,9 @@ public class RestAuthController {
     private final UsuarioMapper usuarioMapper;
 
     public RestAuthController(AuthenticationManager authenticationManager,
-                               JwtService jwtService,
-                               UsuarioService usuarioService,
-                               UsuarioMapper usuarioMapper) {
+                              JwtService jwtService,
+                              UsuarioService usuarioService,
+                              UsuarioMapper usuarioMapper) {
         this.authenticationManager = authenticationManager;
         this.jwtService = jwtService;
         this.usuarioService = usuarioService;
@@ -55,16 +55,25 @@ public class RestAuthController {
         String token = jwtService.generateToken(userDetails);
         List<String> roles = userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
+                .filter(a -> a.startsWith("ROLE_"))
                 .collect(Collectors.toList());
-        return ResponseEntity.ok(new LoginResponseDTO(token, "Bearer", userDetails.getUsername(), roles));
+        edu.icesi.emprendimientos.entity.Usuario usuario =
+                usuarioService.buscarPorCorreo(userDetails.getUsername());
+        Integer idUsuario = (usuario != null) ? usuario.getIdUsuario() : null;
+        return ResponseEntity.ok(new LoginResponseDTO(token, "Bearer", userDetails.getUsername(), roles, idUsuario));
     }
 
     @PostMapping("/register")
     @Operation(summary = "Registrar nuevo usuario")
     @ApiResponse(responseCode = "201", description = "Usuario creado")
-    public ResponseEntity<UsuarioResponseDTO> register(@RequestBody UsuarioRequestDTO dto) {
+    public ResponseEntity<UsuarioResponseDTO> register(
+            @RequestBody UsuarioRequestDTO dto,
+            @RequestParam(defaultValue = "3") int idRol) {
         Usuario usuario = usuarioMapper.toEntity(dto);
         Usuario saved = usuarioService.guardar(usuario);
+        // idRol: 2=EMPRENDEDOR, 3=COMPRADOR (default)
+        int rolId = (idRol == 2) ? 2 : 3;
+        usuarioService.asignarRol(saved.getIdUsuario(), rolId);
         return ResponseEntity.status(HttpStatus.CREATED).body(usuarioMapper.toDto(saved));
     }
 }

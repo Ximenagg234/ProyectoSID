@@ -33,6 +33,7 @@ public class RestCategoriaController {
     }
 
     @GetMapping
+    @PreAuthorize("isAuthenticated()")   // cualquier usuario logueado puede ver categorías
     @Operation(summary = "Listar categorías")
     @ApiResponse(responseCode = "200", description = "Éxito")
     @ApiResponse(responseCode = "403", description = "Sin permisos")
@@ -62,7 +63,7 @@ public class RestCategoriaController {
     @Operation(summary = "Actualizar categoría")
     @ApiResponse(responseCode = "200", description = "Actualizada")
     public ResponseEntity<CategoriaResponseDTO> update(@PathVariable Integer id,
-                                                        @RequestBody CategoriaRequestDTO dto) {
+                                                       @RequestBody CategoriaRequestDTO dto) {
         Categoria cat = categoriaService.buscarPorId(id);
         cat.setNombre(dto.getNombre());
         cat.setDescripcion(dto.getDescripcion());

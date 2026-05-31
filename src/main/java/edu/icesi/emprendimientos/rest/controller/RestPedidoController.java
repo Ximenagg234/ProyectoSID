@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +23,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -36,19 +38,22 @@ public class RestPedidoController {
     private final EmprendimientoRepository emprendimientoRepository;
     private final EstadoRepository estadoRepository;
     private final ProductoRepository productoRepository;
+    private final SimpMessagingTemplate messagingTemplate;
 
     public RestPedidoController(PedidoService pedidoService,
-                                 PedidoMapper pedidoMapper,
-                                 UsuarioService usuarioService,
-                                 EmprendimientoRepository emprendimientoRepository,
-                                 EstadoRepository estadoRepository,
-                                 ProductoRepository productoRepository) {
+                                PedidoMapper pedidoMapper,
+                                UsuarioService usuarioService,
+                                EmprendimientoRepository emprendimientoRepository,
+                                EstadoRepository estadoRepository,
+                                ProductoRepository productoRepository,
+                                SimpMessagingTemplate messagingTemplate) {
         this.pedidoService = pedidoService;
         this.pedidoMapper = pedidoMapper;
         this.usuarioService = usuarioService;
         this.emprendimientoRepository = emprendimientoRepository;
         this.estadoRepository = estadoRepository;
         this.productoRepository = productoRepository;
+        this.messagingTemplate = messagingTemplate;
     }
 
     @GetMapping
@@ -70,8 +75,8 @@ public class RestPedidoController {
     }
 
     @GetMapping("/mis-pedidos")
-    @PreAuthorize("hasAnyRole('COMPRADOR','ADMIN')")
-    @Operation(summary = "Ver mis pedidos (comprador autenticado)")
+    @PreAuthorize("hasAnyRole('COMPRADOR','EMPRENDEDOR','ADMIN')")
+    @Operation(summary = "Ver mis pedidos (usuario autenticado)")
     @ApiResponse(responseCode = "200", description = "Éxito")
     public ResponseEntity<List<PedidoResponseDTO>> getMisPedidos(Authentication auth) {
         Usuario comprador = usuarioService.buscarPorCorreo(auth.getName());
@@ -80,8 +85,19 @@ public class RestPedidoController {
                 .collect(Collectors.toList()));
     }
 
+    @GetMapping("/recibidos")
+    @PreAuthorize("hasAnyRole('EMPRENDEDOR','ADMIN')")
+    @Operation(summary = "Ver pedidos recibidos por el emprendedor autenticado")
+    @ApiResponse(responseCode = "200", description = "Éxito")
+    public ResponseEntity<List<PedidoResponseDTO>> getPedidosRecibidos(Authentication auth) {
+        Usuario emprendedor = usuarioService.buscarPorCorreo(auth.getName());
+        return ResponseEntity.ok(pedidoService.listarRecibidosPorEmprendedor(emprendedor.getIdUsuario()).stream()
+                .map(pedidoMapper::toDto)
+                .collect(Collectors.toList()));
+    }
+
     @PostMapping
-    @PreAuthorize("hasAnyRole('COMPRADOR','ADMIN')")
+    @PreAuthorize("hasAnyRole('COMPRADOR','EMPRENDEDOR','ADMIN')")
     @Operation(summary = "Crear pedido")
     @ApiResponse(responseCode = "201", description = "Creado")
     public ResponseEntity<PedidoResponseDTO> create(@RequestBody PedidoRequestDTO dto) {
@@ -119,22 +135,23 @@ public class RestPedidoController {
         pedido.setTotal(total);
 
         Pedido saved = pedidoService.crearPedido(pedido);
+
+        // Notificación WebSocket al emprendedor
+        messagingTemplate.convertAndSend("/topic/notificaciones",
+                Map.of("mensaje", "Nuevo pedido recibido en: " + emp.getNombre()));
+
         return ResponseEntity.status(HttpStatus.CREATED).body(pedidoMapper.toDto(saved));
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('EMPRENDEDOR','ADMIN')")
-    @Operation(summary = "Actualizar pedido")
+    @Operation(summary = "Actualizar estado del pedido")
     @ApiResponse(responseCode = "200", description = "Actualizado")
     public ResponseEntity<PedidoResponseDTO> update(@PathVariable Integer id,
-                                                     @RequestBody PedidoRequestDTO dto) {
-        Pedido pedido = pedidoService.buscarPorId(id);
+                                                    @RequestBody PedidoRequestDTO dto) {
         if (dto.getIdEstado() != null) {
-            Estado estado = estadoRepository.findById(dto.getIdEstado())
-                    .orElseThrow(() -> new EntityNotFoundException("Estado no encontrado"));
-            pedido.setEstado(estado);
+            pedidoService.actualizarEstado(id, dto.getIdEstado());
         }
-        pedidoService.actualizarEstado(id, dto.getIdEstado());
         return ResponseEntity.ok(pedidoMapper.toDto(pedidoService.buscarPorId(id)));
     }
 
