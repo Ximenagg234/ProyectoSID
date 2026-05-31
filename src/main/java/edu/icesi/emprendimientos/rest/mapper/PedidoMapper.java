@@ -11,6 +11,7 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface PedidoMapper {
 
+    @Mapping(source = "emprendimiento.idEmprendimiento", target = "idEmprendimiento")
     @Mapping(source = "emprendimiento.nombre", target = "nombreEmprendimiento")
     @Mapping(source = "usuario.nombreCompleto", target = "nombreUsuario")
     @Mapping(source = "estado.nombre", target = "nombreEstado")
