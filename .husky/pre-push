@@ -1,0 +1,5 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "Construyendo proyecto antes del push..."
+cd frontend && npm run build

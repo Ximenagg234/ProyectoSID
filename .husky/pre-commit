@@ -1,0 +1,6 @@
+
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "Verificando ESLint antes del commit..."
+cd frontend && npm run lint
