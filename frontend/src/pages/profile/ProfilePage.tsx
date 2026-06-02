@@ -60,8 +60,16 @@ const ProfilePage: React.FC = () => {
     if (!idUsuario || !form.correoInstitucional) return;
     setSaving(true);
     try {
-      const updated = await usuarioApi.update(idUsuario, form as UsuarioRequest);
-      setUsuario(updated);
+      await usuarioApi.update(idUsuario, form as UsuarioRequest);
+      // Actualizar estado local con los valores del form (no confiar en la respuesta
+      // del Transaction Pooler de Supabase que puede devolver el valor pre-flush)
+      setUsuario((prev) => prev ? {
+        ...prev,
+        nombreCompleto:    form.nombreCompleto    ?? prev.nombreCompleto,
+        programaAcademico: form.programaAcademico ?? prev.programaAcademico,
+        semestreAcademico: form.semestreAcademico ?? prev.semestreAcademico,
+        fotoPerfil:        form.fotoPerfil        ?? prev.fotoPerfil,
+      } : prev);
       setEditing(false);
       setSaveOk(true);
       setTimeout(() => setSaveOk(false), 3000);

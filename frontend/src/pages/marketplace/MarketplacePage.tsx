@@ -95,7 +95,7 @@ const MarketplacePage: React.FC = () => {
 
           <div style={{ display: 'flex', gap: 24, alignItems: 'flex-start' }}>
             {/* Sidebar de filtros */}
-            <aside style={{ width: 200, flexShrink: 0 }}>
+            <aside style={{ width: 160, flexShrink: 0 }}>
               <div className="card" style={{ padding: 16, position: 'sticky', top: 24 }}>
                 <div
                   style={{
@@ -202,7 +202,7 @@ const MarketplacePage: React.FC = () => {
                 <div
                   style={{
                     display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
+                    gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))',
                     gap: 20,
                   }}
                 >
