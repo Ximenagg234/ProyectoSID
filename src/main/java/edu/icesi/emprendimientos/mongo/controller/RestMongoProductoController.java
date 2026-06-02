@@ -59,7 +59,6 @@ public class RestMongoProductoController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('EMPRENDEDOR','ADMIN')")
     public ResponseEntity<ProductoResponseDTO> create(@RequestBody ProductoRequestDTO dto) {
         return empRepo.findByIdEmprendimientoSql(dto.getIdEmprendimiento()).map(emp -> {
             EmprendimientoDocument.ProductoEmbed p = new EmprendimientoDocument.ProductoEmbed();
@@ -79,7 +78,6 @@ public class RestMongoProductoController {
     }
 
     @PutMapping("/{idProducto}")
-    @PreAuthorize("hasAnyRole('EMPRENDEDOR','ADMIN')")
     public ResponseEntity<ProductoResponseDTO> update(@PathVariable Integer idProducto,
                                                        @RequestBody ProductoRequestDTO dto) {
         for (EmprendimientoDocument emp : empRepo.findAll()) {
@@ -98,7 +96,6 @@ public class RestMongoProductoController {
     }
 
     @DeleteMapping("/{idProducto}")
-    @PreAuthorize("hasAnyRole('EMPRENDEDOR','ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable Integer idProducto) {
         for (EmprendimientoDocument emp : empRepo.findAll()) {
             if (emp.getProductos() != null) {
@@ -132,7 +129,6 @@ public class RestMongoProductoController {
     }
 
     @PostMapping(value = "/{idProducto}/imagenes", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PreAuthorize("hasAnyRole('EMPRENDEDOR','ADMIN')")
     public ResponseEntity<?> uploadImagen(@PathVariable Integer idProducto,
                                            @RequestParam("file") MultipartFile file) {
         for (EmprendimientoDocument emp : empRepo.findAll()) {
@@ -156,7 +152,6 @@ public class RestMongoProductoController {
     }
 
     @DeleteMapping("/{idProducto}/imagenes/{idImagen}")
-    @PreAuthorize("hasAnyRole('EMPRENDEDOR','ADMIN')")
     public ResponseEntity<Void> deleteImagen(@PathVariable Integer idProducto,
                                               @PathVariable Integer idImagen) {
         for (EmprendimientoDocument emp : empRepo.findAll()) {

@@ -65,7 +65,6 @@ public class RestMongoCalificacionController {
     }
 
     @PostMapping("/emprendimientos/{idEmp}/calificaciones")
-    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> calificar(@PathVariable Integer idEmp,
                                         @RequestBody CalificacionRequestDTO dto) {
         if (dto.getPuntuacion() == null || dto.getPuntuacion() < 1 || dto.getPuntuacion() > 5)
@@ -96,7 +95,6 @@ public class RestMongoCalificacionController {
     }
 
     @PutMapping("/emprendimientos/{idEmp}/calificaciones/{idCal}")
-    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> actualizar(@PathVariable Integer idEmp, @PathVariable Integer idCal,
                                          @RequestBody CalificacionRequestDTO dto) {
         return calRepo.findByIdCalificacionSql(idCal).map(cal -> {
@@ -111,7 +109,6 @@ public class RestMongoCalificacionController {
     }
 
     @DeleteMapping("/emprendimientos/{idEmp}/calificaciones/{idCal}")
-    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> eliminar(@PathVariable Integer idEmp, @PathVariable Integer idCal,
                                        @RequestParam Integer idUsuario) {
         return calRepo.findByIdCalificacionSql(idCal).map(cal -> {

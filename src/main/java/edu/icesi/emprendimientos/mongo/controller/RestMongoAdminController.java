@@ -23,7 +23,6 @@ public class RestMongoAdminController {
 
     /** Fuerza re-siembra completa de MongoDB (solo ADMIN) */
     @PostMapping("/reseed")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Map<String, String>> reseed() {
         seeder.forceReseed();
         return ResponseEntity.ok(Map.of("status", "MongoDB resembrado correctamente"));

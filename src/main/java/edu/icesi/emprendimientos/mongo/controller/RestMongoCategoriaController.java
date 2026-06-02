@@ -35,7 +35,6 @@ public class RestMongoCategoriaController {
     }
 
     @GetMapping
-    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<Map<String, Object>>> getAll() {
         return ResponseEntity.ok(CATEGORIAS_FIJAS);
     }

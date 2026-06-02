@@ -53,7 +53,6 @@ public class RestMongoEmprendimientoController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('EMPRENDEDOR','ADMIN')")
     public ResponseEntity<EmprendimientoResponseDTO> create(@RequestBody EmprendimientoRequestDTO dto) {
         EmprendimientoDocument e = new EmprendimientoDocument();
         // Generate new ID
@@ -66,7 +65,6 @@ public class RestMongoEmprendimientoController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('EMPRENDEDOR','ADMIN')")
     public ResponseEntity<EmprendimientoResponseDTO> update(@PathVariable Integer id,
                                                              @RequestBody EmprendimientoRequestDTO dto) {
         return empRepo.findByIdEmprendimientoSql(id)
@@ -75,14 +73,12 @@ public class RestMongoEmprendimientoController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyRole('EMPRENDEDOR','ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
         empRepo.findByIdEmprendimientoSql(id).ifPresent(empRepo::delete);
         return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/{id}/estado")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<EmprendimientoResponseDTO> cambiarEstado(@PathVariable Integer id,
                                                                     @RequestParam Integer idEstado) {
         return empRepo.findByIdEmprendimientoSql(id).map(e -> {
@@ -93,7 +89,6 @@ public class RestMongoEmprendimientoController {
     }
 
     @PatchMapping("/{id}/destacado")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<EmprendimientoResponseDTO> toggleDestacado(@PathVariable Integer id,
                                                                        @RequestParam Boolean destacado) {
         return empRepo.findByIdEmprendimientoSql(id).map(e -> {
