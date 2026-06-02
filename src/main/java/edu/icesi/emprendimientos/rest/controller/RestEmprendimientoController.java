@@ -25,7 +25,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.context.annotation.Profile;
 
+@Profile("!sid")
 @RestController
 @RequestMapping("/api/emprendimientos")
 @Tag(name = "Emprendimientos", description = "CRUD de emprendimientos")

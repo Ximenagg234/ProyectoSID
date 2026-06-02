@@ -37,7 +37,9 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
+import org.springframework.context.annotation.Profile;
 
+@Profile("!sid")
 @RestController
 @RequestMapping("/api/reportes")
 @Tag(name = "Reportes", description = "Generación de reportes PDF")

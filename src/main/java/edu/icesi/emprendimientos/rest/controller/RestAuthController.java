@@ -66,14 +66,20 @@ public class RestAuthController {
     @PostMapping("/register")
     @Operation(summary = "Registrar nuevo usuario")
     @ApiResponse(responseCode = "201", description = "Usuario creado")
-    public ResponseEntity<UsuarioResponseDTO> register(
+    @ApiResponse(responseCode = "400", description = "Correo no institucional o datos inválidos")
+    public ResponseEntity<?> register(
             @RequestBody UsuarioRequestDTO dto,
             @RequestParam(defaultValue = "3") int idRol) {
-        Usuario usuario = usuarioMapper.toEntity(dto);
-        Usuario saved = usuarioService.guardar(usuario);
-        // idRol: 2=EMPRENDEDOR, 3=COMPRADOR (default)
-        int rolId = (idRol == 2) ? 2 : 3;
-        usuarioService.asignarRol(saved.getIdUsuario(), rolId);
-        return ResponseEntity.status(HttpStatus.CREATED).body(usuarioMapper.toDto(saved));
+        try {
+            Usuario usuario = usuarioMapper.toEntity(dto);
+            Usuario saved = usuarioService.guardar(usuario);
+            int rolId = (idRol == 2) ? 2 : 3;
+            usuarioService.asignarRol(saved.getIdUsuario(), rolId);
+            return ResponseEntity.status(HttpStatus.CREATED).body(usuarioMapper.toDto(saved));
+        } catch (IllegalArgumentException e) {
+            // Error de validación de email institucional
+            return ResponseEntity.badRequest()
+                    .body(java.util.Map.of("error", e.getMessage()));
+        }
     }
 }

@@ -5,6 +5,7 @@ export interface CalificacionResponse {
   puntuacion: number;
   comentario: string | null;
   fecha: string;
+  idUsuario: number;
   nombreUsuario: string;
   idEmprendimiento: number;
   idPedido: number;
@@ -30,6 +31,20 @@ export const calificar = (
   idEmprendimiento: number,
   data: CalificacionRequest
 ): Promise<CalificacionResponse> =>
-  axiosInstance
-    .post(`/emprendimientos/${idEmprendimiento}/calificaciones`, data)
-    .then((r) => r.data);
+  axiosInstance.post(`/emprendimientos/${idEmprendimiento}/calificaciones`, data).then((r) => r.data);
+
+export const actualizar = (
+  idEmprendimiento: number,
+  idCalificacion: number,
+  data: CalificacionRequest
+): Promise<CalificacionResponse> =>
+  axiosInstance.put(`/emprendimientos/${idEmprendimiento}/calificaciones/${idCalificacion}`, data).then((r) => r.data);
+
+export const eliminar = (
+  idEmprendimiento: number,
+  idCalificacion: number,
+  idUsuario: number
+): Promise<void> =>
+  axiosInstance.delete(`/emprendimientos/${idEmprendimiento}/calificaciones/${idCalificacion}`, {
+    params: { idUsuario },
+  }).then(() => undefined);

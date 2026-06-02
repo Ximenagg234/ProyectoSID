@@ -7,47 +7,60 @@ import LoadingSpinner from '../../components/common/LoadingSpinner';
 import ErrorMessage from '../../components/common/ErrorMessage';
 import ProductoForm from '../../components/productos/ProductoForm';
 import ConfirmDialog from '../../components/common/ConfirmDialog';
-import ImagenesProductoModal from '../../components/productos/ImagenesProductoModal';
 import { Plus, Image } from 'lucide-react';
 
 const ProductosPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const idEmprendimiento = Number(id);
 
-  const [productos, setProductos] = useState<ProductoResponse[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [mostrarForm, setMostrarForm] = useState(false);
-  const [editando, setEditando] = useState<ProductoResponse | null>(null);
-  const [guardando, setGuardando] = useState(false);
-  const [confirmId, setConfirmId] = useState<number | null>(null);
-  const [imagenModalProducto, setImagenModalProducto] = useState<ProductoResponse | null>(null);
+  const [productos, setProductos]           = useState<ProductoResponse[]>([]);
+  const [loading, setLoading]               = useState(true);
+  const [error, setError]                   = useState<string | null>(null);
+  const [mostrarForm, setMostrarForm]       = useState(false);
+  const [editando, setEditando]             = useState<ProductoResponse | null>(null);
+  const [guardando, setGuardando]           = useState(false);
+  const [confirmId, setConfirmId]           = useState<number | null>(null);
+  const [recienCreado, setRecienCreado]     = useState(false);
 
   const cargar = () => {
+    setLoading(true);
     productoApi.getAll()
-      .then((todos) => setProductos(todos))
+      .then((todos) => setProductos(
+        todos.filter((p) => p.idEmprendimiento === idEmprendimiento)
+      ))
       .catch(() => setError('Error al cargar los productos'))
       .finally(() => setLoading(false));
   };
 
-  useEffect(() => { cargar(); }, []);
+  useEffect(() => { cargar(); }, [idEmprendimiento]);
 
   const handleSave = async (data: ProductoRequest) => {
     setGuardando(true);
     try {
       if (editando) {
-        await productoApi.update(editando.idProducto, data);
+        // Editing — update and keep form open
+        const updated = await productoApi.update(editando.idProducto, data);
+        setEditando(updated);
+        setRecienCreado(false);
+        cargar();
       } else {
-        await productoApi.create({ ...data, idEmprendimiento });
+        // Creating — keep form open with new product so user can add photos
+        const nuevo = await productoApi.create({ ...data, idEmprendimiento });
+        setEditando(nuevo);
+        setRecienCreado(true);
+        cargar();
       }
-      await cargar();
-      setMostrarForm(false);
-      setEditando(null);
     } catch {
       setError('No se pudo guardar el producto');
     } finally {
       setGuardando(false);
     }
+  };
+
+  const handleCloseForm = () => {
+    setMostrarForm(false);
+    setEditando(null);
+    setRecienCreado(false);
   };
 
   const handleDelete = async (idP: number) => {
@@ -67,7 +80,7 @@ const ProductosPage: React.FC = () => {
       action={
         <button
           className="btn btn-primary"
-          onClick={() => { setMostrarForm(true); setEditando(null); }}
+          onClick={() => { setMostrarForm(true); setEditando(null); setRecienCreado(false); }}
         >
           <Plus size={15} /> Nuevo producto
         </button>
@@ -83,10 +96,14 @@ const ProductosPage: React.FC = () => {
       {mostrarForm && (
         <div style={{ marginBottom: 24 }}>
           <ProductoForm
-            inicial={editando ? { nombre: editando.nombre, descripcion: editando.descripcion, precio: editando.precio, stockDisponible: editando.stockDisponible } : undefined}
+            inicial={editando
+              ? { nombre: editando.nombre, descripcion: editando.descripcion, precio: editando.precio, stockDisponible: editando.stockDisponible }
+              : undefined}
             idEmprendimiento={idEmprendimiento}
+            idProducto={editando?.idProducto}
+            recienCreado={recienCreado}
             onSubmit={handleSave}
-            onCancel={() => { setMostrarForm(false); setEditando(null); }}
+            onCancel={handleCloseForm}
             loading={guardando}
           />
         </div>
@@ -124,15 +141,7 @@ const ProductosPage: React.FC = () => {
                 </td>
                 <td style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>
                   <button
-                    onClick={() => setImagenModalProducto(p)}
-                    className="btn btn-sm btn-secondary"
-                    style={{ marginRight: 6 }}
-                    title="Gestionar imágenes"
-                  >
-                    <Image size={13} /> Imágenes
-                  </button>
-                  <button
-                    onClick={() => { setEditando(p); setMostrarForm(true); }}
+                    onClick={() => { setEditando(p); setMostrarForm(true); setRecienCreado(false); }}
                     className="btn btn-sm btn-outline-primary"
                     style={{ marginRight: 6 }}
                   >
@@ -159,17 +168,6 @@ const ProductosPage: React.FC = () => {
           mensaje="¿Eliminar este producto?"
           onConfirm={() => handleDelete(confirmId)}
           onCancel={() => setConfirmId(null)}
-        />
-      )}
-
-      {imagenModalProducto && (
-        <ImagenesProductoModal
-          idProducto={imagenModalProducto.idProducto}
-          nombreProducto={imagenModalProducto.nombre}
-          onClose={() => {
-            setImagenModalProducto(null);
-            cargar(); // Refresh so primeraImagenUrl updates
-          }}
         />
       )}
     </DashboardLayout>

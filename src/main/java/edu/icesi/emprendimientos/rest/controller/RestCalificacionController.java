@@ -23,7 +23,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.springframework.context.annotation.Profile;
 
+@Profile("!sid")
 @RestController
 @RequestMapping("/api")
 @Tag(name = "Calificaciones", description = "Valoraciones y comentarios de emprendimientos")

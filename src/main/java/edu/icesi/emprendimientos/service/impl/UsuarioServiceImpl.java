@@ -4,6 +4,8 @@ import edu.icesi.emprendimientos.entity.Rol;
 import edu.icesi.emprendimientos.entity.Usuario;
 import edu.icesi.emprendimientos.entity.UsuarioRol;
 import edu.icesi.emprendimientos.entity.keys.UsuarioRolId;
+import edu.icesi.emprendimientos.mongo.service.EmailValidationService;
+import edu.icesi.emprendimientos.mongo.service.MongoSyncService;
 import edu.icesi.emprendimientos.repository.RolRepository;
 import edu.icesi.emprendimientos.repository.UsuarioRepository;
 import edu.icesi.emprendimientos.repository.UsuarioRolRepository;
@@ -18,24 +20,33 @@ import java.util.List;
 @Service
 public class UsuarioServiceImpl implements UsuarioService {
 
-    private final UsuarioRepository usuarioRepository;
-    private final RolRepository rolRepository;
-    private final UsuarioRolRepository usuarioRolRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final UsuarioRepository     usuarioRepository;
+    private final RolRepository         rolRepository;
+    private final UsuarioRolRepository  usuarioRolRepository;
+    private final PasswordEncoder       passwordEncoder;
+    private final EmailValidationService emailValidation;
+    private final MongoSyncService      mongoSync;
 
     public UsuarioServiceImpl(UsuarioRepository usuarioRepository,
                               RolRepository rolRepository,
                               UsuarioRolRepository usuarioRolRepository,
-                              PasswordEncoder passwordEncoder) {
-        this.usuarioRepository = usuarioRepository;
-        this.rolRepository = rolRepository;
+                              PasswordEncoder passwordEncoder,
+                              EmailValidationService emailValidation,
+                              MongoSyncService mongoSync) {
+        this.usuarioRepository  = usuarioRepository;
+        this.rolRepository      = rolRepository;
         this.usuarioRolRepository = usuarioRolRepository;
-        this.passwordEncoder = passwordEncoder;
+        this.passwordEncoder    = passwordEncoder;
+        this.emailValidation    = emailValidation;
+        this.mongoSync          = mongoSync;
     }
 
     @Override
     public Usuario guardar(Usuario usuario) {
         usuario.setIdUsuario(null);
+
+        // Validar correo institucional ANTES de guardar en PostgreSQL
+        emailValidation.validar(usuario.getCorreoInstitucional());
 
         if (usuario.getClave() == null || usuario.getClave().isEmpty()) {
             throw new RuntimeException("El usuario debe tener una contraseña");
@@ -47,7 +58,13 @@ public class UsuarioServiceImpl implements UsuarioService {
             usuario.setRoles(new ArrayList<>());
         }
 
-        return usuarioRepository.save(usuario);
+        Usuario saved = usuarioRepository.save(usuario);
+
+        // Sincronizar a MongoDB (dual-write)
+        try { mongoSync.sincronizarUsuario(saved); }
+        catch (Exception e) { /* MongoDB sync no bloquea el flujo principal */ }
+
+        return saved;
     }
 
     @Override
@@ -82,19 +99,22 @@ public class UsuarioServiceImpl implements UsuarioService {
         if (usuarioActualizado.getClave() != null && !usuarioActualizado.getClave().isEmpty())
             existente.setClave(passwordEncoder.encode(usuarioActualizado.getClave()));
 
-        return usuarioRepository.save(existente);
+        Usuario saved = usuarioRepository.save(existente);
+
+        // Sincronizar actualización a MongoDB
+        try { mongoSync.sincronizarUsuario(saved); }
+        catch (Exception e) { /* no bloquea */ }
+
+        return saved;
     }
 
     @Override
     public void asignarRol(Integer idUsuario, Integer idRol) {
         UsuarioRolId id = new UsuarioRolId(idUsuario, idRol);
-
-        // Si ya existe no hacer nada
         if (usuarioRolRepository.existsById(id)) return;
 
         Usuario usuario = usuarioRepository.findById(idUsuario)
                 .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
-
         Rol rol = rolRepository.findById(idRol)
                 .orElseThrow(() -> new EntityNotFoundException("Rol no encontrado"));
 
@@ -102,15 +122,20 @@ public class UsuarioServiceImpl implements UsuarioService {
         usuarioRol.setId(id);
         usuarioRol.setUsuario(usuario);
         usuarioRol.setRol(rol);
-
-        // Guardar directamente en la tabla junction, sin cascade
         usuarioRolRepository.save(usuarioRol);
+
+        // Re-sincronizar roles a MongoDB
+        try { mongoSync.sincronizarUsuario(buscarPorId(idUsuario)); }
+        catch (Exception e) { /* no bloquea */ }
     }
 
     @Override
     public void quitarRol(Integer idUsuario, Integer idRol) {
         UsuarioRolId id = new UsuarioRolId(idUsuario, idRol);
         usuarioRolRepository.deleteById(id);
+
+        try { mongoSync.sincronizarUsuario(buscarPorId(idUsuario)); }
+        catch (Exception e) { /* no bloquea */ }
     }
 
     @Override

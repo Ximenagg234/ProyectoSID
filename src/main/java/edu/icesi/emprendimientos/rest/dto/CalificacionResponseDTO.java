@@ -13,6 +13,7 @@ public class CalificacionResponseDTO {
     private Integer puntuacion;
     private String comentario;
     private Date fecha;
+    private Integer idUsuario;
     private String nombreUsuario;
     private Integer idEmprendimiento;
     private Integer idPedido;

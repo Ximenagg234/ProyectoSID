@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -15,6 +16,7 @@ public class PedidoResponseDTO {
     private String nombreEmprendimiento;
     private String nombreUsuario;
     private String nombreEstado;
+    private Date fechaPedido;
     private List<DetallePedidoResponseDTO> detalles;
     private BigDecimal total;
 }

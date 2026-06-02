@@ -15,8 +15,10 @@ public interface PedidoMapper {
     @Mapping(source = "emprendimiento.nombre", target = "nombreEmprendimiento")
     @Mapping(source = "usuario.nombreCompleto", target = "nombreUsuario")
     @Mapping(source = "estado.nombre", target = "nombreEstado")
+    @Mapping(source = "fechaPedido", target = "fechaPedido")
     PedidoResponseDTO toDto(Pedido pedido);
 
+    @Mapping(source = "producto.idProducto", target = "idProducto")
     @Mapping(source = "producto.nombre", target = "nombreProducto")
     DetallePedidoResponseDTO detalleToDto(DetallePedido detalle);
 

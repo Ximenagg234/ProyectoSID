@@ -17,24 +17,19 @@ const HomePage: React.FC = () => {
 
   useEffect(() => {
     const load = async () => {
-      try {
-        const empsPromise = emprendimientoApi.getAll();
-        let pedsPromise: Promise<PedidoResponse[]>;
-        if (isComprador) {
-          pedsPromise = pedidoApi.getMisPedidos();
-        } else if (isEmprendedor) {
-          pedsPromise = pedidoApi.getPedidosRecibidos();
-        } else {
-          pedsPromise = Promise.resolve([]);
-        }
-        const [emps, peds] = await Promise.all([empsPromise, pedsPromise]);
-        setEmprendimientos(emps);
-        setPedidos(peds);
-      } catch {
-        // ignore
-      } finally {
-        setLoading(false);
-      }
+      // Cargar emprendimientos y pedidos de forma independiente
+      // para que un fallo en uno no afecte al otro
+      const [empsResult, pedsResult] = await Promise.allSettled([
+        emprendimientoApi.getAll(),
+        isComprador
+          ? pedidoApi.getMisPedidos()
+          : isEmprendedor
+          ? pedidoApi.getPedidosRecibidos()
+          : Promise.resolve([]),
+      ]);
+      if (empsResult.status === 'fulfilled') setEmprendimientos(empsResult.value);
+      if (pedsResult.status === 'fulfilled') setPedidos(pedsResult.value);
+      setLoading(false);
     };
     load();
   }, [isComprador, isEmprendedor]);

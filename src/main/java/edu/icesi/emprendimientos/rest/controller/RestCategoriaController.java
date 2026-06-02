@@ -16,7 +16,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.context.annotation.Profile;
 
+@Profile("!sid")
 @RestController
 @RequestMapping("/api/categorias")
 @Tag(name = "Categorias", description = "CRUD de categorías (solo ADMIN)")

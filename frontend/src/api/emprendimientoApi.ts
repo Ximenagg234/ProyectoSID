@@ -15,3 +15,9 @@ export const update = (id: number, data: EmprendimientoRequest): Promise<Emprend
 
 export const remove = (id: number): Promise<void> =>
   axiosInstance.delete(`/emprendimientos/${id}`);
+
+export const cambiarEstado = (id: number, idEstado: number): Promise<EmprendimientoResponse> =>
+  axiosInstance.patch(`/emprendimientos/${id}/estado`, null, { params: { idEstado } }).then((r) => r.data);
+
+export const toggleDestacado = (id: number, destacado: boolean): Promise<EmprendimientoResponse> =>
+  axiosInstance.patch(`/emprendimientos/${id}/destacado`, null, { params: { destacado } }).then((r) => r.data);

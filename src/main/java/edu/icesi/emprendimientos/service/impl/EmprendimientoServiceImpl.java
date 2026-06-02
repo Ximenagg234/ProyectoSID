@@ -1,19 +1,24 @@
 package edu.icesi.emprendimientos.service.impl;
 
 import edu.icesi.emprendimientos.entity.Emprendimiento;
+import edu.icesi.emprendimientos.mongo.service.MongoSyncService;
 import edu.icesi.emprendimientos.repository.EmprendimientoRepository;
 import edu.icesi.emprendimientos.service.EmprendimientoService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 
 @Service
 public class EmprendimientoServiceImpl implements EmprendimientoService {
 
     private final EmprendimientoRepository emprendimientoRepository;
+    private final MongoSyncService         mongoSync;
 
-    public EmprendimientoServiceImpl(EmprendimientoRepository emprendimientoRepository) {
+    public EmprendimientoServiceImpl(EmprendimientoRepository emprendimientoRepository,
+                                     MongoSyncService mongoSync) {
         this.emprendimientoRepository = emprendimientoRepository;
+        this.mongoSync                = mongoSync;
     }
 
     @Override
@@ -26,7 +31,14 @@ public class EmprendimientoServiceImpl implements EmprendimientoService {
             throw new RuntimeException("El emprendimiento debe tener una categoria");
         if (emprendimiento.getEstado() == null)
             throw new RuntimeException("El emprendimiento debe tener un estado");
-        return emprendimientoRepository.save(emprendimiento);
+
+        Emprendimiento saved = emprendimientoRepository.save(emprendimiento);
+
+        // Dual-write a MongoDB
+        try { mongoSync.sincronizarEmprendimiento(saved); }
+        catch (Exception e) { /* no bloquea */ }
+
+        return saved;
     }
 
     @Override
@@ -47,8 +59,16 @@ public class EmprendimientoServiceImpl implements EmprendimientoService {
         existente.setNombre(actualizado.getNombre());
         existente.setDescripcion(actualizado.getDescripcion());
         existente.setLogoUrl(actualizado.getLogoUrl());
-        if (actualizado.getCategoria() != null) existente.setCategoria(actualizado.getCategoria());
-        return emprendimientoRepository.save(existente);
+        if (actualizado.getCategoria()  != null) existente.setCategoria(actualizado.getCategoria());
+        if (actualizado.getEstado()     != null) existente.setEstado(actualizado.getEstado());
+        if (actualizado.getDestacado()  != null) existente.setDestacado(actualizado.getDestacado());
+
+        Emprendimiento saved = emprendimientoRepository.save(existente);
+
+        try { mongoSync.sincronizarEmprendimiento(saved); }
+        catch (Exception e) { /* no bloquea */ }
+
+        return saved;
     }
 
     @Override
@@ -71,6 +91,8 @@ public class EmprendimientoServiceImpl implements EmprendimientoService {
         Emprendimiento e = emprendimientoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Emprendimiento no encontrado"));
         e.setDestacado(e.getDestacado() == null || !e.getDestacado());
-        emprendimientoRepository.save(e);
+        Emprendimiento saved = emprendimientoRepository.save(e);
+        try { mongoSync.sincronizarEmprendimiento(saved); }
+        catch (Exception ex) { /* no bloquea */ }
     }
 }

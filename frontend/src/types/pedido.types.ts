@@ -1,5 +1,6 @@
 export interface DetallePedidoResponse {
   idDetalle: number;
+  idProducto: number;
   nombreProducto: string;
   cantidad: number;
   precioUnitario: number;
@@ -12,6 +13,7 @@ export interface PedidoResponse {
   nombreEmprendimiento: string;
   nombreUsuario: string;
   nombreEstado: string;
+  fechaPedido: string;
   detalles: DetallePedidoResponse[];
   total: number;
 }

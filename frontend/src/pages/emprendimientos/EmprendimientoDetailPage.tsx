@@ -9,6 +9,7 @@ import LoadingSpinner from '../../components/common/LoadingSpinner';
 import ErrorMessage from '../../components/common/ErrorMessage';
 import ProductoCard from '../../components/productos/ProductoCard';
 import CalificacionesSection from '../../components/calificaciones/CalificacionesSection';
+import CalificacionesProductoSection from '../../components/calificaciones/CalificacionesProductoSection';
 import { Building2, User, CalendarDays, CheckCircle2, Package } from 'lucide-react';
 
 const EmprendimientoDetailPage: React.FC = () => {
@@ -92,9 +93,15 @@ const EmprendimientoDetailPage: React.FC = () => {
               <p style={{ fontWeight: 600 }}>Este emprendimiento aún no tiene productos</p>
             </div>
           ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 20 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 20 }}>
               {productos.map((p) => (
-                <ProductoCard key={p.idProducto} producto={p} emprendimiento={emprendimiento ?? undefined} />
+                <div key={p.idProducto}>
+                  <ProductoCard producto={p} emprendimiento={emprendimiento ?? undefined} />
+                  <CalificacionesProductoSection
+                    idProducto={p.idProducto}
+                    nombreProducto={p.nombre}
+                  />
+                </div>
               ))}
             </div>
           )}

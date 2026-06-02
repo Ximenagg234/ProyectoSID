@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class DetallePedidoResponseDTO {
     private Integer idDetalle;
+    private Integer idProducto;
     private String nombreProducto;
     private Integer cantidad;
     private BigDecimal precioUnitario;

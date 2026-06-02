@@ -17,7 +17,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
+import org.springframework.context.annotation.Profile;
 
+@Profile("!sid")
 @RestController
 @RequestMapping("/api/productos/{idProducto}/imagenes")
 @Tag(name = "Imágenes de productos", description = "Gestión de imágenes de productos")
